@@ -21,8 +21,8 @@ const LandingPage = () => {
         </nav>
       </header>
 
-      <main className="flex-grow flex flex-col items-center justify-center p-6 md:p-12 text-center">
-        <div className="max-w-3xl space-y-6">
+      <main className="flex-grow flex flex-col items-center justify-center p-6 md:p-12 text-center overflow-y-auto scroll-smooth">
+        <div className="max-w-3xl space-y-6 pt-10">
           <h2 className="text-4xl md:text-6xl font-extrabold text-forest-900 leading-tight">
             Spend less time waiting. <br/>
             <span className="text-forest-600">Know exactly when to arrive.</span>
@@ -31,7 +31,7 @@ const LandingPage = () => {
             Smart Farmer Procurement & Queue Management Platform powered by AI insights and real-time tracking.
           </p>
           
-          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-8">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-8 pb-10">
             <Button size="lg" className="gap-2" onClick={() => navigate('/farmer/login')}>
               <User className="w-5 h-5" />
               Farmer Login
@@ -47,10 +47,11 @@ const LandingPage = () => {
           </div>
         </div>
         
-        <div className="mt-16 w-full max-w-4xl">
+        {/* How it works section */}
+        <div id="how-it-works" className="mt-16 w-full max-w-4xl scroll-mt-24">
           <div className="bg-white rounded-2xl shadow-soft border border-earth-200 p-8 flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1 text-left space-y-4">
-              <h3 className="text-2xl font-bold text-forest-900">Live Queue Tracking</h3>
+              <h3 className="text-2xl font-bold text-forest-900">How it works: Live Queue Tracking</h3>
               <p className="text-earth-600">
                 Farmers no longer need to wait all day at the procurement centre. Our smart system provides real-time updates and notifies you when your turn is approaching.
               </p>
@@ -74,6 +75,34 @@ const LandingPage = () => {
                    </div>
                  </div>
                </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Features section */}
+        <div id="features" className="mt-24 mb-16 w-full max-w-4xl scroll-mt-24 text-left">
+          <h3 className="text-3xl font-bold text-forest-900 mb-8 text-center">Platform Features</h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-xl border border-earth-200 shadow-sm">
+              <div className="w-12 h-12 bg-forest-100 text-forest-600 rounded-lg flex items-center justify-center mb-4">
+                <Leaf className="w-6 h-6" />
+              </div>
+              <h4 className="font-bold text-earth-900 mb-2">Smart Procurement</h4>
+              <p className="text-earth-600 text-sm">Efficiently manage crop quality checks, weighing, and instant MSP payouts.</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl border border-earth-200 shadow-sm">
+              <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center mb-4">
+                <User className="w-6 h-6" />
+              </div>
+              <h4 className="font-bold text-earth-900 mb-2">Digital Tokens</h4>
+              <p className="text-earth-600 text-sm">Paperless QR code tokens that update in real-time based on centre processing speed.</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl border border-earth-200 shadow-sm">
+              <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h4 className="font-bold text-earth-900 mb-2">Statewide Control</h4>
+              <p className="text-earth-600 text-sm">Government admins get a bird's-eye view of congestion, payments, and AI demand forecasting.</p>
             </div>
           </div>
         </div>
