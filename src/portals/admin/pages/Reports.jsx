@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../../../context/AppContext';
+import { useTranslation } from '../../../data/translations';
 import { Search, Filter, Download, FileText, Calendar, MapPin, PackageOpen, Building, CheckCircle2 } from 'lucide-react';
+import { CROPS_CATALOGUE, getLocalizedCropName } from '../../farmer/data/crops';
 
 const AdminReports = () => {
   const { state } = useAppContext();
+  const { t, currentLang } = useTranslation();
   const [successMsg, setSuccessMsg] = useState('');
 
   const [filters, setFilters] = useState({
@@ -52,7 +55,18 @@ const AdminReports = () => {
       let keep = true;
       if (filters.district && item.district && !item.district.toLowerCase().includes(filters.district.toLowerCase())) keep = false;
       if (filters.centreId && item.centreId && item.centreId !== filters.centreId) keep = false;
-      if (filters.crop && item.crop && !item.crop.toLowerCase().includes(filters.crop.toLowerCase())) keep = false;
+      
+      if (filters.crop) {
+        const cropObj = CROPS_CATALOGUE.find(c => c.id === filters.crop || c.name.toLowerCase() === filters.crop.toLowerCase());
+        const selectedEn = cropObj ? cropObj.name.toLowerCase() : filters.crop.toLowerCase();
+        const selectedTe = cropObj ? cropObj.teluguName.toLowerCase() : selectedEn;
+        const itemCrop = (item.crop || item.commodity || '').toLowerCase();
+        
+        if (!itemCrop.includes(selectedEn) && !itemCrop.includes(selectedTe) && itemCrop !== filters.crop.toLowerCase()) {
+          keep = false;
+        }
+      }
+
       if (filters.farmerId && item.farmerId && item.farmerId !== filters.farmerId) keep = false;
       
       // Date range logic (assuming item has 'date' or 'createdAt')
@@ -71,7 +85,6 @@ const AdminReports = () => {
     }
 
     // 3. Convert to CSV
-    // Get headers from first object
     const headers = Object.keys(filteredData[0]);
     const csvRows = [];
     csvRows.push(headers.join(',')); // Add header row
@@ -79,7 +92,6 @@ const AdminReports = () => {
     for (const row of filteredData) {
       const values = headers.map(header => {
         const val = row[header];
-        // Strip out commas and quotes to avoid breaking CSV format
         const escaped = ('' + (val || '')).replace(/"/g, '""');
         return `"${escaped}"`;
       });
@@ -144,7 +156,19 @@ const AdminReports = () => {
           </div>
           <div>
             <label className="block text-xs font-bold text-farmer-secondary mb-1">Crop</label>
-            <input name="crop" value={filters.crop} onChange={handleFilterChange} type="text" placeholder="e.g. Paddy" className="w-full border border-farmer-border rounded-xl px-3 py-2 text-sm text-farmer-text focus:outline-none focus:border-farmer-primary" />
+            <select
+              name="crop"
+              value={filters.crop}
+              onChange={handleFilterChange}
+              className="w-full border border-farmer-border rounded-xl px-3 py-2 text-sm text-farmer-text focus:outline-none focus:border-farmer-primary bg-white cursor-pointer font-bold"
+            >
+              <option value="">{currentLang === 'te' ? 'అన్ని పంటలు (All Crops)' : 'All Crops'}</option>
+              {CROPS_CATALOGUE.map(c => (
+                <option key={c.id} value={c.id}>
+                  {currentLang === 'te' ? c.teluguName : c.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="block text-xs font-bold text-farmer-secondary mb-1">Start Date</label>

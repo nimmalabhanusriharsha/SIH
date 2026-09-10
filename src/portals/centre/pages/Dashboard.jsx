@@ -249,7 +249,7 @@ const StaffDashboard = () => {
           </div>
 
           <div 
-            onClick={() => navigate('/centre/reports?tab=payments')}
+            onClick={() => navigate('/centre/reports')}
             className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 shadow-xs hover:border-[#046a38] hover:shadow transition-all cursor-pointer group"
           >
             <div className="flex items-center gap-3">

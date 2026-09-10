@@ -164,8 +164,8 @@ const LoginPage = ({ role }) => {
                 type="button"
                 onClick={() => { setTabMode('login'); setError(''); }}
                 className={`py-2.5 text-xs font-bold rounded-xl uppercase tracking-wider transition-all min-h-[44px] ${tabMode === 'login'
-                    ? 'bg-white text-farmer-primary shadow-sm font-black'
-                    : 'text-farmer-secondary hover:text-farmer-text'
+                  ? 'bg-white text-farmer-primary shadow-sm font-black'
+                  : 'text-farmer-secondary hover:text-farmer-text'
                   }`}
               >
                 {t('signIn', 'Farmer Sign In')}
@@ -174,8 +174,8 @@ const LoginPage = ({ role }) => {
                 type="button"
                 onClick={() => { setTabMode('register'); setError(''); }}
                 className={`py-2.5 text-xs font-bold rounded-xl uppercase tracking-wider transition-all min-h-[44px] ${tabMode === 'register'
-                    ? 'bg-white text-farmer-primary shadow-sm font-black'
-                    : 'text-farmer-secondary hover:text-farmer-text'
+                  ? 'bg-white text-farmer-primary shadow-sm font-black'
+                  : 'text-farmer-secondary hover:text-farmer-text'
                   }`}
               >
                 {t('register', 'Farmer Registration')}
@@ -204,8 +204,8 @@ const LoginPage = ({ role }) => {
 
             {error && (
               <div className={`p-3 rounded-xl text-xs font-bold border mb-4 animate-in fade-in ${isFarmer
-                  ? 'bg-farmer-error-light text-farmer-error border-farmer-error/30'
-                  : 'bg-red-50 text-red-700 border-red-200'
+                ? 'bg-farmer-error-light text-farmer-error border-farmer-error/30'
+                : 'bg-red-50 text-red-700 border-red-200'
                 }`}>
                 {error}
               </div>
@@ -213,8 +213,8 @@ const LoginPage = ({ role }) => {
 
             {successMsg && (
               <div className={`p-3 rounded-xl text-xs font-bold border mb-4 animate-in fade-in flex items-center gap-1.5 ${isFarmer
-                  ? 'bg-farmer-success-light text-farmer-success border-farmer-success/30'
-                  : 'bg-green-50 text-green-700 border-green-200'
+                ? 'bg-farmer-success-light text-farmer-success border-farmer-success/30'
+                : 'bg-green-50 text-green-700 border-green-200'
                 }`}>
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
                 <span>{successMsg}</span>
@@ -235,8 +235,8 @@ const LoginPage = ({ role }) => {
                       onChange={(e) => setIdentifier(e.target.value)}
                       placeholder={isFarmer ? 'e.g. 9876543210' : 'Enter ID'}
                       className={`w-full min-h-[48px] rounded-2xl border px-4 text-sm font-bold focus:outline-none ${isFarmer
-                          ? 'border-farmer-border bg-farmer-bg text-farmer-text focus:ring-2 focus:ring-farmer-primary pl-10'
-                          : 'border-earth-300 bg-white text-earth-900 focus:ring-2 focus:ring-forest-500'
+                        ? 'border-farmer-border bg-farmer-bg text-farmer-text focus:ring-2 focus:ring-farmer-primary pl-10'
+                        : 'border-earth-300 bg-white text-earth-900 focus:ring-2 focus:ring-forest-500'
                         }`}
                       required
                     />
@@ -285,8 +285,8 @@ const LoginPage = ({ role }) => {
                 <button
                   type="submit"
                   className={`w-full min-h-[50px] font-bold text-sm rounded-2xl shadow-sm flex items-center justify-center gap-2 transition-colors ${isFarmer
-                      ? 'bg-farmer-primary hover:bg-farmer-primary-dark text-white'
-                      : 'bg-forest-600 hover:bg-forest-700 text-white'
+                    ? 'bg-farmer-primary hover:bg-farmer-primary-dark text-white'
+                    : 'bg-forest-600 hover:bg-forest-700 text-white'
                     }`}
                 >
                   <span>{isFarmer ? t('auth.verifyOtp', 'Verify & Sign In') : 'Sign In'}</span>

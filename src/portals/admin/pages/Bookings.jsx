@@ -17,7 +17,11 @@ const AdminBookings = () => {
   const enhancedBookings = state.bookings.map(booking => {
     const farmer = state.farmers.find(f => f.id === booking.farmerId) || {};
     const centre = state.centres.find(c => c.id === booking.centreId) || {};
-    return { ...booking, farmerName: farmer.name, centreName: centre.name };
+    return { 
+      ...booking, 
+      farmerName: booking.farmerName || farmer.name || 'Verified Farmer', 
+      centreName: booking.centreName || centre.name || 'Procurement Centre' 
+    };
   });
 
   // Filter bookings

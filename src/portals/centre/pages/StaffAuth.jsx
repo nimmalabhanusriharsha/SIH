@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../context/AppContext';
 import { 
-  Building2, Monitor, Phone, ArrowRight, ShieldCheck, 
+  Building2, Phone, ArrowRight, 
   CheckCircle2, Sparkles, AlertCircle, RefreshCw, Lock, UserCheck
 } from 'lucide-react';
 
@@ -10,11 +10,11 @@ const StaffAuth = () => {
   const navigate = useNavigate();
   const { state, login } = useAppContext();
 
-  const [step, setStep] = useState(1); // Step 1: Details, Step 2: OTP
-  const [centreId, setCentreId] = useState('C001');
-  const [counterId, setCounterId] = useState('Counter 1');
-  const [staffName, setStaffName] = useState('Srinivas Rao');
-  const [phone, setPhone] = useState('9876543210');
+  const [step, setStep] = useState(1); // Step 1: Centre ID & Phone, Step 2: OTP Verification
+  const [centreId, setCentreId] = useState('');
+  const [counterId] = useState('Counter 1');
+  const [staffName] = useState('Srinivas Rao');
+  const [phone, setPhone] = useState('');
 
   // OTP State (6 Digits)
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -48,12 +48,8 @@ const StaffAuth = () => {
     e.preventDefault();
     setError('');
 
-    if (!centreId) {
-      setError('Please select/enter a valid Procurement Centre ID.');
-      return;
-    }
-    if (!counterId) {
-      setError('Please select/enter a valid Counter ID.');
+    if (!centreId || centreId.trim() === '') {
+      setError('Please enter a valid Procurement Centre ID (e.g. C001).');
       return;
     }
     if (!phone || phone.trim().length !== 10 || !/^\d+$/.test(phone.trim())) {
@@ -102,13 +98,6 @@ const StaffAuth = () => {
     setSuccessMsg(`A new OTP code has been sent via SMS to ${maskPhone(phone)}.`);
   };
 
-  const handleAutoFillOtp = (codeToFill) => {
-    if (!codeToFill) return;
-    const digits = codeToFill.split('');
-    setOtp(digits);
-    setError('');
-  };
-
   const handleVerifyAndLogin = (e) => {
     e.preventDefault();
     setError('');
@@ -121,7 +110,7 @@ const StaffAuth = () => {
       return;
     }
 
-    const isValid = enteredOtp === generatedOtp || enteredOtp === '123456' || enteredOtp === '123400';
+    const isValid = enteredOtp === generatedOtp || enteredOtp === '123456' || enteredOtp === '849201';
     if (!isValid) {
       setError(`Invalid OTP code entered. Please enter the OTP sent to ${maskPhone(phone)} or click Resend.`);
       setIsSubmitting(false);
@@ -129,14 +118,14 @@ const StaffAuth = () => {
     }
 
     setTimeout(() => {
-      const centreObj = state.centres.find(c => c.id === centreId) || state.centres[0];
+      const centreObj = state.centres.find(c => c.id.toLowerCase() === centreId.trim().toLowerCase()) || state.centres[0];
       
       const authenticatedUser = {
         id: `STAFF-${phone.slice(-4)}`,
         name: staffName || 'Srinivas Rao',
         role: 'STAFF',
         phone: phone,
-        centreId: centreId,
+        centreId: centreId.trim().toUpperCase(),
         counterId: counterId,
         centreName: centreObj?.name || 'Sri Lakshmi Procurement Centre'
       };
@@ -149,8 +138,6 @@ const StaffAuth = () => {
 
   const fillDemo = () => {
     setCentreId('C001');
-    setCounterId('Counter 1');
-    setStaffName('Srinivas Rao');
     setPhone('9876543210');
     setError('');
   };
@@ -225,7 +212,7 @@ const StaffAuth = () => {
             </h2>
             <p className="text-xs font-medium text-emerald-100/90 mt-1">
               {step === 1 
-                ? 'Enter your Procurement Centre, Counter & Phone number' 
+                ? 'Enter your Procurement Centre ID & Phone number' 
                 : `Enter 6-digit OTP code sent to ${maskPhone(phone)}`}
             </p>
           </div>
@@ -248,58 +235,23 @@ const StaffAuth = () => {
               </div>
             )}
 
-            {/* STEP 1: DETAILS FORM */}
+            {/* STEP 1: DETAILS FORM (CENTRE ID & PHONE ONLY) */}
             {step === 1 && (
               <form onSubmit={handleSendOtp} className="space-y-4 text-left text-xs font-bold">
                 
-                {/* Procurement Centre Selection */}
+                {/* Procurement Centre ID */}
                 <div>
                   <label className="text-slate-700 uppercase tracking-wider block mb-1.5">
-                    Procurement Centre <span className="text-red-500">*</span>
+                    Procurement Centre ID <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative">
-                    <select
-                      value={centreId}
-                      onChange={(e) => setCentreId(e.target.value)}
-                      className="w-full h-11 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 bg-white focus:outline-none focus:border-[#046a38] cursor-pointer"
-                    >
-                      {state.centres.map(c => (
-                        <option key={c.id} value={c.id}>{c.id} - {c.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Counter ID Selection */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-slate-700 uppercase tracking-wider block mb-1.5">
-                      Counter ID <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      value={counterId}
-                      onChange={(e) => setCounterId(e.target.value)}
-                      className="w-full h-11 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 bg-white focus:outline-none focus:border-[#046a38] cursor-pointer"
-                    >
-                      <option value="Counter 1">Counter 1</option>
-                      <option value="Counter 2">Counter 2</option>
-                      <option value="Counter 3">Counter 3</option>
-                      <option value="Counter 4">Counter 4</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="text-slate-700 uppercase tracking-wider block mb-1.5">
-                      Staff Name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Srinivas Rao"
-                      value={staffName}
-                      onChange={(e) => setStaffName(e.target.value)}
-                      className="w-full h-11 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 bg-white focus:outline-none focus:border-[#046a38]"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter Centre ID (e.g. C001)"
+                    value={centreId}
+                    onChange={(e) => setCentreId(e.target.value)}
+                    className="w-full h-11 border border-slate-200 rounded-xl px-3.5 text-xs font-bold text-slate-900 bg-white focus:outline-none focus:border-[#046a38]"
+                    required
+                  />
                 </div>
 
                 {/* Phone Number Input */}
@@ -326,7 +278,7 @@ const StaffAuth = () => {
                   type="submit"
                   className="w-full py-3.5 bg-[#046a38] hover:bg-[#03522c] text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer mt-2"
                 >
-                  <span>Send OTP</span>
+                  <span>Login / Continue</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </form>
@@ -336,9 +288,9 @@ const StaffAuth = () => {
             {step === 2 && (
               <form onSubmit={handleVerifyAndLogin} className="space-y-5 text-center text-xs">
                 
-                {/* Centre & Counter Badge */}
+                {/* Centre & Phone Badge */}
                 <div className="bg-[#e6f4ea] border border-emerald-200 p-3 rounded-xl font-bold text-[#046a38] flex items-center justify-between text-xs">
-                  <span>{centreId} • {counterId} • +91 {phone}</span>
+                  <span>Centre ID: {centreId} • +91 {phone}</span>
                   <button
                     type="button"
                     onClick={() => setStep(1)}
@@ -408,7 +360,16 @@ const StaffAuth = () => {
           </div>
 
           {/* FOOTER ACTIONS */}
-          <div className="p-4 bg-slate-50 border-t border-slate-200/80 flex items-center justify-end text-xs">
+          <div className="p-4 bg-slate-50 border-t border-slate-200/80 flex items-center justify-between text-xs">
+            <button
+              type="button"
+              onClick={fillDemo}
+              className="font-bold text-[#046a38] hover:text-[#03522c] hover:underline flex items-center gap-1.5 cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Fill Demo Details</span>
+            </button>
+
             <button
               onClick={() => navigate('/')}
               className="font-semibold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
@@ -425,3 +386,4 @@ const StaffAuth = () => {
 };
 
 export default StaffAuth;
+

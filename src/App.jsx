@@ -27,6 +27,7 @@ import CentreLayout from './portals/centre/CentreLayout';
 import CentreDashboard from './portals/centre/pages/Dashboard';
 import CentreLiveQueue from './portals/centre/pages/LiveQueue';
 import CentreBookings from './portals/centre/pages/Bookings';
+import StaffVerification from './portals/centre/pages/Verification';
 import CentreQualityCheck from './portals/centre/pages/QualityCheck';
 import CentreWeighing from './portals/centre/pages/Weighing';
 import CentreProcurement from './portals/centre/pages/Procurement';
@@ -90,12 +91,13 @@ function App() {
           <CentreLayout>
             <Routes>
               <Route path="dashboard" element={<CentreDashboard />} />
+              <Route path="verification" element={<Navigate to="/centre/live-queue" replace />} />
               <Route path="live-queue" element={<CentreLiveQueue />} />
               <Route path="bookings" element={<CentreBookings />} />
               <Route path="quality-check" element={<Navigate to="/centre/procurement" replace />} />
               <Route path="weighing" element={<Navigate to="/centre/procurement" replace />} />
               <Route path="procurement" element={<CentreProcurement />} />
-              <Route path="payments" element={<Navigate to="/centre/reports?tab=payments" replace />} />
+              <Route path="payments" element={<CentrePayments />} />
               <Route path="complaints" element={<CentreComplaints />} />
               <Route path="reports" element={<CentreReports />} />
               <Route path="activity" element={<CentreActivity />} />

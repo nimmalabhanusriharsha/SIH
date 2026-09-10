@@ -13,7 +13,7 @@ export const CROP_CATEGORIES = [
   'Commercial',
   'Spices',
   'Vegetables',
-  'Fruits'
+  'Fruits / Plantation'
 ];
 
 export const CROPS_CATALOGUE = [
@@ -368,7 +368,7 @@ export const CROPS_CATALOGUE = [
     teluguName: 'అరటిపండు',
     hindiName: 'केला',
     aliases: ['Banana', 'Kela', 'Aratipandu', 'Arati', 'అరటిపండు', 'అరటి', 'केला'],
-    category: 'Fruits',
+    category: 'Fruits / Plantation',
     iconType: 'banana'
   },
   {
@@ -377,7 +377,7 @@ export const CROPS_CATALOGUE = [
     teluguName: 'మామిడికాయ',
     hindiName: 'आम',
     aliases: ['Mango', 'Aam', 'Mamidi', 'Mamidikaya', 'మామిడికాయ', 'మామిడి', 'आम'],
-    category: 'Fruits',
+    category: 'Fruits / Plantation',
     iconType: 'mango'
   },
   {
@@ -386,7 +386,7 @@ export const CROPS_CATALOGUE = [
     teluguName: 'కొబ్బరికాయ',
     hindiName: 'नारियल',
     aliases: ['Coconut', 'Nariyal', 'Kobbari', 'Kobbarikaya', 'కొబ్బరికాయ', 'కొబ్బరి', 'నారికేళం', 'नारियल'],
-    category: 'Fruits',
+    category: 'Fruits / Plantation',
     iconType: 'coconut'
   }
 ];
@@ -445,6 +445,52 @@ export const getCropById = (id, crops = CROPS_CATALOGUE) => {
   return (
     crops.find((c) => c.id.toLowerCase() === cleanId) ||
     crops.find((c) => c.name.toLowerCase() === cleanId) ||
+    crops.find((c) => c.teluguName === id) ||
     crops[0]
   );
 };
+
+/**
+ * Helper to get localized crop display name based on current language code ('en', 'te', 'hi').
+ * Displays ONLY the crop name in the CURRENT selected system language.
+ */
+export const getLocalizedCropName = (cropInput, language = 'en') => {
+  if (!cropInput) return 'Paddy';
+  
+  let cropObj = null;
+  if (typeof cropInput === 'object') {
+    cropObj = cropInput;
+  } else {
+    const clean = String(cropInput).toLowerCase().trim();
+    cropObj = CROPS_CATALOGUE.find(c => 
+      c.id.toLowerCase() === clean || 
+      c.name.toLowerCase() === clean ||
+      c.teluguName === cropInput ||
+      (c.aliases && c.aliases.some(a => String(a).toLowerCase() === clean))
+    );
+  }
+
+  if (!cropObj) return String(cropInput);
+
+  if (language === 'te') {
+    return cropObj.teluguName || cropObj.name;
+  } else if (language === 'hi') {
+    return cropObj.hindiName || cropObj.name;
+  } else {
+    return cropObj.name;
+  }
+};
+
+/**
+ * Helper to get full crops list formatted for dropdown options in current language.
+ */
+export const getLocalizedCropsList = (language = 'en') => {
+  return CROPS_CATALOGUE.map(crop => ({
+    id: crop.id,
+    name: crop.name,
+    displayName: language === 'te' ? (crop.teluguName || crop.name) : crop.name,
+    category: crop.category,
+    msp: crop.msp
+  }));
+};
+

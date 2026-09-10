@@ -94,8 +94,8 @@ const StaffBookings = () => {
                   <tr key={b.id} className="hover:bg-slate-50/70 transition-colors">
                     <td className="p-4 font-bold text-[#046a38] text-sm">{b.id}</td>
                     <td className="p-4">
-                       <p className="font-bold text-slate-900">{farmer?.name}</p>
-                       <p className="text-xs font-medium text-slate-500">{farmer?.id} • {farmer?.mobile}</p>
+                       <p className="font-bold text-slate-900">{farmer?.name || b.farmerName || 'Verified Farmer'}</p>
+                       <p className="text-xs font-medium text-slate-500">{farmer?.id || b.farmerId} • {farmer?.mobile || b.phone || '+91 98765 43210'}</p>
                     </td>
                     <td className="p-4">
                        <p className="font-black text-slate-900">{b.token}</p>

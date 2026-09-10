@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Users, Calendar, FileSignature, 
   MessageSquareWarning, BarChart3, History, Bell, Globe, 
   Menu, X, MapPin, ChevronDown, Sprout, Headphones, 
-  ChevronRight, LogOut, Check, AlertCircle, Send, UserCheck, Shield, Phone, Mail, Building
+  ChevronRight, LogOut, Check, AlertCircle, Send, UserCheck, Shield, Phone, Mail, Building, QrCode, CreditCard
 } from 'lucide-react';
 
 import { useTranslation } from '../../data/translations';
@@ -99,6 +99,7 @@ const CentreLayout = ({ children }) => {
     { name: t('centre.nav.todaysBookings', "Today's Bookings"), path: '/centre/bookings', icon: Calendar },
     { name: t('centre.nav.liveQueue', 'Live Queue'), path: '/centre/live-queue', icon: Users },
     { name: t('centre.nav.procurement', 'Procurement'), path: '/centre/procurement', icon: FileSignature },
+    { name: t('centre.nav.payments', 'Payments'), path: '/centre/payments', icon: CreditCard },
     { name: t('centre.nav.complaints', 'Complaints'), path: '/centre/complaints', icon: MessageSquareWarning },
     { name: t('centre.nav.reports', 'Reports'), path: '/centre/reports', icon: BarChart3 },
     { name: t('centre.nav.activityLog', 'Activity Log'), path: '/centre/activity', icon: History },

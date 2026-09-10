@@ -34,12 +34,16 @@ const Feedback = () => {
     
     const newComplaint = {
       id: `CMP-${Math.floor(1000 + Math.random() * 9000)}`,
-      farmerId: currentUser?.id,
+      farmerId: currentUser?.farmerId || currentUser?.id || 'FARM-9021',
+      farmerName: currentUser?.name || 'Ramesh Kumar',
+      name: currentUser?.name || 'Ramesh Kumar',
+      userType: 'Farmer',
+      centreId: activeBooking?.centreId || 'C001',
       tokenRef: tokenRef,
       type: complaintCategory,
       description: complaintDesc,
-      status: 'Under Review',
-      date: new Date().toLocaleDateString()
+      status: 'Open',
+      date: new Date().toISOString()
     };
 
     setState(prev => ({

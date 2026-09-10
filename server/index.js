@@ -13,6 +13,7 @@ import './loadEnv.js';
 import express from 'express';
 import cors from 'cors';
 import farmerAssistantRouter from './routes/farmerAssistant.js';
+import kisanqueueApiRouter from './routes/kisanqueueApi.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
@@ -35,8 +36,8 @@ app.use(cors({
     if (allowedOrigins.includes(origin)) return callback(null, true);
     return callback(new Error(`CORS: Origin ${origin} not allowed.`));
   },
-  methods: ['POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -62,6 +63,7 @@ app.get(['/api/health', '/health'], (_req, res) => {
 // API Routes
 // ─────────────────────────────────────────────────────────────────────────────
 
+app.use('/api', kisanqueueApiRouter);
 app.use('/api/farmer-assistant', farmerAssistantRouter);
 app.use('/farmer-assistant', farmerAssistantRouter);
 

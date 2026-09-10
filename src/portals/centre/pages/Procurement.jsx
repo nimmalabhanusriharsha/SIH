@@ -1,38 +1,56 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAppContext } from '../../../context/AppContext';
 import { useTranslation } from '../../../data/translations';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../shared/components/Card';
 import { 
   Sprout, Phone, MapPin, Calendar, Clock, CheckCircle2, 
-  IndianRupee, FileText, Landmark, Info, Check, Send, AlertCircle, X
+  IndianRupee, FileText, Info, Check, X
 } from 'lucide-react';
+import { CROPS_CATALOGUE, getLocalizedCropName } from '../../farmer/data/crops';
 
 const StaffProcurement = () => {
   const { state, setState, currentUser } = useAppContext();
-  const { t } = useTranslation();
+  const { t, currentLang } = useTranslation();
+  const location = useLocation();
 
-  // Find currently serving queue item or default to Ramesh Kumar sample data
-  const servingQueueItem = state.queue.find(q => q.status === 'Quality Check' || q.status === 'Serving' || q.status === 'Weighing');
-  const activeFarmer = servingQueueItem ? state.farmers.find(f => f.id === servingQueueItem.farmerId) : null;
-  const activeBooking = servingQueueItem ? state.bookings.find(b => b.token === servingQueueItem.token) : null;
+  // Find dynamic verified farmer/booking passed from LiveQueue navigation or AppContext
+  const navState = location.state || {};
+  const activeServingFarmer = state.activeServingFarmer;
+  
+  const targetBooking = (navState.bookingId ? (state.bookings || []).find(b => b.id === navState.bookingId || b.token === navState.token) : null) ||
+                        (state.activeServingBookingId ? (state.bookings || []).find(b => b.id === state.activeServingBookingId) : null) ||
+                        (state.bookings && state.bookings.length > 0 ? state.bookings[0] : null);
 
-  // Form State initialized with reference UI default values
+  const targetFarmerProfile = targetBooking ? (state.farmers || []).find(f => f.id === targetBooking.farmerId) : null;
+
+  // Resolved dynamic values (NEVER hardcoded Suresh Reddy)
+  const resolvedFarmerName = activeServingFarmer?.farmerName || navState.farmerName || targetBooking?.farmerName || targetFarmerProfile?.name || 'Ramesh Kumar';
+  const resolvedFarmerId = activeServingFarmer?.farmerId || navState.farmerId || targetBooking?.farmerId || targetFarmerProfile?.id || 'FARM-9021';
+  const resolvedToken = activeServingFarmer?.token || navState.token || targetBooking?.token || '#A-042';
+  const resolvedBookingId = activeServingFarmer?.bookingId || navState.bookingId || targetBooking?.id || 'BK-1001';
+  const resolvedPhone = activeServingFarmer?.phone || targetFarmerProfile?.phone || targetBooking?.phone || '+91 98765 43210';
+  const resolvedLocation = activeServingFarmer?.village || targetFarmerProfile?.village || targetFarmerProfile?.location || 'Bhuvanavaram, West Godavari';
+  const resolvedCrop = activeServingFarmer?.crop || targetBooking?.crop || 'Paddy (Rice)';
+  const resolvedQty = activeServingFarmer?.quantity || targetBooking?.expectedQuantity || targetBooking?.quantity || 450;
+
+  // Form State initialized dynamically from verified farmer record
   const [formData, setFormData] = useState({
-    tokenNumber: servingQueueItem?.token || 'A105',
-    bookingId: activeBooking?.id || 'BK-20250910-0012',
-    farmerName: activeFarmer?.name || 'Ramesh Kumar',
-    farmerId: activeFarmer?.id || 'KIS-729481C',
-    phone: activeFarmer?.phone || '98765 43210',
-    location: activeFarmer?.location || 'Bhuvanavaram, West Godavari',
-    bookingDate: '10 Sep 2025',
-    bookedSlot: '10:00 AM – 10:30 AM',
-    expectedQuantity: activeBooking?.expectedQuantity ? `${activeBooking.expectedQuantity} kg` : '50 – 60 kg',
+    tokenNumber: resolvedToken,
+    bookingId: resolvedBookingId,
+    farmerName: resolvedFarmerName,
+    farmerId: resolvedFarmerId,
+    phone: resolvedPhone,
+    location: resolvedLocation,
+    bookingDate: targetBooking?.date || new Date().toISOString().split('T')[0],
+    bookedSlot: targetBooking?.slot || activeServingFarmer?.slotTime || '09:00 AM – 10:00 AM',
+    expectedQuantity: `${resolvedQty} kg`,
     status: 'Arrived',
     
     // Harvest & Quality Details
-    commodity: activeBooking?.crop || 'Paddy',
+    crop: resolvedCrop,
     variety: 'MTU 1010',
-    quantity: '540',
+    quantity: String(resolvedQty),
     unit: 'Kilograms (kg)',
     moisture: '13.5',
     foreignMatter: '0.6',
@@ -40,18 +58,27 @@ const StaffProcurement = () => {
     grainGrade: 'Grade A',
 
     // Pricing
-    rate: '22.50',
-
-    // Bank Details
-    accountHolder: activeFarmer?.name || 'Ramesh Kumar',
-    accountNumber: activeFarmer?.bankAccount || 'XXXX XXXX 3210',
-    ifscCode: activeFarmer?.ifsc || 'SBIN0001234',
-    bankName: activeFarmer?.bankName || 'State Bank of India',
-    upi: 'ramesh.k@upi',
+    rate: '23.69',
 
     // Remarks
     remarks: ''
   });
+
+  // Re-sync form data if navigation or serving farmer changes
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      tokenNumber: resolvedToken,
+      bookingId: resolvedBookingId,
+      farmerName: resolvedFarmerName,
+      farmerId: resolvedFarmerId,
+      phone: resolvedPhone,
+      location: resolvedLocation,
+      crop: resolvedCrop,
+      expectedQuantity: `${resolvedQty} kg`,
+      quantity: String(resolvedQty)
+    }));
+  }, [navState.bookingId, state.activeServingBookingId, activeServingFarmer]);
 
   // Calculate Total Amount dynamically: Quantity * Rate
   const qtyNum = parseFloat(formData.quantity) || 0;
@@ -71,7 +98,7 @@ const StaffProcurement = () => {
     }));
   };
 
-  // Complete Procurement (Save Quality & Procurement details)
+  // Complete Procurement (Save Quality & Procurement details AND add to Pending Payments list)
   const handleCompleteProcurement = () => {
     if (!formData.quantity || parseFloat(formData.quantity) <= 0) {
       alert("Please enter a valid quantity.");
@@ -79,13 +106,15 @@ const StaffProcurement = () => {
     }
 
     const newProcurementId = `PRC-${Date.now().toString().slice(-6)}`;
+    const newPaymentId = `PAY-${Date.now().toString().slice(-6)}`;
+
     const newProcurementRecord = {
       id: newProcurementId,
       bookingId: formData.bookingId,
       farmerId: formData.farmerId,
       farmerName: formData.farmerName,
       centreId: currentUser?.centreId || 'C001',
-      crop: formData.commodity,
+      crop: formData.crop,
       variety: formData.variety,
       actualQuantity: parseFloat(formData.quantity),
       unit: formData.unit,
@@ -97,7 +126,28 @@ const StaffProcurement = () => {
       grainGrade: formData.grainGrade,
       remarks: formData.remarks,
       date: new Date().toISOString(),
-      status: 'Quality & Procurement Completed'
+      status: 'Completed'
+    };
+
+    // Create corresponding Pending Payment record so farmer appears in Payments page -> PENDING PAYMENT
+    const newPaymentRecord = {
+      id: newPaymentId,
+      procurementId: newProcurementId,
+      bookingId: formData.bookingId,
+      token: formData.tokenNumber,
+      farmerId: formData.farmerId,
+      farmerName: formData.farmerName,
+      farmerPhone: formData.phone,
+      location: formData.location,
+      crop: formData.crop,
+      variety: formData.variety,
+      quantity: parseFloat(formData.quantity),
+      unit: formData.unit,
+      rate: parseFloat(formData.rate),
+      amount: totalAmount,
+      date: new Date().toISOString(),
+      status: 'Pending',
+      initiatedBy: currentUser?.name || 'Staff User'
     };
 
     const counterId = currentUser?.counterId || 'Counter 1';
@@ -110,12 +160,19 @@ const StaffProcurement = () => {
       farmerId: formData.farmerId,
       token: formData.tokenNumber,
       bookingId: formData.bookingId,
-      action: `Completed procurement for farmer ${formData.farmerName} (${formData.farmerId}, Token ${formData.tokenNumber}) at ${counterId}. Crop: ${formData.commodity}, Qty: ${formData.quantity} kg, Amount: ₹${totalAmount.toLocaleString('en-IN')}`
+      action: `Completed procurement for farmer ${formData.farmerName} (${formData.farmerId}, Token ${formData.tokenNumber}) at ${counterId}. Crop: ${formData.crop}, Qty: ${formData.quantity} kg, Amount: ₹${totalAmount.toLocaleString('en-IN')}`
     };
+
+    // Update queue status to completed
+    const updatedQueue = (state.queue || []).map(q => 
+      q.token === formData.tokenNumber ? { ...q, status: 'Completed' } : q
+    );
 
     setState(prev => ({
       ...prev,
       procurements: [newProcurementRecord, ...(prev.procurements || [])],
+      payments: [newPaymentRecord, ...(prev.payments || []).filter(p => p.id !== newPaymentId)],
+      queue: updatedQueue,
       activity: [newActivity, ...(prev.activity || [])]
     }));
 
@@ -126,7 +183,7 @@ const StaffProcurement = () => {
     });
   };
 
-  // Initiate Payment: Send complete farmer, bank, crop, quantity, rate & amount to Admin for payment processing
+  // Initiate Payment: Mark payment processing & send to Admin
   const handleInitiatePayment = () => {
     if (!formData.quantity || parseFloat(formData.quantity) <= 0) {
       alert("Please enter a valid quantity before initiating payment.");
@@ -142,7 +199,7 @@ const StaffProcurement = () => {
       farmerId: formData.farmerId,
       farmerName: formData.farmerName,
       centreId: currentUser?.centreId || 'C001',
-      crop: formData.commodity,
+      crop: formData.crop,
       variety: formData.variety,
       actualQuantity: parseFloat(formData.quantity),
       unit: formData.unit,
@@ -161,23 +218,19 @@ const StaffProcurement = () => {
       id: newPaymentId,
       procurementId: newProcurementId,
       bookingId: formData.bookingId,
+      token: formData.tokenNumber,
       farmerId: formData.farmerId,
       farmerName: formData.farmerName,
       farmerPhone: formData.phone,
       location: formData.location,
-      accountHolder: formData.accountHolder,
-      accountNumber: formData.accountNumber,
-      ifsc: formData.ifscCode,
-      bankName: formData.bankName,
-      upi: formData.upi,
-      crop: formData.commodity,
+      crop: formData.crop,
       variety: formData.variety,
       quantity: parseFloat(formData.quantity),
       unit: formData.unit,
       rate: parseFloat(formData.rate),
       amount: totalAmount,
       date: new Date().toISOString(),
-      status: 'Pending Admin Approval',
+      status: 'Pending',
       initiatedBy: currentUser?.name || 'Staff User'
     };
 
@@ -191,18 +244,17 @@ const StaffProcurement = () => {
       farmerId: formData.farmerId,
       token: formData.tokenNumber,
       bookingId: formData.bookingId,
-      action: `Initiated payment processing for farmer ${formData.farmerName} (${formData.farmerId}, Token ${formData.tokenNumber}) at ${counterId} (Amount: ₹${totalAmount.toLocaleString('en-IN')}) sent to Admin`
+      action: `Initiated payment processing for farmer ${formData.farmerName} (${formData.farmerId}, Token ${formData.tokenNumber}) at ${counterId} (Amount: ₹${totalAmount.toLocaleString('en-IN')})`
     };
 
-    // Update queue status if serving
-    const updatedQueue = state.queue.map(q => 
+    const updatedQueue = (state.queue || []).map(q => 
       q.token === formData.tokenNumber ? { ...q, status: 'Completed' } : q
     );
 
     setState(prev => ({
       ...prev,
       procurements: [newProcurementRecord, ...(prev.procurements || [])],
-      payments: [newPaymentRecord, ...(prev.payments || [])],
+      payments: [newPaymentRecord, ...(prev.payments || []).filter(p => p.id !== newPaymentId)],
       queue: updatedQueue,
       activity: [newActivity, ...(prev.activity || [])]
     }));
@@ -215,7 +267,7 @@ const StaffProcurement = () => {
   };
 
   return (
-    <div className="space-y-6 font-sans">
+    <div className="space-y-6 font-sans pb-12">
       
       {/* PAGE HEADER & TOP STEPPER */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-200 pb-5">
@@ -329,8 +381,8 @@ const StaffProcurement = () => {
                 <div className="flex items-start gap-3">
                   <Sprout className="w-4 h-4 text-[#046a38] shrink-0 mt-0.5" strokeWidth={2} />
                   <div>
-                    <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider">Commodity</p>
-                    <p className="text-slate-900 font-bold">{formData.commodity}</p>
+                    <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider">Crop</p>
+                    <p className="text-slate-900 font-bold">{formData.crop}</p>
                   </div>
                 </div>
               </div>
@@ -365,22 +417,21 @@ const StaffProcurement = () => {
             <CardContent className="p-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
-                {/* Commodity */}
+                {/* Crop Selection Dropdown (Complete 39 Crops Catalogue) */}
                 <div>
                   <label className="text-xs font-bold text-slate-700 block mb-1.5">
-                    Commodity <span className="text-red-500">*</span>
+                    Crop <span className="text-red-500">*</span>
                   </label>
                   <select
                     className="w-full h-10 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#046a38] bg-white cursor-pointer"
-                    value={formData.commodity}
-                    onChange={(e) => handleInputChange('commodity', e.target.value)}
+                    value={formData.crop}
+                    onChange={(e) => handleInputChange('crop', e.target.value)}
                   >
-                    <option value="Paddy">Paddy</option>
-                    <option value="Wheat">Wheat</option>
-                    <option value="Maize">Maize</option>
-                    <option value="Pulses">Pulses</option>
-                    <option value="Cotton">Cotton</option>
-                    <option value="Mustard">Mustard</option>
+                    {CROPS_CATALOGUE.map(c => (
+                      <option key={c.id} value={c.name}>
+                        {currentLang === 'te' ? c.teluguName : c.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -544,7 +595,7 @@ const StaffProcurement = () => {
 
                 <div className="flex items-center gap-1.5 text-blue-700 bg-blue-50/80 border border-blue-100 px-2.5 py-1 rounded-full text-[11px] font-medium">
                   <Info className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                  <span>Rate is based on current centre rates</span>
+                  <span>Rate is based on current MSP / centre rates</span>
                 </div>
               </div>
             </CardContent>
@@ -561,7 +612,7 @@ const StaffProcurement = () => {
             <CardContent className="p-5">
               <textarea
                 className="w-full h-20 border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#046a38] resize-none"
-                placeholder="Any additional notes about the harvest quality, weight, or other observations..."
+                placeholder="Any additional notes about the crop quality, weight, or other observations..."
                 value={formData.remarks}
                 onChange={(e) => handleInputChange('remarks', e.target.value)}
               ></textarea>
@@ -582,7 +633,7 @@ const StaffProcurement = () => {
                 </div>
                 <div>
                   <h4 className="font-extrabold text-[#046a38] text-sm leading-tight">Complete Procurement</h4>
-                  <p className="text-[11px] font-medium text-emerald-800/80 leading-tight">Save quality and procurement details</p>
+                  <p className="text-[11px] font-medium text-emerald-800/80 leading-tight">Save details & add to Pending Payment</p>
                 </div>
               </button>
 
@@ -605,13 +656,13 @@ const StaffProcurement = () => {
             {/* INFO ALERT BANNER BELOW BUTTONS */}
             <div className="bg-blue-50/70 border border-blue-100 rounded-xl p-3 flex items-center gap-2.5 text-xs text-blue-800 font-medium">
               <Info className="w-4 h-4 text-blue-600 shrink-0" />
-              <span>When you initiate payment, farmer details, crop details and amount will be sent to Admin for processing.</span>
+              <span>When you click Complete Procurement, farmer procurement record is updated and added to Payments page under Pending Payment.</span>
             </div>
           </div>
 
         </div>
 
-        {/* COLUMN 3 (lg:col-span-3): RIGHT SECTION - BOOKING DETAILS, BANK DETAILS & SUMMARY */}
+        {/* COLUMN 3 (lg:col-span-3): RIGHT SECTION - BOOKING DETAILS & SUMMARY */}
         <div className="lg:col-span-3 space-y-6">
           
           {/* BOOKING & TOKEN DETAILS CARD */}
@@ -652,42 +703,6 @@ const StaffProcurement = () => {
             </CardContent>
           </Card>
 
-          {/* FARMER BANK DETAILS CARD */}
-          <Card className="border border-slate-200 shadow-xs bg-white rounded-2xl overflow-hidden">
-            <CardHeader className="bg-white border-b border-slate-100 py-3.5 px-5">
-              <CardTitle className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <Landmark className="w-4 h-4 text-[#046a38]" strokeWidth={2.5} />
-                Farmer Bank Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-5 space-y-3 text-xs font-semibold">
-              <div className="flex justify-between items-center py-1">
-                <span className="text-slate-500 font-medium">Account Holder</span>
-                <span className="font-bold text-slate-900">{formData.accountHolder}</span>
-              </div>
-
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">Account Number</span>
-                <span className="font-bold text-slate-800">{formData.accountNumber}</span>
-              </div>
-
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">IFSC Code</span>
-                <span className="font-bold text-slate-800">{formData.ifscCode}</span>
-              </div>
-
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">Bank Name</span>
-                <span className="font-bold text-slate-800">{formData.bankName}</span>
-              </div>
-
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">UPI (Optional)</span>
-                <span className="font-bold text-slate-800">{formData.upi}</span>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* PROCUREMENT SUMMARY CARD */}
           <Card className="border border-slate-200 shadow-xs bg-white rounded-2xl overflow-hidden">
             <CardHeader className="bg-white border-b border-slate-100 py-3.5 px-5">
@@ -698,8 +713,8 @@ const StaffProcurement = () => {
             </CardHeader>
             <CardContent className="p-5 space-y-3 text-xs font-semibold">
               <div className="flex justify-between items-center py-1">
-                <span className="text-slate-500 font-medium">Commodity</span>
-                <span className="font-bold text-slate-900">{formData.commodity}</span>
+                <span className="text-slate-500 font-medium">Crop</span>
+                <span className="font-bold text-slate-900">{formData.crop}</span>
               </div>
 
               <div className="flex justify-between items-center py-1 border-t border-slate-100">
@@ -725,20 +740,16 @@ const StaffProcurement = () => {
 
       </div>
 
-      {/* CONFIRMATION / PAYMENT INITIATION MODAL */}
+      {/* CONFIRMATION MODAL */}
       {modalState.isOpen && (
         <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden animate-in zoom-in-95 border border-slate-100">
+          <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden animate-in zoom-in-95 border border-slate-100">
             {/* Modal Header */}
             <div className="bg-[#046a38] p-5 flex justify-between items-center text-white">
               <div className="flex items-center gap-2.5">
-                {modalState.type === 'INITIATE_PAYMENT' ? (
-                  <IndianRupee className="w-5 h-5 text-emerald-200" />
-                ) : (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-200" />
-                )}
+                <CheckCircle2 className="w-6 h-6 text-emerald-200" />
                 <h3 className="font-black text-lg">
-                  {modalState.type === 'INITIATE_PAYMENT' ? 'Payment Initiated to Admin' : 'Procurement Details Saved'}
+                  {modalState.type === 'INITIATE_PAYMENT' ? 'Payment Initiated to Admin' : 'Procurement Completed & Saved'}
                 </h3>
               </div>
               <button 
@@ -765,25 +776,29 @@ const StaffProcurement = () => {
               </div>
 
               <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200/80">
-                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Details Transmitted</p>
+                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Procurement Record Details</p>
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div><span className="text-slate-500 font-normal">Crop/Variety:</span> <span className="font-bold">{formData.commodity} ({formData.variety})</span></div>
+                  <div><span className="text-slate-500 font-normal">Crop/Variety:</span> <span className="font-bold">{formData.crop} ({formData.variety})</span></div>
                   <div><span className="text-slate-500 font-normal">Quantity:</span> <span className="font-bold">{formData.quantity} kg</span></div>
                   <div><span className="text-slate-500 font-normal">Rate:</span> <span className="font-bold">₹{formData.rate}/kg</span></div>
                   <div><span className="text-slate-500 font-normal">Grade:</span> <span className="font-bold">{formData.grainGrade}</span></div>
-                  <div><span className="text-slate-500 font-normal">Bank Name:</span> <span className="font-bold">{formData.bankName}</span></div>
-                  <div><span className="text-slate-500 font-normal">Account No:</span> <span className="font-bold">{formData.accountNumber}</span></div>
-                  <div><span className="text-slate-500 font-normal">IFSC:</span> <span className="font-bold">{formData.ifscCode}</span></div>
-                  <div><span className="text-slate-500 font-normal">UPI:</span> <span className="font-bold">{formData.upi}</span></div>
                 </div>
+              </div>
+
+              <div className="p-3.5 bg-emerald-50 text-[#046a38] rounded-xl border border-emerald-200 text-xs font-bold flex items-center gap-2">
+                <Check className="w-4 h-4 stroke-[3]" />
+                <span>Farmer procurement marked Completed. Added to Payments page under Pending Payment.</span>
               </div>
 
               <div className="flex gap-3 pt-2">
                 <button
-                  onClick={() => setModalState({ isOpen: false, type: null, data: null })}
+                  onClick={() => {
+                    setModalState({ isOpen: false, type: null, data: null });
+                    navigate('/centre/payments');
+                  }}
                   className="w-full py-3 bg-[#046a38] hover:bg-[#03522c] text-white font-bold rounded-xl transition-colors cursor-pointer text-sm shadow-xs"
                 >
-                  Done
+                  View Payments Page
                 </button>
               </div>
 

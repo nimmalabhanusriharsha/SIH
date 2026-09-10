@@ -242,8 +242,11 @@ const BookSlot = () => {
 
     const newBooking = {
       id: newBookingId,
-      farmerId: currentUser.id,
+      farmerId: currentUser.farmerId || currentUser.id || 'FARM-9021',
+      farmerName: currentUser.name || 'Ramesh Kumar',
+      phone: currentUser.mobile || currentUser.phone || '+91 98765 43210',
       centreId: selectedCentre.id,
+      centreName: selectedCentre.name,
       date: bookingData.date,
       slot: bookingData.slot,
       cropId: bookingData.cropId || 'paddy',
