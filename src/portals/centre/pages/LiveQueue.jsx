@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../context/AppContext';
 import { useTranslation } from '../../../data/translations';
@@ -6,49 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../../shared/compon
 import { 
   Users, CheckCircle2, QrCode, Upload, FileCheck, AlertCircle, RefreshCw, 
   ChevronRight, Phone, MapPin, Ticket, Clock, Sprout, Scale, Calendar, 
-  Play, FileText, Check, FastForward, User, ShieldCheck, Hash, ArrowRight
+  Play, FileText, Check, FastForward, User
 } from 'lucide-react';
 import { CROPS_CATALOGUE, getCropById } from '../../farmer/data/crops';
+import { MASTER_FARMER_REGISTRY } from '../../farmer/data/masterFarmers';
 
 const StaffLiveQueue = () => {
-  const { state, setState, currentUser, updateBookingStatus, addToQueue, addActivity } = useAppContext();
+  const { state, setState, currentUser, logActivity } = useAppContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
-
-  // Combine queue from state or baseline demo records
-  const queueList = (state.queue && state.queue.length > 0) ? state.queue : [
-    { token: '#A-042', farmerName: 'Ramesh Kumar', farmerId: 'FARM-9021', phone: '+91 98765 43210', crop: 'Paddy (Rice)', cropTelugu: 'వరి (ధాన్యం)', msp: '₹2,369 / Q', slotTime: '09:00 AM - 10:00 AM', qty: '450 kg', status: 'In Queue' },
-    { token: '#A-043', farmerName: 'Suresh Babu', farmerId: 'FARM-8812', phone: '+91 94401 56789', crop: 'Maize', cropTelugu: 'మొక్కజొన్న', msp: '₹2,090 / Q', slotTime: '10:00 AM - 11:00 AM', qty: '520 kg', status: 'In Queue' },
-    { token: '#A-044', farmerName: 'Anitha Devi', farmerId: 'FARM-7719', phone: '+91 98665 43210', crop: 'Cotton', cropTelugu: 'పత్తి (దూది)', msp: '₹7,121 / Q', slotTime: '11:00 AM - 12:00 PM', qty: '380 kg', status: 'In Queue' },
-    { token: '#A-045', farmerName: 'Venkata Ramana', farmerId: 'FARM-6651', phone: '+91 99890 11223', crop: 'Red Gram (Tur / Arhar)', cropTelugu: 'కందులు (తువర్)', msp: 'Category: Pulses', slotTime: '12:00 PM - 01:00 PM', qty: '600 kg', status: 'Waiting' },
-    { token: '#A-046', farmerName: 'Lakshmi Prasad', farmerId: 'FARM-5541', phone: '+91 97012 33445', crop: 'Wheat', cropTelugu: 'గోధుమలు', msp: '₹2,275 / Q', slotTime: '02:00 PM - 03:00 PM', qty: '400 kg', status: 'Waiting' }
-  ];
-
-  // Currently Serving farmer state
-  const [currentlyServing, setCurrentlyServing] = useState({
-    token: '#A-042',
-    bookingId: 'BK-1001',
-    farmerName: 'Ramesh Kumar',
-    farmerId: 'FARM-9021',
-    phone: '+91 98765 43210',
-    village: 'Bhuvanavaram, West Godavari',
-    slotTime: '09:00 AM - 10:00 AM',
-    crop: 'Paddy (Rice)',
-    cropTelugu: 'వరి (ధాన్యం)',
-    msp: '₹2,369 / Q',
-    qty: '450 kg',
-    date: new Date().toISOString().split('T')[0],
-    verificationTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    centreName: 'Sri Lakshmi Procurement Centre'
-  });
-
-  // QR Verification States
-  const [qrLoading, setQrLoading] = useState(false);
-  const [qrDragActive, setQrDragActive] = useState(false);
-  const [qrVerifiedData, setQrVerifiedData] = useState(null);
-  const [qrErrorMessage, setQrErrorMessage] = useState('');
-  const [uploadedFileName, setUploadedFileName] = useState('');
-  const [showBookingModal, setShowBookingModal] = useState(false);
 
   // Helper to format crop details with Telugu name and MSP
   const getCropDisplayDetails = (cropName) => {
@@ -67,115 +33,144 @@ const StaffLiveQueue = () => {
     };
   };
 
-  // QR Processing Logic - Dynamically matches uploaded file or token to real booking in system
+  // Helper to construct a normalized booking record strictly without fallbacks
+  const normalizeBookingRecord = (booking) => {
+    if (!booking) return null;
+
+    const farmerProfile = (state.farmers || []).find(f => f.id === booking.farmerId || f.farmerId === booking.farmerId)
+      || (MASTER_FARMER_REGISTRY || []).find(f => f.farmerId === booking.farmerId || f.id === booking.farmerId);
+
+    const cropInfo = getCropDisplayDetails(booking.crop || farmerProfile?.primaryCrop);
+    const centre = (state.centres || []).find(c => c.id === (booking.centreId || currentUser?.centreId || 'C001'));
+    const centreName = booking.centreName || centre?.name || currentUser?.centreName || 'Sri Lakshmi Procurement Centre';
+
+    const bookingId = booking.id || booking.bookingId;
+    const token = booking.token || `#A-${String(bookingId).slice(-3)}`;
+    const farmerName = booking.farmerName || farmerProfile?.name || 'Registered Farmer';
+    const farmerId = booking.farmerId || farmerProfile?.id || farmerProfile?.farmerId || 'KIS-000000';
+    const phone = booking.phone || farmerProfile?.mobile || farmerProfile?.phone || 'N/A';
+    const village = farmerProfile?.village ? `${farmerProfile.village}${farmerProfile.district ? ', ' + farmerProfile.district : ''}` : (booking.location || 'Procurement Region');
+    const qtyNum = booking.expectedQuantity || booking.quantity || 450;
+    const date = booking.date || new Date().toISOString().split('T')[0];
+    const slot = booking.slot || booking.slotTime || '09:00 AM - 10:00 AM';
+
+    return {
+      bookingId,
+      token,
+      farmerName,
+      farmerId,
+      phone,
+      village,
+      crop: cropInfo.name,
+      cropTelugu: cropInfo.telugu,
+      msp: cropInfo.msp,
+      quantity: qtyNum,
+      qty: `${qtyNum} kg`,
+      date,
+      slot,
+      slotTime: slot,
+      centreId: booking.centreId || currentUser?.centreId || 'C001',
+      centreName,
+      status: booking.status || 'Confirmed',
+      verificationTime: booking.verifiedAt || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+  };
+
+  // Logged-in Procurement Centre ID
+  const activeCentreId = currentUser?.centreId || 'C001';
+
+  // Derive today's active bookings for current centre dynamically from backend state
+  const todayBookings = (state.bookings || []).filter(b => 
+    (b.centreId === activeCentreId || !b.centreId) && 
+    b.status !== 'Completed' && 
+    b.status !== 'Cancelled'
+  );
+
+  const queueList = todayBookings.map(b => normalizeBookingRecord(b)).filter(Boolean);
+
+  // Initialize currentlyServing from AppContext state or first active booking in queue (NO hardcoded Ramesh/Suresh)
+  const [currentlyServing, setCurrentlyServing] = useState(() => {
+    if (state.activeServingFarmer) {
+      return normalizeBookingRecord(state.activeServingFarmer);
+    }
+    if (state.activeServingBookingId) {
+      const activeB = (state.bookings || []).find(b => b.id === state.activeServingBookingId);
+      if (activeB) return normalizeBookingRecord(activeB);
+    }
+    if (queueList.length > 0) {
+      return queueList[0];
+    }
+    return null;
+  });
+
+  // QR Verification States
+  const [qrLoading, setQrLoading] = useState(false);
+  const [qrDragActive, setQrDragActive] = useState(false);
+  const [qrVerifiedData, setQrVerifiedData] = useState(null);
+  const [qrErrorMessage, setQrErrorMessage] = useState('');
+  const [uploadedFileName, setUploadedFileName] = useState('');
+  const [showBookingModal, setShowBookingModal] = useState(false);
+
+  // Sync currentlyServing if queue updates and no serving farmer is set
+  useEffect(() => {
+    if (!currentlyServing && queueList.length > 0) {
+      setCurrentlyServing(queueList[0]);
+    }
+  }, [queueList]);
+
+  // QR Processing Logic - Dynamically decodes & matches QR/Token to real booking in system
   const processQrVerification = (fileOrItem = null) => {
     setQrLoading(true);
     setQrErrorMessage('');
-    setQrVerifiedData(null);
+    setQrVerifiedData(null); // Clear previous verified data completely to prevent stale state
 
     setTimeout(() => {
-      let activeBooking = null;
-      const allBookings = state.bookings && state.bookings.length > 0 ? state.bookings : [
-        {
-          id: 'BK-1001',
-          token: '#A-042',
-          farmerName: 'Ramesh Kumar',
-          farmerId: 'FARM-9021',
-          phone: '+91 98765 43210',
-          crop: 'Paddy (Rice)',
-          expectedQuantity: 450,
-          centreName: 'Sri Lakshmi Procurement Centre',
-          date: new Date().toISOString().split('T')[0],
-          slot: '09:00 AM - 10:00 AM',
-          status: 'Confirmed'
-        },
-        {
-          id: 'BK-1002',
-          token: '#A-043',
-          farmerName: 'Suresh Babu',
-          farmerId: 'FARM-8812',
-          phone: '+91 94401 56789',
-          crop: 'Maize',
-          expectedQuantity: 520,
-          centreName: 'Sri Lakshmi Procurement Centre',
-          date: new Date().toISOString().split('T')[0],
-          slot: '10:00 AM - 11:00 AM',
-          status: 'Confirmed'
-        },
-        {
-          id: 'BK-1003',
-          token: '#A-044',
-          farmerName: 'Anitha Devi',
-          farmerId: 'FARM-7719',
-          phone: '+91 98665 43210',
-          crop: 'Cotton',
-          expectedQuantity: 380,
-          centreName: 'Sri Lakshmi Procurement Centre',
-          date: new Date().toISOString().split('T')[0],
-          slot: '11:00 AM - 12:00 PM',
-          status: 'Confirmed'
-        }
-      ];
+      let matchedBooking = null;
 
-      if (fileOrItem && typeof fileOrItem === 'object' && fileOrItem.farmerName) {
-        activeBooking = fileOrItem;
+      if (fileOrItem && typeof fileOrItem === 'object' && (fileOrItem.bookingId || fileOrItem.id)) {
+        const targetId = fileOrItem.bookingId || fileOrItem.id;
+        matchedBooking = (state.bookings || []).find(b => b.id === targetId || b.token === fileOrItem.token) || fileOrItem;
       } else if (typeof fileOrItem === 'string' && fileOrItem.trim()) {
-        const query = fileOrItem.toLowerCase();
-        activeBooking = allBookings.find(b => 
-          (b.token && b.token.toLowerCase().includes(query)) ||
-          (b.id && b.id.toLowerCase().includes(query)) ||
-          (b.farmerName && b.farmerName.toLowerCase().includes(query)) ||
-          (b.farmerId && b.farmerId.toLowerCase().includes(query))
-        );
-      }
+        const inputStr = fileOrItem.trim();
+        const lowerStr = inputStr.toLowerCase();
 
-      // If no explicit match, pick the next unserved booking or non-first booking to cycle dynamically
-      if (!activeBooking) {
-        const availableBookings = allBookings.filter(b => b.status !== 'Completed');
-        const nextIdx = Math.floor(Math.random() * (availableBookings.length || 1));
-        activeBooking = availableBookings[nextIdx] || allBookings[0];
-      }
+        // Extract values if input contains structured QR payload format
+        const tokenMatch = inputStr.match(/TOKEN:([^\s\n]+)/i);
+        const bookingMatch = inputStr.match(/BOOKING_ID:([^\s\n]+)/i);
+        const farmerMatch = inputStr.match(/FARMER_ID:([^\s\n]+)/i);
 
-      if (activeBooking) {
-        const cropDetails = getCropDisplayDetails(activeBooking.crop);
-        const farmerProfile = (state.farmers || []).find(f => f.id === activeBooking.farmerId);
+        const searchToken = tokenMatch ? tokenMatch[1] : null;
+        const searchBookingId = bookingMatch ? bookingMatch[1] : null;
+        const searchFarmerId = farmerMatch ? farmerMatch[1] : null;
 
-        const verified = {
-          bookingId: activeBooking.id || 'BK-1001',
-          token: activeBooking.token || '#A-042',
-          farmerName: activeBooking.farmerName || farmerProfile?.name || 'Ramesh Kumar',
-          farmerId: activeBooking.farmerId || farmerProfile?.id || 'FARM-9021',
-          phone: activeBooking.phone || farmerProfile?.phone || '+91 98765 43210',
-          crop: cropDetails.name,
-          cropTelugu: cropDetails.telugu,
-          msp: cropDetails.msp,
-          quantity: activeBooking.expectedQuantity || activeBooking.quantity || 450,
-          centreName: activeBooking.centreName || 'Sri Lakshmi Procurement Centre',
-          date: activeBooking.date || new Date().toISOString().split('T')[0],
-          slot: activeBooking.slot || '09:00 AM - 10:00 AM',
-          status: 'Verified',
-          verifiedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
+        const allBookings = state.bookings || [];
 
-        setQrVerifiedData(verified);
-        setCurrentlyServing({
-          token: verified.token,
-          bookingId: verified.bookingId,
-          farmerName: verified.farmerName,
-          farmerId: verified.farmerId,
-          phone: verified.phone,
-          village: farmerProfile?.village || 'Bhuvanavaram',
-          slotTime: verified.slot,
-          crop: verified.crop,
-          cropTelugu: verified.cropTelugu,
-          msp: verified.msp,
-          qty: `${verified.quantity} kg`,
-          date: verified.date,
-          verificationTime: verified.verifiedAt,
-          centreName: verified.centreName
+        matchedBooking = allBookings.find(b => {
+          if (searchBookingId && b.id === searchBookingId) return true;
+          if (searchToken && b.token && b.token.toLowerCase() === searchToken.toLowerCase()) return true;
+          if (searchFarmerId && (b.farmerId === searchFarmerId || b.farmerId?.toLowerCase() === searchFarmerId.toLowerCase())) return true;
+          
+          if (b.token && b.token.toLowerCase().includes(lowerStr)) return true;
+          if (b.id && b.id.toLowerCase().includes(lowerStr)) return true;
+          if (b.farmerName && b.farmerName.toLowerCase().includes(lowerStr)) return true;
+          if (b.farmerId && b.farmerId.toLowerCase().includes(lowerStr)) return true;
+
+          // Match clean filename like "qr_BK-1001.png" or "A104.jpg"
+          const cleanName = lowerStr.replace(/\.(png|jpg|jpeg|webp)$/i, '').replace(/^(qr_|token_)/i, '');
+          if (cleanName && b.id && b.id.toLowerCase().includes(cleanName)) return true;
+          if (cleanName && b.token && b.token.toLowerCase().includes(cleanName)) return true;
+          if (cleanName && b.farmerId && b.farmerId.toLowerCase().includes(cleanName)) return true;
+
+          return false;
         });
+      }
 
-        // Store active serving booking in AppContext
+      if (matchedBooking) {
+        const verified = normalizeBookingRecord(matchedBooking);
+        setQrVerifiedData(verified);
+        setCurrentlyServing(verified);
+
+        // Store active serving booking persistently in AppContext
         if (setState) {
           setState(prev => ({
             ...prev,
@@ -184,19 +179,19 @@ const StaffLiveQueue = () => {
           }));
         }
 
-        if (addActivity) {
-          addActivity({
-            type: 'VERIFICATION',
-            title: 'Farmer QR Verified',
-            desc: `Verified token ${verified.token} for ${verified.farmerName} (${verified.crop})`,
-            time: 'Just now'
-          });
+        if (logActivity) {
+          logActivity(
+            'Farmer QR Verified',
+            `Verified token ${verified.token} for ${verified.farmerName} (${verified.crop}, Qty: ${verified.qty})`,
+            verified.centreId
+          );
         }
       } else {
-        setQrErrorMessage('Invalid QR Code or booking record not found in system database.');
+        setQrVerifiedData(null);
+        setQrErrorMessage('Booking or farmer details could not be found for the provided QR code.');
       }
       setQrLoading(false);
-    }, 850);
+    }, 500);
   };
 
   const handleFileUpload = (e) => {
@@ -249,6 +244,8 @@ const StaffLiveQueue = () => {
   };
 
   const handleStartProcurement = () => {
+    if (!currentlyServing) return;
+
     const newActivity = {
       id: `ACT-${Date.now()}`,
       timestamp: new Date().toISOString(),
@@ -275,7 +272,7 @@ const StaffLiveQueue = () => {
     });
   };
 
-  const currentServingCropInfo = getCropDisplayDetails(currentlyServing.crop);
+  const currentServingCropInfo = currentlyServing ? getCropDisplayDetails(currentlyServing.crop) : null;
 
   return (
     <div className="space-y-6 font-sans pb-12">
@@ -299,13 +296,19 @@ const StaffLiveQueue = () => {
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-600">Currently Serving</p>
-                <h3 className="text-2xl md:text-3xl font-black text-[#046a38] mt-0.5">{currentlyServing.token}</h3>
-                <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.farmerName}</p>
+                <h3 className="text-2xl md:text-3xl font-black text-[#046a38] mt-0.5">
+                  {currentlyServing ? currentlyServing.token : 'No Active Token'}
+                </h3>
+                <p className="text-xs font-bold text-slate-900 mt-0.5">
+                  {currentlyServing ? currentlyServing.farmerName : 'Scan QR at entry gate'}
+                </p>
               </div>
             </div>
-            <span className="bg-[#e6f4ea] text-[#046a38] text-[10px] font-extrabold px-3 py-1 rounded-full border border-emerald-200 uppercase tracking-wider">
-              Serving
-            </span>
+            {currentlyServing && (
+              <span className="bg-[#e6f4ea] text-[#046a38] text-[10px] font-extrabold px-3 py-1 rounded-full border border-emerald-200 uppercase tracking-wider">
+                Serving
+              </span>
+            )}
           </CardContent>
         </Card>
 
@@ -319,7 +322,7 @@ const StaffLiveQueue = () => {
               <div>
                 <p className="text-xs font-bold text-slate-600">Farmers Waiting</p>
                 <h3 className="text-2xl md:text-3xl font-black text-slate-900 mt-0.5">{queueList.length}</h3>
-                <p className="text-xs font-medium text-slate-500 mt-0.5">active in live queue</p>
+                <p className="text-xs font-medium text-slate-500 mt-0.5">active in live queue today</p>
               </div>
             </div>
             <span className="bg-slate-100 text-slate-700 text-[10px] font-extrabold px-3 py-1 rounded-full border border-slate-200 uppercase tracking-wider">
@@ -330,7 +333,7 @@ const StaffLiveQueue = () => {
 
       </div>
 
-      {/* SECTION 1 & 2: INTEGRATED "VERIFY FARMER QR" SECTION */}
+      {/* VERIFY FARMER QR SECTION */}
       <Card className="border border-emerald-900/10 shadow-sm bg-white rounded-3xl overflow-hidden">
         <CardHeader className="py-4 px-6 border-b border-slate-100 bg-emerald-50/40 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
           <div className="flex items-center gap-2.5">
@@ -356,7 +359,7 @@ const StaffLiveQueue = () => {
 
         <CardContent className="p-6 space-y-6">
           
-          {/* DEFAULT / SCAN & UPLOAD INTERFACE (FULL WIDTH) */}
+          {/* UPLOAD INTERFACE */}
           {!qrVerifiedData && !qrLoading && (
             <div className="w-full">
               <div
@@ -525,7 +528,7 @@ const StaffLiveQueue = () => {
       {/* TWO COLUMN LIVE QUEUE TABLE & DETAILS */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* LEFT COLUMN (lg:col-span-7): SERVING DETAILS */}
+        {/* LEFT COLUMN: SERVING DETAILS */}
         <div className="lg:col-span-7 space-y-6">
           <Card className="border border-slate-200 shadow-xs bg-white rounded-3xl overflow-hidden">
             <CardHeader className="py-4 px-6 border-b border-slate-100 flex flex-row items-center justify-between bg-white">
@@ -536,135 +539,145 @@ const StaffLiveQueue = () => {
                 <CardTitle className="text-base font-black text-slate-900">Serving Farmer Details</CardTitle>
               </div>
 
-              <span className="px-3 py-1 rounded-full bg-[#e6f4ea] text-[#046a38] border border-emerald-300 font-extrabold text-xs flex items-center gap-1.5">
-                Verified Token {currentlyServing.token}
-              </span>
+              {currentlyServing && (
+                <span className="px-3 py-1 rounded-full bg-[#e6f4ea] text-[#046a38] border border-emerald-300 font-extrabold text-xs flex items-center gap-1.5">
+                  Verified Token {currentlyServing.token}
+                </span>
+              )}
             </CardHeader>
 
             <CardContent className="p-6 space-y-6">
               
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="flex items-start gap-4 md:w-5/12 pr-4 border-b md:border-b-0 md:border-r border-slate-100 pb-4 md:pb-0">
-                  <div className="w-14 h-14 rounded-full bg-[#e6f4ea] text-[#046a38] flex items-center justify-center shrink-0">
-                    <User className="w-7 h-7" />
+              {currentlyServing ? (
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex items-start gap-4 md:w-5/12 pr-4 border-b md:border-b-0 md:border-r border-slate-100 pb-4 md:pb-0">
+                    <div className="w-14 h-14 rounded-full bg-[#e6f4ea] text-[#046a38] flex items-center justify-center shrink-0">
+                      <User className="w-7 h-7" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black text-slate-900">{currentlyServing.farmerName}</h3>
+                      <p className="text-xs font-bold text-slate-500 mt-0.5">Farmer ID: {currentlyServing.farmerId}</p>
+                      
+                      <div className="mt-3 space-y-1 text-xs font-semibold text-slate-600">
+                        <div className="flex items-center gap-2">
+                          <Phone className="w-3.5 h-3.5 text-slate-400" />
+                          <span>{currentlyServing.phone}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                          <span>{currentlyServing.village}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-black text-slate-900">{currentlyServing.farmerName}</h3>
-                    <p className="text-xs font-bold text-slate-500 mt-0.5">Farmer ID: {currentlyServing.farmerId}</p>
+
+                  <div className="grid grid-cols-3 gap-y-4 gap-x-2 md:w-7/12">
                     
-                    <div className="mt-3 space-y-1 text-xs font-semibold text-slate-600">
-                      <div className="flex items-center gap-2">
-                        <Phone className="w-3.5 h-3.5 text-slate-400" />
-                        <span>{currentlyServing.phone}</span>
+                    {/* TOKEN */}
+                    <div className="flex items-start gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
+                        <Ticket className="w-3.5 h-3.5 text-slate-600" />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                        <span>{currentlyServing.village}</span>
+                      <div>
+                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Token Number</p>
+                        <p className="text-sm font-black text-slate-900 mt-0.5">{currentlyServing.token}</p>
                       </div>
                     </div>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-3 gap-y-4 gap-x-2 md:w-7/12">
-                  
-                  {/* TOKEN */}
-                  <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
-                      <Ticket className="w-3.5 h-3.5 text-slate-600" />
+                    {/* SLOT */}
+                    <div className="flex items-start gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
+                        <Clock className="w-3.5 h-3.5 text-slate-600" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Booked Slot</p>
+                        <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.slotTime}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Token Number</p>
-                      <p className="text-sm font-black text-slate-900 mt-0.5">{currentlyServing.token}</p>
-                    </div>
-                  </div>
 
-                  {/* SLOT */}
-                  <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
-                      <Clock className="w-3.5 h-3.5 text-slate-600" />
+                    {/* CROP */}
+                    <div className="flex items-start gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-emerald-50 text-[#046a38] flex items-center justify-center shrink-0 mt-0.5">
+                        <Sprout className="w-3.5 h-3.5 text-[#046a38]" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Crop</p>
+                        <p className="text-xs font-extrabold text-slate-900 mt-0.5">{currentServingCropInfo?.name}</p>
+                        {currentServingCropInfo?.telugu && (
+                          <p className="text-[11px] font-bold text-[#046a38]">{currentServingCropInfo.telugu}</p>
+                        )}
+                        <p className="text-[10px] text-slate-500 font-bold mt-0.5">{currentServingCropInfo?.msp}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Booked Slot</p>
-                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.slotTime}</p>
-                    </div>
-                  </div>
 
-                  {/* CROP REQUIREMENT 5: CROP DISPLAY WITH TELUGU NAME & MSP */}
-                  <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-emerald-50 text-[#046a38] flex items-center justify-center shrink-0 mt-0.5">
-                      <Sprout className="w-3.5 h-3.5 text-[#046a38]" />
+                    {/* QUANTITY */}
+                    <div className="flex items-start gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
+                        <Scale className="w-3.5 h-3.5 text-slate-600" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Quantity</p>
+                        <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.qty}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Crop</p>
-                      <p className="text-xs font-extrabold text-slate-900 mt-0.5">{currentServingCropInfo.name}</p>
-                      {currentServingCropInfo.telugu && (
-                        <p className="text-[11px] font-bold text-[#046a38]">{currentServingCropInfo.telugu}</p>
-                      )}
-                      <p className="text-[10px] text-slate-500 font-bold mt-0.5">{currentServingCropInfo.msp}</p>
-                    </div>
-                  </div>
 
-                  {/* QUANTITY */}
-                  <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
-                      <Scale className="w-3.5 h-3.5 text-slate-600" />
+                    {/* DATE */}
+                    <div className="flex items-start gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
+                        <Calendar className="w-3.5 h-3.5 text-slate-600" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Booking Date</p>
+                        <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.date}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Quantity</p>
-                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.qty}</p>
-                    </div>
-                  </div>
 
-                  {/* DATE */}
-                  <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
-                      <Calendar className="w-3.5 h-3.5 text-slate-600" />
+                    {/* VERIFIED TIME */}
+                    <div className="flex items-start gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-slate-600" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Verified Time</p>
+                        <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.verificationTime}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Booking Date</p>
-                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.date}</p>
-                    </div>
-                  </div>
 
-                  {/* VERIFIED TIME */}
-                  <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-slate-600" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Verified Time</p>
-                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.verificationTime}</p>
-                    </div>
                   </div>
 
                 </div>
-
-              </div>
+              ) : (
+                <div className="py-8 text-center text-slate-500 font-medium">
+                  No farmer token currently being served. Upload or select a QR token from the live queue table.
+                </div>
+              )}
 
               {/* ACTION BUTTONS */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={handleStartProcurement}
-                  className="flex-1 bg-[#046a38] hover:bg-[#03522c] text-white font-black h-12 rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
-                >
-                  <Play className="w-4 h-4 fill-current" /> Start Procurement <ChevronRight className="w-4 h-4" />
-                </button>
+              {currentlyServing && (
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={handleStartProcurement}
+                    className="flex-1 bg-[#046a38] hover:bg-[#03522c] text-white font-black h-12 rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
+                  >
+                    <Play className="w-4 h-4 fill-current" /> Start Procurement <ChevronRight className="w-4 h-4" />
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => setShowBookingModal(true)}
-                  className="flex-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold h-12 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
-                >
-                  <FileText className="w-4 h-4 text-slate-600" /> View Booking Details
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowBookingModal(true)}
+                    className="flex-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold h-12 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
+                  >
+                    <FileText className="w-4 h-4 text-slate-600" /> View Booking Details
+                  </button>
+                </div>
+              )}
 
             </CardContent>
           </Card>
         </div>
 
-        {/* RIGHT COLUMN (lg:col-span-5): LIVE QUEUE TABLE */}
+        {/* RIGHT COLUMN: LIVE QUEUE TABLE */}
         <div className="lg:col-span-5 space-y-4">
           <Card className="border border-slate-200 shadow-xs bg-white rounded-3xl overflow-hidden flex flex-col justify-between h-full">
             <div>
@@ -676,7 +689,7 @@ const StaffLiveQueue = () => {
                   </CardTitle>
                 </div>
 
-                <span className="text-xs font-mono font-bold text-slate-400">Centre: C001</span>
+                <span className="text-xs font-mono font-bold text-slate-400">Centre: {activeCentreId}</span>
               </CardHeader>
 
               <div className="overflow-x-auto">
@@ -690,48 +703,58 @@ const StaffLiveQueue = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 bg-white">
-                    {queueList.map((item, idx) => {
-                      const cropInfo = getCropDisplayDetails(item.crop);
-                      return (
-                        <tr 
-                          key={idx} 
-                          onClick={() => processQrVerification(item)}
-                          className="hover:bg-slate-50/80 transition-colors cursor-pointer group"
-                        >
-                          <td className="p-3 pl-5 font-black text-[#046a38] text-sm group-hover:underline">{item.token}</td>
-                          <td className="p-3 font-bold text-slate-900 text-xs">
-                            {item.farmerName}
-                            <span className="block text-[10px] text-slate-400 font-medium">{item.phone}</span>
-                          </td>
-                          <td className="p-3 text-xs">
-                            <span className="font-bold text-slate-800 block">{cropInfo.name}</span>
-                            {cropInfo.telugu && <span className="text-[10px] text-[#046a38] font-bold block">{cropInfo.telugu}</span>}
-                          </td>
-                          <td className="p-3 pr-5 text-right font-medium text-slate-500 text-xs">{item.slotTime}</td>
-                        </tr>
-                      );
-                    })}
+                    {queueList.length > 0 ? (
+                      queueList.map((item, idx) => {
+                        const cropInfo = getCropDisplayDetails(item.crop);
+                        return (
+                          <tr 
+                            key={idx} 
+                            onClick={() => processQrVerification(item)}
+                            className="hover:bg-slate-50/80 transition-colors cursor-pointer group"
+                          >
+                            <td className="p-3 pl-5 font-black text-[#046a38] text-sm group-hover:underline">{item.token}</td>
+                            <td className="p-3 font-bold text-slate-900 text-xs">
+                              {item.farmerName}
+                              <span className="block text-[10px] text-slate-400 font-medium">{item.phone}</span>
+                            </td>
+                            <td className="p-3 text-xs">
+                              <span className="font-bold text-slate-800 block">{cropInfo.name}</span>
+                              {cropInfo.telugu && <span className="text-[10px] text-[#046a38] font-bold block">{cropInfo.telugu}</span>}
+                            </td>
+                            <td className="p-3 pr-5 text-right font-medium text-slate-500 text-xs">{item.slotTime}</td>
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan="4" className="p-6 text-center text-slate-400 text-xs font-medium">
+                          No active waiting tokens for today.
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
             </div>
 
-            <div className="p-4 bg-white border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => processQrVerification(queueList[0])}
-                className="w-full bg-[#e6f4ea] hover:bg-[#d8edd9] text-[#046a38] font-black h-12 rounded-2xl transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
-              >
-                <FastForward className="w-4 h-4 fill-current" /> Call Next Token ({queueList[0]?.token || '#A-043'})
-              </button>
-            </div>
+            {queueList.length > 0 && (
+              <div className="p-4 bg-white border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => processQrVerification(queueList[0])}
+                  className="w-full bg-[#e6f4ea] hover:bg-[#d8edd9] text-[#046a38] font-black h-12 rounded-2xl transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
+                >
+                  <FastForward className="w-4 h-4 fill-current" /> Call Next Token ({queueList[0]?.token})
+                </button>
+              </div>
+            )}
           </Card>
         </div>
 
       </div>
 
       {/* BOOKING DETAILS MODAL */}
-      {showBookingModal && (
+      {showBookingModal && currentlyServing && (
         <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden animate-in zoom-in-95">
             <div className="bg-[#046a38] p-5 flex justify-between items-center text-white">
@@ -770,9 +793,9 @@ const StaffLiveQueue = () => {
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2 text-xs">
                 <div className="flex justify-between">
                   <span className="text-slate-500">Crop:</span>
-                  <span className="font-bold text-slate-900">{currentServingCropInfo.name}</span>
+                  <span className="font-bold text-slate-900">{currentServingCropInfo?.name}</span>
                 </div>
-                {currentServingCropInfo.telugu && (
+                {currentServingCropInfo?.telugu && (
                   <div className="flex justify-between">
                     <span className="text-slate-500">Telugu Name:</span>
                     <span className="font-bold text-[#046a38]">{currentServingCropInfo.telugu}</span>
@@ -780,7 +803,7 @@ const StaffLiveQueue = () => {
                 )}
                 <div className="flex justify-between">
                   <span className="text-slate-500">MSP / Rate:</span>
-                  <span className="font-bold text-slate-900">{currentServingCropInfo.msp}</span>
+                  <span className="font-bold text-slate-900">{currentServingCropInfo?.msp}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Expected Quantity:</span>

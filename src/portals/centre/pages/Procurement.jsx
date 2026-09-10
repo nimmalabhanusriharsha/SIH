@@ -163,17 +163,24 @@ const StaffProcurement = () => {
       action: `Completed procurement for farmer ${formData.farmerName} (${formData.farmerId}, Token ${formData.tokenNumber}) at ${counterId}. Crop: ${formData.crop}, Qty: ${formData.quantity} kg, Amount: ₹${totalAmount.toLocaleString('en-IN')}`
     };
 
-    // Update queue status to completed
+    // Update queue status and booking status to completed
     const updatedQueue = (state.queue || []).map(q => 
-      q.token === formData.tokenNumber ? { ...q, status: 'Completed' } : q
+      q.token === formData.tokenNumber || q.farmerId === formData.farmerId ? { ...q, status: 'Completed' } : q
+    );
+
+    const updatedBookings = (state.bookings || []).map(b => 
+      b.id === formData.bookingId || b.token === formData.tokenNumber ? { ...b, status: 'Completed' } : b
     );
 
     setState(prev => ({
       ...prev,
+      bookings: updatedBookings,
       procurements: [newProcurementRecord, ...(prev.procurements || [])],
       payments: [newPaymentRecord, ...(prev.payments || []).filter(p => p.id !== newPaymentId)],
       queue: updatedQueue,
-      activity: [newActivity, ...(prev.activity || [])]
+      activity: [newActivity, ...(prev.activity || [])],
+      activeServingBookingId: null,
+      activeServingFarmer: null
     }));
 
     setModalState({
