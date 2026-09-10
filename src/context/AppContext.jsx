@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { initialData } from '../data/mockData';
 import { loadState, saveState } from '../utils/storage';
+import { MASTER_FARMER_REGISTRY } from '../portals/farmer/data/masterFarmers';
 
 const AppContext = createContext();
 
@@ -14,8 +15,20 @@ export const AppProvider = ({ children }) => {
       return {
         ...f,
         id: canonicalId,
-        farmerId: canonicalId
+        farmerId: canonicalId,
+        isRegistered: f.isRegistered !== false // default to true for existing mock data
       };
+    });
+
+    // Merge in any MASTER_FARMER_REGISTRY items that don't exist yet
+    MASTER_FARMER_REGISTRY.forEach(mf => {
+      if (!migratedFarmers.some(f => f.farmerId === mf.farmerId)) {
+        migratedFarmers.push({
+          ...mf,
+          id: mf.farmerId,
+          isRegistered: false
+        });
+      }
     });
     const migratedBookings = (loadedState.bookings || initialData.bookings).map(b =>
       b.farmerId === 'F001' ? { ...b, farmerId: 'KIS-7F29A81C' } : b
@@ -45,7 +58,8 @@ export const AppProvider = ({ children }) => {
       payments: migratedPayments,
       notifications: migratedNotifications,
       feedback: migratedComplaints,
-      activity: loadedState.activity || initialData.activity || []
+      activity: loadedState.activity || initialData.activity || [],
+      mspConfig: loadedState.mspConfig || initialData.mspConfig || []
     };
   });
   
@@ -94,8 +108,67 @@ export const AppProvider = ({ children }) => {
     saveState('kisanqueue_user', null);
   };
 
+  const addCentre = (newCentre) => {
+    setState(prev => ({
+      ...prev,
+      centres: [...(prev.centres || []), newCentre]
+    }));
+  };
+
+  const updateComplaint = (complaintId, updates) => {
+    setState(prev => {
+      const currentComplaints = prev.feedback || [];
+      return {
+        ...prev,
+        feedback: currentComplaints.map(cmp => 
+          cmp.id === complaintId ? { ...cmp, ...updates } : cmp
+        )
+      };
+    });
+  };
+
+  const updateMSP = (cropId, updates) => {
+    setState(prev => {
+      const currentMSP = prev.mspConfig || [];
+      const exists = currentMSP.find(m => m.id === cropId);
+      if (exists) {
+        return {
+          ...prev,
+          mspConfig: currentMSP.map(m => m.id === cropId ? { ...m, ...updates } : m)
+        };
+      } else {
+        return {
+          ...prev,
+          mspConfig: [...currentMSP, { id: cropId, ...updates }]
+        };
+      }
+    });
+  };
+
+  const logActivity = (action, details, centreId = 'GLOBAL') => {
+    setState(prev => {
+      const currentLog = prev.activity || [];
+      const user = currentUser?.name || 'System';
+      const role = currentUser?.role || 'SYSTEM';
+      
+      const newEntry = {
+        id: `ACT-${Date.now()}`,
+        action,
+        user,
+        role,
+        details,
+        centreId,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Keep only latest 100 to avoid bloat
+      const newLog = [newEntry, ...currentLog].slice(0, 100);
+      return { ...prev, activity: newLog };
+    });
+  };
+
   return (
-    <AppContext.Provider value={{ state, setState, currentUser, login, logout, resetDemo }}>
+    <AppContext.Provider value={{ state, setState, currentUser, login, logout, resetDemo, addCentre, updateComplaint, updateMSP, logActivity }}>
       {children}
     </AppContext.Provider>
   );

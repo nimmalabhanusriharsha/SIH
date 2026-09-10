@@ -168,7 +168,7 @@ const FarmerAuth = ({ initialTab = 'login' }) => {
     const registeredFarmer = findRegisteredFarmerByMobile(cleanMobile, state.farmers || []);
     if (!registeredFarmer) {
       // Check if mobile exists in authorized Master Registry but registration is incomplete
-      const masterFarmer = findMasterFarmerByMobile(cleanMobile);
+      const masterFarmer = findMasterFarmerByMobile(cleanMobile, state.farmers || []);
       if (masterFarmer) {
         setError(t('auth.mobileFoundInMasterIncomplete', 'Mobile number found in the Farmer Registry, but registration is not complete. Please complete Farmer Registration first.'));
       } else {
