@@ -117,9 +117,9 @@ const CentreLayout = ({ children }) => {
             <Menu className="w-6 h-6" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-farmer-primary text-white flex items-center justify-center">
-              <Sprout className="w-4 h-4 text-white" strokeWidth={2.5} />
-            </div>
+             <div className="w-8 h-8 bg-farmer-primary rounded-xl flex items-center justify-center shadow-sm">
+                <span className="font-black text-white text-sm">K</span>
+             </div>
             <h1 className="font-black text-farmer-text text-lg tracking-tight">KisanQueue</h1>
           </div>
         </div>
@@ -139,12 +139,12 @@ const CentreLayout = ({ children }) => {
       <aside className={`md:hidden fixed inset-y-0 left-0 w-[280px] bg-farmer-card text-farmer-text z-50 transform transition-transform duration-300 flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-4 border-b border-farmer-border flex justify-between items-center">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-farmer-primary text-white flex items-center justify-center shadow-xs">
-              <Sprout className="w-4.5 h-4.5 text-white" strokeWidth={2.5} />
-            </div>
+             <div className="w-8 h-8 bg-farmer-primary rounded-xl flex items-center justify-center shadow-sm">
+                <span className="font-black text-white text-sm">K</span>
+             </div>
             <div>
               <h1 className="text-lg font-black tracking-tight text-farmer-text">KisanQueue</h1>
-              <p className="text-[10px] font-extrabold text-farmer-primary uppercase tracking-wider">Procurement Centre</p>
+              <p className="text-[10px] text-farmer-secondary font-bold uppercase tracking-wider">Procurement Centre</p>
             </div>
           </div>
           <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-farmer-secondary hover:text-farmer-text rounded-full cursor-pointer"><X className="w-5 h-5" /></button>
@@ -152,9 +152,14 @@ const CentreLayout = ({ children }) => {
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
           {navItems.map((item) => (
             <NavLink key={item.name} to={item.path} onClick={() => setIsMobileMenuOpen(false)}
-              className={({ isActive }) => `flex items-center gap-3 px-3 py-3 text-xs font-bold transition-all ${isActive ? 'bg-farmer-primary-light text-farmer-primary border-l-4 border-farmer-primary rounded-r-xl' : 'text-farmer-text hover:bg-farmer-primary-light/60'}`}
+              className={({ isActive }) => `flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-bold transition-all min-h-[48px] ${isActive ? 'bg-farmer-primary text-white shadow-sm font-black' : 'text-farmer-secondary hover:bg-farmer-primary-light hover:text-farmer-primary'}`}
             >
-              <item.icon className="w-5 h-5 text-farmer-primary" /> {item.name}
+              {({ isActive }) => (
+                <>
+                  <item.icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-farmer-secondary'}`} strokeWidth={2.5} />
+                  <span className="truncate">{item.name}</span>
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
@@ -163,15 +168,15 @@ const CentreLayout = ({ children }) => {
       {/* DESKTOP SIDEBAR */}
       <aside className="hidden md:flex w-64 flex-col bg-farmer-card border-r border-farmer-border fixed h-full z-20 shadow-xs">
         {/* LOGO */}
-        <div className="p-5 border-b border-farmer-border/80 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-farmer-primary-light flex items-center justify-center shrink-0">
-            <div className="w-7.5 h-7.5 rounded-xl bg-farmer-primary text-white flex items-center justify-center shadow-xs">
-              <Sprout className="w-4.5 h-4.5 text-white" strokeWidth={2.5} />
-            </div>
-          </div>
-          <div>
-            <h1 className="text-lg font-black tracking-tight text-farmer-text leading-tight">KisanQueue</h1>
-            <p className="text-[10px] font-extrabold text-farmer-primary uppercase tracking-wider mt-0.5">Procurement Centre</p>
+        <div className="p-5 border-b border-farmer-border flex items-center justify-between">
+          <div className="flex items-center gap-3">
+             <div className="w-10 h-10 bg-farmer-primary rounded-2xl flex items-center justify-center shadow-sm">
+                <span className="font-black text-white text-xl">K</span>
+             </div>
+             <div>
+               <h1 className="text-base font-black tracking-tight text-farmer-text leading-tight">{t('appName', 'KisanQueue')}</h1>
+               <p className="text-[10px] text-farmer-secondary font-bold uppercase tracking-wider">Procurement Centre</p>
+             </div>
           </div>
         </div>
 
@@ -182,18 +187,16 @@ const CentreLayout = ({ children }) => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 text-xs font-bold transition-all ${isActive
-                  ? 'bg-farmer-primary-light text-farmer-primary border-l-4 border-farmer-primary rounded-r-xl rounded-l-none'
-                  : 'text-farmer-text hover:bg-farmer-primary-light/70 hover:text-farmer-primary rounded-xl border-l-4 border-transparent'
+                `flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-bold transition-all min-h-[48px] ${isActive
+                  ? 'bg-farmer-primary text-white shadow-sm font-black'
+                  : 'text-farmer-secondary hover:bg-farmer-primary-light hover:text-farmer-primary'
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${isActive ? 'bg-farmer-primary text-white' : 'text-farmer-primary'}`}>
-                    <item.icon className="w-4 h-4" strokeWidth={2.5} />
-                  </div>
-                  {item.name}
+                  <item.icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-farmer-secondary'}`} strokeWidth={2.5} />
+                  <span className="truncate">{item.name}</span>
                 </>
               )}
             </NavLink>

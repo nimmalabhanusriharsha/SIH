@@ -161,7 +161,12 @@ const StaffAuth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-farmer-card flex items-center justify-center p-4 py-8 font-sans relative overflow-x-hidden">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 py-8 font-sans relative overflow-x-hidden bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: "url('/images/centre-login-bg.jpg')" }}
+    >
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-black/50 z-0"></div>
       
       {/* FLOATING REAL SMS NOTIFICATION BANNER */}
       {smsBanner && (
@@ -202,15 +207,15 @@ const StaffAuth = () => {
         </div>
       )}
 
-      <div className="w-full max-w-md space-y-6">
+      <div className="w-full max-w-md space-y-6 relative z-10">
         
         {/* BRANDING HEADER */}
         <div className="flex flex-col items-center justify-center text-center">
-          <div className="w-14 h-14 rounded-2xl bg-farmer-primary text-white flex items-center justify-center shadow-md mb-3">
-            <Building2 className="w-7 h-7 text-white" strokeWidth={2.5} />
+          <div className="w-14 h-14 rounded-2xl bg-white text-farmer-primary flex items-center justify-center shadow-lg mb-3">
+            <Building2 className="w-7 h-7" strokeWidth={2.5} />
           </div>
-          <h1 className="text-2xl font-black text-farmer-text tracking-tight">KisanQueue</h1>
-          <p className="text-xs font-extrabold text-farmer-primary uppercase tracking-widest mt-0.5">
+          <h1 className="text-3xl font-black text-white tracking-tight drop-shadow-md">KisanQueue</h1>
+          <p className="text-xs font-extrabold text-emerald-300 uppercase tracking-widest mt-1 drop-shadow-sm">
             PROCUREMENT CENTRE STAFF PORTAL
           </p>
         </div>

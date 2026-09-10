@@ -479,7 +479,12 @@ const FarmerAuth = ({ initialTab = 'login' }) => {
   };
 
   return (
-    <div className="min-h-screen bg-farmer-bg flex items-center justify-center p-4 py-8 font-sans relative overflow-x-hidden">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 py-8 font-sans relative overflow-x-hidden bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: "url('/images/farmer-login-bg.png')" }}
+    >
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-black/40 z-0"></div>
       
       {/* FLOATING REAL SMS NOTIFICATION BANNER */}
       {smsBanner && (
@@ -520,17 +525,17 @@ const FarmerAuth = ({ initialTab = 'login' }) => {
         </div>
       )}
 
-      <div className="w-full max-w-lg">
+      <div className="w-full max-w-lg relative z-10">
         
         {/* Brand Header */}
         <div className="flex flex-col items-center justify-center mb-6 text-center">
-          <div className="w-14 h-14 bg-farmer-primary rounded-2xl shadow-sm mb-3 flex items-center justify-center">
-            <span className="font-black text-white text-2xl">K</span>
+          <div className="w-14 h-14 bg-white rounded-2xl shadow-lg mb-3 flex items-center justify-center">
+            <span className="font-black text-farmer-primary text-2xl">K</span>
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-farmer-text">
+          <h1 className="text-3xl font-black tracking-tight text-white drop-shadow-md">
             {t('appName', 'KisanQueue')}
           </h1>
-          <p className="text-xs font-bold uppercase tracking-widest mt-0.5 text-farmer-secondary">
+          <p className="text-xs font-extrabold uppercase tracking-widest mt-1 text-emerald-300 drop-shadow-sm">
             {t('farmerPortal', 'Farmer Portal')}
           </p>
         </div>
