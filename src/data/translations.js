@@ -1941,6 +1941,10 @@ export const useTranslation = () => {
     return {
       currentLang: 'en',
       setLanguage: () => {},
+      i18n: {
+        language: 'en',
+        changeLanguage: () => {}
+      },
       t: (key, paramsOrFallback = {}) => {
         let params = typeof paramsOrFallback === 'object' ? paramsOrFallback : {};
         let text = translations.en[key] || (typeof paramsOrFallback === 'string' ? paramsOrFallback : key);
@@ -1954,5 +1958,16 @@ export const useTranslation = () => {
       }
     };
   }
-  return context;
+  
+  const { currentLang, setLanguage, t } = context;
+  return {
+    ...context,
+    currentLang,
+    setLanguage,
+    t,
+    i18n: {
+      language: currentLang,
+      changeLanguage: setLanguage
+    }
+  };
 };

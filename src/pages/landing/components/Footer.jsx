@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../data/translations';
 import { Leaf } from 'lucide-react';
 
 const Footer = ({ onLoginClick }) => {

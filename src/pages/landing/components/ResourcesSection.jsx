@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../data/translations';
 import { motion, useAnimation } from 'framer-motion';
 import { ChevronDown, Phone, Mail, FileText, Info, ArrowRight, Building, MessageCircle, MessageSquare, PlayCircle, Smartphone } from 'lucide-react';
 

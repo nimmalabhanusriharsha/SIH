@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../data/translations';
 import { Leaf, Globe, Menu, X } from 'lucide-react';
 import { Button } from '../../../shared/components/Button';
 

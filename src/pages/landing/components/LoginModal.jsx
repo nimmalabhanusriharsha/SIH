@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../../data/translations';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Building2, Landmark, X } from 'lucide-react';
 
