@@ -48,15 +48,22 @@ const LoginPage = ({ role }) => {
   };
 
   return (
-    <div className="min-h-screen bg-earth-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center p-4 relative">
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url("/images/bg2.jpg")' }}
+      >
+        <div className="absolute inset-0 bg-forest-900/70 backdrop-blur-sm"></div>
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
         <div className="flex justify-center mb-6">
-          <div className="bg-forest-600 p-3 rounded-xl shadow-lg">
-            <Leaf className="w-8 h-8 text-white" />
+          <div className="bg-white p-3 rounded-xl shadow-2xl">
+            <Leaf className="w-8 h-8 text-forest-600" />
           </div>
         </div>
 
-        <Card>
+        <Card className="shadow-2xl border-white/20 bg-white/95 backdrop-blur-md">
           <CardHeader className="text-center">
             <CardTitle>{role} Portal</CardTitle>
             <CardDescription>
@@ -80,6 +87,7 @@ const LoginPage = ({ role }) => {
                   onChange={(e) => setIdentifier(e.target.value)}
                   placeholder={role === 'FARMER' ? 'Enter mobile number' : 'Enter your ID'}
                   required
+                  className="bg-white"
                 />
               </div>
 
@@ -93,16 +101,17 @@ const LoginPage = ({ role }) => {
                   onChange={(e) => setSecret(e.target.value)}
                   placeholder={role === 'FARMER' ? 'Enter OTP' : 'Enter password'}
                   required
+                  className="bg-white"
                 />
               </div>
 
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full bg-forest-600 hover:bg-forest-700 text-white">
                 Sign In
               </Button>
             </form>
           </CardContent>
           <CardFooter className="flex justify-center border-t border-earth-100 pt-4">
-            <Button variant="ghost" size="sm" onClick={fillDemo} className="text-xs">
+            <Button variant="ghost" size="sm" onClick={fillDemo} className="text-xs text-gray-500 hover:text-gray-700">
               Fill Demo Credentials
             </Button>
           </CardFooter>
