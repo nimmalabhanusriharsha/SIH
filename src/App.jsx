@@ -46,7 +46,6 @@ import AdminBookings from './portals/admin/pages/Bookings';
 import AdminProcurement from './portals/admin/pages/Procurement';
 import AdminPayments from './portals/admin/pages/Payments';
 import AdminCongestion from './portals/admin/pages/Congestion';
-import AdminDemand from './portals/admin/pages/Demand';
 import AdminReports from './portals/admin/pages/Reports';
 import AdminComplaints from './portals/admin/pages/Complaints';
 import AdminStaff from './portals/admin/pages/Staff';
@@ -126,7 +125,7 @@ function App() {
               <Route path="procurement" element={<AdminProcurement />} />
               <Route path="payments" element={<AdminPayments />} />
               <Route path="congestion" element={<AdminCongestion />} />
-              <Route path="demand" element={<AdminDemand />} />
+              <Route path="demand" element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="reports" element={<AdminReports />} />
               <Route path="complaints" element={<AdminComplaints />} />
               <Route path="staff" element={<AdminStaff />} />

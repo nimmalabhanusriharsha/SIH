@@ -26,7 +26,6 @@ const AdminLayout = ({ children }) => {
     { name: 'Procurement Monitoring', path: '/admin/procurement', icon: PackageOpen },
     { name: 'Payment Monitoring', path: '/admin/payments', icon: IndianRupee },
     { name: 'Congestion & Queue', path: '/admin/congestion', icon: MapPin },
-    { name: 'Demand Forecast', path: '/admin/demand', icon: TrendingUp },
     { name: 'Reports', path: '/admin/reports', icon: BarChart2 },
     { name: 'Complaints', path: '/admin/complaints', icon: AlertTriangle },
     { name: 'Staff Management', path: '/admin/staff', icon: UsersRound },
