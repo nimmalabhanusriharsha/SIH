@@ -10,6 +10,7 @@ const AdminBookings = () => {
   const { state } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedBooking, setSelectedBooking] = useState(null);
   const itemsPerPage = 10;
 
   // Enhance bookings with farmer and centre details
@@ -116,7 +117,10 @@ const AdminBookings = () => {
                            <Badge variant={statusBadge}>{statusLabel}</Badge>
                         </td>
                         <td className="px-6 py-4 text-right">
-                           <Button variant="ghost" size="sm" className="text-forest-600 hover:text-forest-700 hover:bg-forest-50">
+                           <Button 
+                             variant="ghost" size="sm" className="text-forest-600 hover:text-forest-700 hover:bg-forest-50"
+                             onClick={() => setSelectedBooking(booking)}
+                           >
                              <Eye className="w-4 h-4 mr-2" />
                              View
                            </Button>
@@ -169,6 +173,74 @@ const AdminBookings = () => {
           </div>
         )}
       </Card>
+
+      {/* VIEW BOOKING MODAL */}
+      {selectedBooking && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col">
+            <div className="px-6 py-4 border-b border-earth-100 flex items-center justify-between bg-earth-50">
+              <h3 className="font-bold text-lg text-forest-900 flex items-center gap-2">
+                <CalendarClock className="w-5 h-5 text-forest-600" /> Booking Details
+              </h3>
+              <button 
+                onClick={() => setSelectedBooking(null)}
+                className="p-1 hover:bg-earth-200 rounded-md text-earth-500 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex justify-between items-center border-b border-earth-100 pb-3">
+                <span className="text-sm font-bold text-earth-500">Booking ID</span>
+                <span className="text-sm font-bold text-forest-900">{selectedBooking.id}</span>
+              </div>
+              <div className="flex justify-between items-center border-b border-earth-100 pb-3">
+                <span className="text-sm font-bold text-earth-500">Token</span>
+                <Badge variant="outline" className="font-bold">{selectedBooking.token}</Badge>
+              </div>
+              <div className="flex justify-between items-center border-b border-earth-100 pb-3">
+                <span className="text-sm font-bold text-earth-500">Farmer</span>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-forest-900">{selectedBooking.farmerName}</p>
+                  <p className="text-xs text-earth-500">{selectedBooking.farmerId}</p>
+                </div>
+              </div>
+              <div className="flex justify-between items-center border-b border-earth-100 pb-3">
+                <span className="text-sm font-bold text-earth-500">Centre</span>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-forest-900">{selectedBooking.centreName}</p>
+                  <p className="text-xs text-earth-500">{selectedBooking.centreId}</p>
+                </div>
+              </div>
+              <div className="flex justify-between items-center border-b border-earth-100 pb-3">
+                <span className="text-sm font-bold text-earth-500">Schedule</span>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-forest-900">{new Date(selectedBooking.date).toLocaleDateString()}</p>
+                  <p className="text-xs text-earth-500">{selectedBooking.slot}</p>
+                </div>
+              </div>
+              <div className="flex justify-between items-center border-b border-earth-100 pb-3">
+                <span className="text-sm font-bold text-earth-500">Crop Expected</span>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-forest-900">{selectedBooking.expectedQuantity} Quintals</p>
+                  <p className="text-xs text-earth-500">{selectedBooking.crop}</p>
+                </div>
+              </div>
+              <div className="flex justify-between items-center pt-1">
+                <span className="text-sm font-bold text-earth-500">Status</span>
+                <Badge variant={selectedBooking.status === 'Confirmed' ? 'success' : selectedBooking.status === 'Cancelled' ? 'danger' : 'neutral'}>
+                  {selectedBooking.status}
+                </Badge>
+              </div>
+            </div>
+            <div className="p-4 border-t border-earth-100 bg-earth-50 flex justify-end">
+              <Button onClick={() => setSelectedBooking(null)} className="bg-forest-600 hover:bg-forest-700 text-white">
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

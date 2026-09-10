@@ -222,6 +222,16 @@ export const initialData = {
   ],
   complaints: [
     { id: 'CMP1042', farmerId: 'KIS-7F29A81C', type: 'Long waiting time', description: 'Counter #2 experienced a temporary scale calibration delay.', status: 'Under Review', date: '2026-08-15T14:30:00Z' }
+  ],
+  mspConfig: [
+    { id: 'MSP-001', crop: 'Paddy', price: 2300, unit: 'Quintal', effectiveFrom: '2026-04-01', effectiveTo: '2027-03-31', status: 'Active' },
+    { id: 'MSP-002', crop: 'Maize', price: 1800, unit: 'Quintal', effectiveFrom: '2026-04-01', effectiveTo: '2027-03-31', status: 'Active' },
+    { id: 'MSP-003', crop: 'Wheat', price: 2275, unit: 'Quintal', effectiveFrom: '2026-04-01', effectiveTo: '2027-03-31', status: 'Inactive' }
+  ],
+  activity: [
+    { id: 'ACT-101', action: 'System Initialization', user: 'System', role: 'SYSTEM', details: 'KisanQueue platform started.', centreId: 'GLOBAL', timestamp: new Date(Date.now() - 86400000).toISOString() },
+    { id: 'ACT-102', action: 'Admin Login', user: 'Admin User', role: 'ADMIN', details: 'Successful authentication.', centreId: 'GLOBAL', timestamp: new Date(Date.now() - 7200000).toISOString() },
+    { id: 'ACT-103', action: 'Procurement Completion', user: 'Staff User', role: 'STAFF', details: 'Completed PRC-5912 for KIS-7F29A81C.', centreId: 'C001', timestamp: new Date(Date.now() - 3600000).toISOString() }
   ]
 };
 
