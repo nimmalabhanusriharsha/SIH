@@ -6,11 +6,11 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'en', // default language
+    lng: 'en',
     fallbackLng: 'en',
     supportedLngs: ['en', 'hi', 'te', 'ta', 'kn', 'ml', 'mr', 'bn'],
     interpolation: {
-      escapeValue: false // react already safes from xss
+      escapeValue: false
     }
   });
 

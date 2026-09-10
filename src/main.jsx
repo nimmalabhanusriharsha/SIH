@@ -5,16 +5,20 @@ import App from './App.jsx'
 import './i18n.js'
 import './index.css'
 import { AppProvider } from './context/AppContext.jsx'
+import { LanguageProvider } from './data/translations.js'
 import ErrorBoundary from './ErrorBoundary.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <AppProvider>
-      <BrowserRouter>
-        <ErrorBoundary>
-          <App />
-        </ErrorBoundary>
-      </BrowserRouter>
-    </AppProvider>
+    <LanguageProvider>
+      <AppProvider>
+        <BrowserRouter>
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
+        </BrowserRouter>
+      </AppProvider>
+    </LanguageProvider>
   </React.StrictMode>,
 )
+

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Leaf, Globe, Menu, X } from 'lucide-react';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '../../../shared/components/Button';
 
 const Navigation = ({ onLoginClick }) => {
   const { t, i18n } = useTranslation();
@@ -24,9 +24,6 @@ const Navigation = ({ onLoginClick }) => {
         <div className="flex items-center gap-4 ml-auto">
           <a href="#main-content" className="hover:underline hidden md:block">{t('accessibility.skip')}</a>
           <div className="flex items-center gap-2 font-medium">
-            <button className="hover:text-forest-300">A-</button>
-            <button className="hover:text-forest-300">A</button>
-            <button className="hover:text-forest-300">A+</button>
           </div>
           <select 
             className="bg-transparent text-white border border-white/30 rounded px-1 py-0.5 outline-none focus:bg-forest-800 text-xs"
@@ -37,11 +34,6 @@ const Navigation = ({ onLoginClick }) => {
             <option value="en">English</option>
             <option value="hi">हिंदी</option>
             <option value="te">తెలుగు</option>
-            <option value="ta">தமிழ்</option>
-            <option value="kn">ಕನ್ನಡ</option>
-            <option value="ml">മലയാളം</option>
-            <option value="mr">मराठी</option>
-            <option value="bn">বাংলা</option>
           </select>
         </div>
       </div>
@@ -68,9 +60,7 @@ const Navigation = ({ onLoginClick }) => {
           <a href="#services" className="hover:text-forest-600 transition-colors">{t('nav.services')}</a>
           <a href="#schemes" className="hover:text-forest-600 transition-colors">{t('nav.schemes')}</a>
           <a href="#how-it-works" className="hover:text-forest-600 transition-colors">{t('nav.howItWorks')}</a>
-          <a href="#resources" className="hover:text-forest-600 transition-colors">{t('nav.resources')}</a>
-          <a href="#faq" className="hover:text-forest-600 transition-colors">{t('nav.faqs')}</a>
-          <a href="#contact" className="hover:text-forest-600 transition-colors">{t('nav.contact')}</a>
+
         </nav>
 
         {/* Far Right: Login */}

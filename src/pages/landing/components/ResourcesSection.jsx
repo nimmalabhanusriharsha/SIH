@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useAnimation } from 'framer-motion';
-import { ChevronDown, Phone, Mail, FileText, Info, ArrowRight, Building } from 'lucide-react';
+import { ChevronDown, Phone, Mail, FileText, Info, ArrowRight, Building, MessageCircle, MessageSquare, PlayCircle, Smartphone } from 'lucide-react';
 
 export const SchemesSupportSection = () => {
   const { t } = useTranslation();
@@ -234,107 +234,86 @@ export const ContactSection = () => {
   const { t } = useTranslation();
 
   return (
-    <section id="contact" className="py-32 bg-gray-50 border-t border-gray-200 relative overflow-hidden">
-      {/* Decorative Blob */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-forest-100/50 rounded-l-full blur-3xl opacity-50 -z-10 translate-x-1/3"></div>
+    <section id="contact" className="py-24 relative overflow-hidden text-white">
+      {/* Background Image and Overlay */}
+      <div className="absolute inset-0 bg-[url('/images/bg1.jpg')] bg-cover bg-center"></div>
+      <div className="absolute inset-0 bg-forest-900/80 mix-blend-multiply"></div>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+      <div className="max-w-6xl mx-auto px-4 md:px-8 relative z-10">
+        <h2 className="text-4xl md:text-5xl font-extrabold text-center text-white mb-16">
+          Connect with us
+        </h2>
+        
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
           
-          {/* Left: Support Info */}
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="space-y-12"
-          >
-            <div>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
-                Need help? <br/><span className="text-forest-600">We are here.</span>
-              </h2>
-              <p className="text-xl text-gray-600">Reach out to our dedicated support teams for any assistance regarding procurement, payments, or centre operations.</p>
+          {/* Left: Social Media Icons */}
+          <div className="grid grid-cols-2 gap-12 pt-8">
+            <div className="flex flex-col items-center">
+              <MessageCircle className="w-16 h-16 text-amber-400 mb-4 hover:scale-110 transition-transform cursor-pointer" />
+              <span className="font-bold text-lg">Facebook</span>
             </div>
-
-            <div className="space-y-8">
-              <div className="flex gap-6 items-start">
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 shrink-0">
-                  <Phone className="w-8 h-8 text-forest-600" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{t('contact.farmerSupport')}</h3>
-                  <p className="text-gray-500 mb-2">Available 24/7 in 8 regional languages.</p>
-                  <p className="text-2xl font-black text-forest-700">1800-XXX-XXXX</p>
-                </div>
-              </div>
-
-              <div className="flex gap-6 items-start">
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 shrink-0">
-                  <Building className="w-8 h-8 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{t('contact.centreSupport')}</h3>
-                  <p className="text-gray-500 mb-2">For PACS / Society Staff only.</p>
-                  <p className="text-xl font-bold text-blue-700">1800-XXX-XXXY</p>
-                  <p className="text-gray-600 font-medium">centresupport@kisanqueue.gov.in</p>
-                </div>
-              </div>
+            <div className="flex flex-col items-center">
+              <MessageSquare className="w-16 h-16 text-amber-400 mb-4 hover:scale-110 transition-transform cursor-pointer" />
+              <span className="font-bold text-lg">Twitter</span>
             </div>
-          </motion.div>
+            <div className="flex flex-col items-center">
+              <PlayCircle className="w-16 h-16 text-amber-400 mb-4 hover:scale-110 transition-transform cursor-pointer" />
+              <span className="font-bold text-lg">Youtube</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <Smartphone className="w-16 h-16 text-amber-400 mb-4 hover:scale-110 transition-transform cursor-pointer" />
+              <span className="font-bold text-lg text-center">Android<br/>App</span>
+            </div>
+            <div className="col-span-2 flex flex-col items-center">
+              <div className="w-16 h-16 bg-amber-400 rounded-2xl flex items-center justify-center mb-4 hover:scale-110 transition-transform cursor-pointer">
+                <span className="font-black text-forest-900 text-3xl">A</span>
+              </div>
+              <span className="font-bold text-lg">IOS App</span>
+            </div>
+          </div>
 
-          {/* Right: Realistic Contact Form */}
+          {/* Right: Contact Form */}
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white p-8 md:p-12 rounded-3xl shadow-2xl border border-gray-100 relative"
+            className="bg-gray-50 p-8 rounded-xl shadow-2xl relative text-gray-900"
           >
-            <div className="absolute top-0 right-0 bg-forest-600 text-white px-6 py-2 rounded-bl-3xl rounded-tr-3xl font-bold text-sm tracking-widest shadow-md">
-              OFFICIAL HELP DESK
-            </div>
-            
-            <h3 className="text-2xl font-bold text-gray-900 mb-8 mt-4">Send a Message</h3>
-            
             <form className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">{t('contact.name')}</label>
-                  <input type="text" placeholder="Full Name" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-500 focus:border-forest-500 outline-none transition-all" />
+                  <label className="block text-sm font-bold text-forest-700 italic">Name*</label>
+                  <input type="text" className="w-full px-4 py-2 bg-white border border-gray-200 rounded focus:ring-2 focus:ring-forest-500 focus:border-forest-500 outline-none" />
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">{t('contact.userType')}</label>
-                  <select className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-500 focus:border-forest-500 outline-none transition-all appearance-none cursor-pointer">
-                    <option>Select User Type</option>
-                    <option>Farmer</option>
-                    <option>Centre Staff</option>
-                    <option>Transporter</option>
-                  </select>
-                </div>
-              </div>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">{t('contact.mobile')}</label>
-                  <input type="tel" placeholder="10-digit mobile number" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-500 focus:border-forest-500 outline-none transition-all" />
+                  <label className="block text-sm font-bold text-forest-700 italic">Mobile*</label>
+                  <input type="tel" className="w-full px-4 py-2 bg-white border border-gray-200 rounded focus:ring-2 focus:ring-forest-500 focus:border-forest-500 outline-none" />
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">{t('contact.email')}</label>
-                  <input type="email" placeholder="Optional" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-500 focus:border-forest-500 outline-none transition-all" />
+                  <label className="block text-sm font-bold text-forest-700 italic">Email*</label>
+                  <input type="email" className="w-full px-4 py-2 bg-white border border-gray-200 rounded focus:ring-2 focus:ring-forest-500 focus:border-forest-500 outline-none" />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">{t('contact.subject')}</label>
-                <input type="text" placeholder="Briefly describe your issue" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-500 focus:border-forest-500 outline-none transition-all" />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">{t('contact.message')}</label>
-                <textarea rows={4} placeholder="Detailed explanation..." className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-500 focus:border-forest-500 outline-none transition-all resize-none"></textarea>
               </div>
               
-              <button type="button" className="w-full bg-forest-600 hover:bg-forest-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-forest-600/30 active:scale-[0.98] mt-4 flex justify-center items-center gap-2">
-                {t('contact.submit')} <ArrowRight className="w-5 h-5" />
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-forest-700 italic">Message*</label>
+                <textarea rows={4} className="w-full px-4 py-2 bg-white border border-gray-200 rounded focus:ring-2 focus:ring-forest-500 focus:border-forest-500 outline-none resize-none"></textarea>
+              </div>
+              
+              <div className="bg-white border border-gray-200 rounded p-4 flex items-center justify-between w-64 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" className="w-6 h-6 border-gray-300 rounded text-forest-600 focus:ring-forest-500" />
+                  <span className="text-gray-700 text-sm font-medium">I'm not a robot</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="w-6 h-6 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
+                  <span className="text-[10px] text-gray-400 mt-1">reCAPTCHA</span>
+                </div>
+              </div>
+              
+              <button type="button" className="bg-forest-800 hover:bg-forest-900 text-amber-400 font-bold py-3 px-8 rounded transition-all shadow-md mt-4">
+                SUBMIT
               </button>
-              <p className="text-xs text-center text-gray-400 mt-4 flex items-center justify-center gap-1">
-                <Info className="w-3 h-3" /> Average response time: 24-48 hours
-              </p>
             </form>
           </motion.div>
         </div>

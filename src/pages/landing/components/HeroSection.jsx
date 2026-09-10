@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '../../../shared/components/Button';
 
 const HeroSection = ({ onLoginClick }) => {
   const { t } = useTranslation();

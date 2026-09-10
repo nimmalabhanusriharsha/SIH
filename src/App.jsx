@@ -1,77 +1,68 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAppContext } from './context/AppContext';
 
-import LandingPage from './pages/landing/LandingPage';
-import LoginPage from './pages/shared/LoginPage';
-import FarmerLayout from './layouts/FarmerLayout';
-import FarmerDashboard from './pages/farmer/Dashboard';
-import FindCentre from './pages/farmer/FindCentre';
-import BookSlot from './pages/farmer/BookSlot';
-import LiveQueue from './pages/farmer/LiveQueue';
-import Payments from './pages/farmer/Payments';
+// Landing & Auth
+import LandingPage from './landing/LandingPage';
+import LoginPage from './auth/LoginPage';
+import ProtectedRoute from './auth/ProtectedRoute';
+import FarmerAuth from './portals/farmer/pages/FarmerAuth';
 
-import MyBooking from './pages/farmer/MyBooking';
-import DigitalToken from './pages/farmer/DigitalToken';
-import Procurement from './pages/farmer/Procurement';
-import History from './pages/farmer/History';
-import Notifications from './pages/farmer/Notifications';
-import Feedback from './pages/farmer/Feedback';
-import Profile from './pages/farmer/Profile';
+// Farmer Portal
+import FarmerLayout from './portals/farmer/FarmerLayout';
+import FarmerDashboard from './portals/farmer/pages/Dashboard';
+import FindCentre from './portals/farmer/pages/FindCentre';
+import BookSlot from './portals/farmer/pages/BookSlot';
+import MyBooking from './portals/farmer/pages/MyBooking';
+import DigitalToken from './portals/farmer/pages/DigitalToken';
+import LiveQueue from './portals/farmer/pages/LiveQueue';
+import Procurement from './portals/farmer/pages/Procurement';
+import Payments from './portals/farmer/pages/Payments';
+import Notifications from './portals/farmer/pages/Notifications';
+import History from './portals/farmer/pages/History';
+import Feedback from './portals/farmer/pages/Feedback';
+import Profile from './portals/farmer/pages/Profile';
 
-import StaffLayout from './layouts/StaffLayout';
-import StaffDashboard from './pages/staff/Dashboard';
-import StaffLiveQueue from './pages/staff/LiveQueue';
-import StaffBookings from './pages/staff/Bookings';
-import StaffVerification from './pages/staff/Verification';
-import StaffQualityCheck from './pages/staff/QualityCheck';
-import StaffWeighing from './pages/staff/Weighing';
-import StaffProcurement from './pages/staff/Procurement';
-import StaffPayments from './pages/staff/Payments';
-import StaffComplaints from './pages/staff/Complaints';
-import StaffReports from './pages/staff/Reports';
-import StaffActivity from './pages/staff/ActivityLog';
-import StaffSettings from './pages/staff/Settings';
+// Procurement Centre Portal
+import CentreLayout from './portals/centre/CentreLayout';
+import CentreDashboard from './portals/centre/pages/Dashboard';
+import CentreLiveQueue from './portals/centre/pages/LiveQueue';
+import CentreBookings from './portals/centre/pages/Bookings';
+import CentreVerification from './portals/centre/pages/Verification';
+import CentreQualityCheck from './portals/centre/pages/QualityCheck';
+import CentreWeighing from './portals/centre/pages/Weighing';
+import CentreProcurement from './portals/centre/pages/Procurement';
+import CentrePayments from './portals/centre/pages/Payments';
+import CentreComplaints from './portals/centre/pages/Complaints';
+import CentreReports from './portals/centre/pages/Reports';
+import CentreActivity from './portals/centre/pages/ActivityLog';
+import CentreSettings from './portals/centre/pages/Settings';
 
-import AdminLayout from './layouts/AdminLayout';
-import AdminDashboard from './pages/admin/Dashboard';
-import AdminCentres from './pages/admin/Centres';
-import AdminFarmers from './pages/admin/Farmers';
-import AdminBookings from './pages/admin/Bookings';
-import AdminProcurement from './pages/admin/Procurement';
-import AdminPayments from './pages/admin/Payments';
-import AdminCongestion from './pages/admin/Congestion';
-import AdminInsights from './pages/admin/Insights';
-import AdminDemand from './pages/admin/Demand';
-import AdminReports from './pages/admin/Reports';
-import AdminComplaints from './pages/admin/Complaints';
-import AdminStaff from './pages/admin/Staff';
-import AdminActivity from './pages/admin/ActivityLog';
-import AdminSettings from './pages/admin/Settings';
-
-// Protected Route Wrapper
-const ProtectedRoute = ({ role, children }) => {
-  const { currentUser } = useAppContext();
-  
-  if (!currentUser) {
-    return <Navigate to={`/${role.toLowerCase()}/login`} replace />;
-  }
-  
-  if (currentUser.role !== role) {
-    // Redirect to their actual role dashboard if they try to access wrong portal
-    return <Navigate to={`/${currentUser.role.toLowerCase()}/dashboard`} replace />;
-  }
-
-  return children;
-};
+// Government Admin Portal
+import AdminLayout from './portals/admin/AdminLayout';
+import AdminDashboard from './portals/admin/pages/Dashboard';
+import AdminCentres from './portals/admin/pages/Centres';
+import AdminFarmers from './portals/admin/pages/Farmers';
+import AdminBookings from './portals/admin/pages/Bookings';
+import AdminProcurement from './portals/admin/pages/Procurement';
+import AdminPayments from './portals/admin/pages/Payments';
+import AdminCongestion from './portals/admin/pages/Congestion';
+import AdminInsights from './portals/admin/pages/Insights';
+import AdminDemand from './portals/admin/pages/Demand';
+import AdminReports from './portals/admin/pages/Reports';
+import AdminComplaints from './portals/admin/pages/Complaints';
+import AdminStaff from './portals/admin/pages/Staff';
+import AdminActivity from './portals/admin/pages/ActivityLog';
+import AdminSettings from './portals/admin/pages/Settings';
 
 function App() {
   return (
     <Routes>
+      {/* Public Landing Page */}
       <Route path="/" element={<LandingPage />} />
       
-      {/* Farmer Routes */}
+      {/* 1. Farmer Portal Routes */}
       <Route path="/farmer/login" element={<LoginPage role="FARMER" />} />
+      <Route path="/farmer/register" element={<FarmerAuth initialTab="register" />} />
       <Route path="/farmer/*" element={
         <ProtectedRoute role="FARMER">
           <FarmerLayout>
@@ -88,35 +79,42 @@ function App() {
               <Route path="history" element={<History />} />
               <Route path="feedback" element={<Feedback />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="*" element={<Navigate to="/farmer/dashboard" replace />} />
             </Routes>
           </FarmerLayout>
         </ProtectedRoute>
       } />
 
-      {/* Staff Routes */}
-      <Route path="/staff/login" element={<LoginPage role="STAFF" />} />
-      <Route path="/staff/*" element={
+      {/* 2. Procurement Centre Portal Routes */}
+      <Route path="/centre/login" element={<LoginPage role="STAFF" />} />
+      <Route path="/centre/*" element={
         <ProtectedRoute role="STAFF">
-          <StaffLayout>
+          <CentreLayout>
             <Routes>
-              <Route path="dashboard" element={<StaffDashboard />} />
-              <Route path="live-queue" element={<StaffLiveQueue />} />
-              <Route path="bookings" element={<StaffBookings />} />
-              <Route path="verification" element={<StaffVerification />} />
-              <Route path="quality-check" element={<StaffQualityCheck />} />
-              <Route path="weighing" element={<StaffWeighing />} />
-              <Route path="procurement" element={<StaffProcurement />} />
-              <Route path="payments" element={<StaffPayments />} />
-              <Route path="complaints" element={<StaffComplaints />} />
-              <Route path="reports" element={<StaffReports />} />
-              <Route path="activity" element={<StaffActivity />} />
-              <Route path="settings" element={<StaffSettings />} />
+              <Route path="dashboard" element={<CentreDashboard />} />
+              <Route path="live-queue" element={<CentreLiveQueue />} />
+              <Route path="bookings" element={<CentreBookings />} />
+              <Route path="verification" element={<CentreVerification />} />
+              <Route path="quality-check" element={<CentreQualityCheck />} />
+              <Route path="weighing" element={<CentreWeighing />} />
+              <Route path="procurement" element={<CentreProcurement />} />
+              <Route path="payments" element={<CentrePayments />} />
+              <Route path="complaints" element={<CentreComplaints />} />
+              <Route path="reports" element={<CentreReports />} />
+              <Route path="activity" element={<CentreActivity />} />
+              <Route path="settings" element={<CentreSettings />} />
+              <Route path="*" element={<Navigate to="/centre/dashboard" replace />} />
             </Routes>
-          </StaffLayout>
+          </CentreLayout>
         </ProtectedRoute>
       } />
 
-      {/* Admin Routes */}
+      {/* Backward Compatibility for legacy /staff routes */}
+      <Route path="/staff/login" element={<Navigate to="/centre/login" replace />} />
+      <Route path="/staff" element={<Navigate to="/centre/dashboard" replace />} />
+      <Route path="/staff/*" element={<Navigate to="/centre/dashboard" replace />} />
+
+      {/* 3. Government Admin Portal Routes */}
       <Route path="/admin/login" element={<LoginPage role="ADMIN" />} />
       <Route path="/admin/*" element={
         <ProtectedRoute role="ADMIN">
@@ -136,11 +134,13 @@ function App() {
               <Route path="staff" element={<AdminStaff />} />
               <Route path="activity" element={<AdminActivity />} />
               <Route path="settings" element={<AdminSettings />} />
+              <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
             </Routes>
           </AdminLayout>
         </ProtectedRoute>
       } />
       
+      {/* Catch-all */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

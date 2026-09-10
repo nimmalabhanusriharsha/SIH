@@ -13,52 +13,37 @@ export const ServicesSection = () => {
     { icon: <QrCode />, title: t('services.qrCheckin.title'), desc: t('services.qrCheckin.desc') },
     { icon: <ClipboardCheck />, title: t('services.procurementTracking.title'), desc: t('services.procurementTracking.desc') },
     { icon: <Wallet />, title: t('services.paymentTracking.title'), desc: t('services.paymentTracking.desc') },
-    { icon: <HeadphonesIcon />, title: t('services.kisanSahayak.title'), desc: t('services.kisanSahayak.desc') },
-    { icon: <Building />, title: t('services.centreCapacity.title'), desc: t('services.centreCapacity.desc') },
-    { icon: <Activity />, title: t('services.govDemand.title'), desc: t('services.govDemand.desc') },
   ];
 
   return (
-    <section id="services" className="py-24 relative bg-gray-50 overflow-hidden">
-      {/* Decorative background blobs */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-forest-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-amber-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 translate-x-1/2 translate-y-1/2"></div>
-      
+    <section id="services" className="py-24 relative bg-gradient-to-r from-[#9effaf] via-[#cbfba4] to-[#fbf793] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
-        <div className="text-center mb-16">
+        <div className="text-center mb-20">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-5xl font-extrabold text-forest-900 mb-4"
+            className="text-4xl md:text-5xl font-extrabold text-black mb-4"
           >
             {t('services.title')}
           </motion.h2>
-          <div className="w-24 h-1 bg-forest-500 mx-auto rounded-full"></div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-4">
           {services.map((srv, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="group bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-2xl hover:border-forest-200 transition-all duration-300 flex flex-col h-full relative overflow-hidden"
+              transition={{ delay: idx * 0.1, type: "spring", stiffness: 100 }}
+              className="flex flex-col items-center text-center px-2 group cursor-pointer"
             >
-              {/* Subtle accent line on hover */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-forest-400 to-forest-600 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-              
-              <div className="w-14 h-14 bg-forest-50 text-forest-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 group-hover:bg-forest-600 group-hover:text-white shadow-sm">
-                {React.cloneElement(srv.icon, { className: 'w-7 h-7' })}
+              <div className="mb-6 text-black group-hover:-translate-y-2 group-hover:scale-110 transition-transform duration-300">
+                {React.cloneElement(srv.icon, { className: 'w-16 h-16 stroke-[1.2]' })}
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-forest-700 transition-colors">{srv.title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-grow">{srv.desc}</p>
-              
-              <div className="text-forest-600 font-semibold text-sm flex items-center mt-auto group-hover:text-forest-800 transition-colors cursor-pointer w-max">
-                {t('learnMore')} <ArrowRight className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
-              </div>
+              <h3 className="text-lg font-bold text-black mb-3 leading-snug">{srv.title}</h3>
+              <p className="text-sm font-medium text-black/80 leading-relaxed">{srv.desc}</p>
             </motion.div>
           ))}
         </div>
