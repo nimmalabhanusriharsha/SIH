@@ -31,11 +31,13 @@ export const loginUser = (state, type, credentials) => {
   }
   
   if (type === 'ADMIN') {
-    const admin = state.admin.find(a => a.id === credentials.id);
-    if (admin && admin.password === credentials.password) {
-      return { success: true, user: { ...admin, role: 'ADMIN' } };
+    const validId = import.meta.env.VITE_ADMIN_ID || 'ADMIN001';
+    const validPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
+    
+    if (credentials.id === validId && credentials.password === validPassword) {
+      return { success: true, user: { id: validId, name: 'System Administrator', role: 'ADMIN' } };
     }
-    return { success: false, message: 'Invalid credentials' };
+    return { success: false, message: 'Invalid Admin credentials' };
   }
 
   return { success: false, message: 'Unknown role type' };

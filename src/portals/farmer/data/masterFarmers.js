@@ -150,9 +150,9 @@ export const verifyFarmerRegistrationCredentials = ({
   const cleanMobile = (mobile || '').trim();
   const cleanName = (fullName || '').trim();
 
-  // 1. Check if Farmer ID exists in Master Registry
-  const masterFarmer = MASTER_FARMER_REGISTRY.find(
-    (f) => f.farmerId.toUpperCase() === cleanId
+  // 1. Check if Farmer ID exists in App State (either registered or unregistered)
+  const masterFarmer = registeredFarmers.find(
+    (f) => (f.farmerId || f.id).toUpperCase() === cleanId
   );
 
   if (!masterFarmer) {
@@ -163,12 +163,8 @@ export const verifyFarmerRegistrationCredentials = ({
     };
   }
 
-  // 2. Check if already registered in the application state
-  const isAlreadyRegistered = registeredFarmers.some(
-    (f) => (f.id || '').toUpperCase() === cleanId
-  );
-
-  if (isAlreadyRegistered) {
+  // 2. Check if already completely registered
+  if (masterFarmer.isRegistered) {
     return {
       success: false,
       errorType: 'ALREADY_REGISTERED',
@@ -209,7 +205,7 @@ export const verifyFarmerRegistrationCredentials = ({
  */
 export const findRegisteredFarmerById = (farmerId, registeredFarmers = []) => {
   const cleanId = (farmerId || '').trim().toUpperCase();
-  return registeredFarmers.find((f) => (f.farmerId || f.id || '').toUpperCase() === cleanId) || null;
+  return registeredFarmers.find((f) => (f.farmerId || f.id || '').toUpperCase() === cleanId && f.isRegistered !== false) || null;
 };
 
 /**
@@ -217,13 +213,13 @@ export const findRegisteredFarmerById = (farmerId, registeredFarmers = []) => {
  */
 export const findRegisteredFarmerByMobile = (mobile, registeredFarmers = []) => {
   const cleanMobile = (mobile || '').trim();
-  return registeredFarmers.find((f) => (f.mobile || '').trim() === cleanMobile) || null;
+  return registeredFarmers.find((f) => (f.mobile || '').trim() === cleanMobile && f.isRegistered !== false) || null;
 };
 
 /**
  * Finds an authorized farmer record in the Government Master Registry by mobile
  */
-export const findMasterFarmerByMobile = (mobile) => {
+export const findMasterFarmerByMobile = (mobile, registeredFarmers = []) => {
   const cleanMobile = (mobile || '').trim();
-  return MASTER_FARMER_REGISTRY.find((f) => (f.mobile || '').trim() === cleanMobile) || null;
+  return registeredFarmers.find((f) => (f.mobile || '').trim() === cleanMobile && f.isRegistered === false) || null;
 };

@@ -23,7 +23,6 @@ import {
   ArrowRight, ArrowLeft, RefreshCw, AlertCircle, Lock, UserCheck,
   Building, MapPin, Wheat, Check, User
 } from 'lucide-react';
-import heroBg from '../../../assets/login_bg.jpg';
 
 const CROPS_LIST = [
   'Paddy (Rice)',
@@ -169,7 +168,7 @@ const FarmerAuth = ({ initialTab = 'login' }) => {
     const registeredFarmer = findRegisteredFarmerByMobile(cleanMobile, state.farmers || []);
     if (!registeredFarmer) {
       // Check if mobile exists in authorized Master Registry but registration is incomplete
-      const masterFarmer = findMasterFarmerByMobile(cleanMobile);
+      const masterFarmer = findMasterFarmerByMobile(cleanMobile, state.farmers || []);
       if (masterFarmer) {
         setError(t('auth.mobileFoundInMasterIncomplete', 'Mobile number found in the Farmer Registry, but registration is not complete. Please complete Farmer Registration first.'));
       } else {
@@ -477,19 +476,8 @@ const FarmerAuth = ({ initialTab = 'login' }) => {
   };
 
   return (
-    <div 
-      className="min-h-screen bg-farmer-bg flex items-center justify-center p-4 py-8 font-sans relative overflow-hidden"
-      style={{
-        backgroundImage: `url(${heroBg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-      }}
-    >
-      {/* Dark overlay for better readability if needed, or slightly transparent */}
-      <div className="absolute inset-0 bg-black/20 md:bg-transparent"></div>
-      
-      <div className="w-full max-w-lg relative z-10">
+    <div className="min-h-screen bg-farmer-bg flex items-center justify-center p-4 py-8 font-sans">
+      <div className="w-full max-w-lg">
         
         {/* Brand Header */}
         <div className="flex flex-col items-center justify-center mb-6 text-center">

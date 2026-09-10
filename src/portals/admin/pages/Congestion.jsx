@@ -1,35 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppContext } from '../../../context/AppContext';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../shared/components/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../shared/components/Card';
 import { Badge } from '../../../shared/components/Badge';
-import { AlertTriangle, MapPin, Search, Users, Activity, ExternalLink, Siren, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, MapPin, Siren, CheckCircle2, X, Clock, Users, PackageOpen, CheckCircle, Store } from 'lucide-react';
 import { Button } from '../../../shared/components/Button';
 
 const AdminCongestion = () => {
   const { state } = useAppContext();
+  const [selectedCentre, setSelectedCentre] = useState(null);
 
-  // Sort centres by congestion (queue length vs capacity)
+  // Compute live congestion and operational stats for each centre
   const centresWithCongestion = state.centres.map(centre => {
-    const queue = state.queue.filter(q => q.centreId === centre.id && q.status === 'Waiting');
-    const load = Math.min(100, Math.round((queue.length / (centre.capacity || 100)) * 100));
+    const allQueue = state.queue.filter(q => q.centreId === centre.id);
+    const waitingQueue = allQueue.filter(q => q.status === 'Waiting');
+    const processingQueue = allQueue.filter(q => ['Serving', 'Quality Check', 'Weighing'].includes(q.status));
+    
+    const todaysBookings = state.bookings.filter(b => b.centreId === centre.id);
+    const completedProcurements = state.procurements.filter(p => p.centreId === centre.id && p.status === 'Completed');
+
+    const load = Math.min(100, Math.round((waitingQueue.length / (centre.capacity || 100)) * 100));
     
     let status = 'Normal';
     let color = 'green';
-    if (load > 80) { status = 'High Congestion'; color = 'red'; }
-    else if (load > 40) { status = 'Moderate'; color = 'amber'; }
+    let congestionBadge = 'Low';
+    
+    if (load > 80) { 
+      status = 'Critical'; 
+      color = 'red'; 
+      congestionBadge = 'Critical';
+    } else if (load > 60) {
+      status = 'High Congestion';
+      color = 'orange';
+      congestionBadge = 'High';
+    } else if (load > 40) { 
+      status = 'Moderate'; 
+      color = 'amber'; 
+      congestionBadge = 'Moderate';
+    }
 
-    return { ...centre, queueLength: queue.length, load, status, color };
+    return { 
+      ...centre, 
+      waitingCount: waitingQueue.length, 
+      processingCount: processingQueue.length,
+      bookingsCount: todaysBookings.length,
+      completedCount: completedProcurements.length,
+      avgWaitTime: Math.max(10, waitingQueue.length * 5), // Estimate 5 mins per person
+      avgProcessingTime: 15,
+      load, 
+      status, 
+      color,
+      congestionBadge
+    };
   }).sort((a, b) => b.load - a.load);
 
-  const highCongestion = centresWithCongestion.filter(c => c.status === 'High Congestion');
+  const highCongestion = centresWithCongestion.filter(c => c.status === 'High Congestion' || c.status === 'Critical');
   const moderate = centresWithCongestion.filter(c => c.status === 'Moderate');
   const normal = centresWithCongestion.filter(c => c.status === 'Normal');
 
   return (
-    <div className="space-y-6 max-w-[1600px] mx-auto animate-in fade-in duration-500">
+    <div className="space-y-6 max-w-[1600px] mx-auto animate-in fade-in duration-500 relative">
       <div>
         <h2 className="text-2xl font-bold text-forest-900 tracking-tight flex items-center gap-2">
-          Live Congestion Monitoring
+          Live Congestion & Queue Monitoring
           {highCongestion.length > 0 && (
             <span className="flex h-3 w-3 relative ml-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -37,7 +69,7 @@ const AdminCongestion = () => {
             </span>
           )}
         </h2>
-        <p className="text-earth-600 mt-1">Real-time geographical tracking of farmer queues and centre capacity.</p>
+        <p className="text-earth-600 mt-1">Real-time geographical tracking of farmer queues, staff activity, and centre operations.</p>
       </div>
 
       {/* Congestion Overview Cards */}
@@ -47,10 +79,10 @@ const AdminCongestion = () => {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-bold text-red-900 mb-1 flex items-center gap-2">
-                  <Siren className="w-4 h-4" /> High Congestion
+                  <Siren className="w-4 h-4" /> High/Critical Congestion
                 </p>
                 <h3 className="text-3xl font-black text-red-700">{highCongestion.length}</h3>
-                <p className="text-xs text-red-600 mt-1 font-medium">Centres at &gt;80% capacity</p>
+                <p className="text-xs text-red-600 mt-1 font-medium">Centres at &gt;60% capacity</p>
               </div>
             </div>
           </CardContent>
@@ -62,7 +94,7 @@ const AdminCongestion = () => {
               <div>
                 <p className="text-sm font-bold text-amber-900 mb-1">Moderate</p>
                 <h3 className="text-3xl font-black text-amber-700">{moderate.length}</h3>
-                <p className="text-xs text-amber-600 mt-1 font-medium">Centres at 40-80% capacity</p>
+                <p className="text-xs text-amber-600 mt-1 font-medium">Centres at 40-60% capacity</p>
               </div>
             </div>
           </CardContent>
@@ -89,10 +121,10 @@ const AdminCongestion = () => {
             <CardHeader className="bg-white border-b border-earth-100 flex flex-row items-center justify-between py-4">
                <CardTitle className="text-lg text-forest-900 flex items-center gap-2">
                  <MapPin className="w-5 h-5 text-forest-600" />
-                 Live Congestion Map
+                 Live Operational Map
                </CardTitle>
                <div className="flex items-center gap-4 text-xs font-medium">
-                 <span className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500"></div> Critical</span>
+                 <span className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500"></div> Critical/High</span>
                  <span className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-amber-500"></div> Moderate</span>
                  <span className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-green-500"></div> Normal</span>
                </div>
@@ -105,24 +137,24 @@ const AdminCongestion = () => {
                {/* Mock Map Markers mapped visually onto the grid */}
                <div className="relative w-full h-full p-8 flex flex-wrap gap-8 justify-around items-center">
                   {centresWithCongestion.map((centre, i) => {
-                    const positions = [
-                      'top-1/4 left-1/4', 'top-1/3 right-1/4', 'bottom-1/3 left-1/3', 'bottom-1/4 right-1/3', 'top-1/2 left-1/2'
-                    ];
-                    
                     return (
                       <div key={centre.id} className={`relative group z-10 p-4`}>
                         {/* Marker pulse for high congestion */}
-                        {centre.status === 'High Congestion' && (
+                        {(centre.status === 'High Congestion' || centre.status === 'Critical') && (
                           <div className="absolute inset-0 animate-ping rounded-full bg-red-400 opacity-20"></div>
                         )}
                         
-                        <div className={`relative flex flex-col items-center cursor-pointer transition-transform hover:scale-110`}>
+                        <div 
+                           className={`relative flex flex-col items-center cursor-pointer transition-transform hover:scale-110`}
+                           onClick={() => setSelectedCentre(centre)}
+                        >
                            <div className={`w-12 h-12 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white font-bold text-lg
                               ${centre.color === 'red' ? 'bg-red-500 shadow-red-200' : 
+                                centre.color === 'orange' ? 'bg-orange-500 shadow-orange-200' :
                                 centre.color === 'amber' ? 'bg-amber-500 shadow-amber-200' : 
                                 'bg-green-500 shadow-green-200'}`}
                            >
-                              {centre.queueLength}
+                              {centre.waitingCount}
                            </div>
                            <div className="mt-2 bg-white/90 backdrop-blur border border-earth-200 px-3 py-1 rounded-full shadow-sm text-xs font-bold text-forest-900 whitespace-nowrap">
                              {centre.name}
@@ -137,12 +169,12 @@ const AdminCongestion = () => {
                            </div>
                            <div className="p-4 bg-earth-50 rounded-b-xl grid grid-cols-2 gap-3 text-xs">
                               <div>
-                                <p className="text-earth-500 mb-0.5">Waiting Queue</p>
-                                <p className={`font-bold text-lg ${centre.color === 'red' ? 'text-red-600' : 'text-forest-900'}`}>{centre.queueLength}</p>
+                                <p className="text-earth-500 mb-0.5">Waiting</p>
+                                <p className={`font-bold text-lg ${centre.color === 'red' ? 'text-red-600' : 'text-forest-900'}`}>{centre.waitingCount}</p>
                               </div>
                               <div>
-                                <p className="text-earth-500 mb-0.5">Utilization</p>
-                                <p className="font-bold text-lg text-forest-900">{centre.load}%</p>
+                                <p className="text-earth-500 mb-0.5">Processing</p>
+                                <p className="font-bold text-lg text-forest-900">{centre.processingCount}</p>
                               </div>
                            </div>
                         </div>
@@ -176,14 +208,15 @@ const AdminCongestion = () => {
                   <div key={c.id} className="p-4 rounded-xl border border-red-200 bg-red-50">
                      <div className="flex justify-between items-start mb-2">
                         <h4 className="font-bold text-red-900 text-sm">{c.name}</h4>
-                        <Badge variant="danger" className="text-[10px]">Critical Load</Badge>
+                        <Badge variant="danger" className="text-[10px]">{c.congestionBadge}</Badge>
                      </div>
                      <p className="text-xs text-red-800 leading-relaxed mb-3">
-                       <strong>{c.queueLength} farmers</strong> are currently waiting. Expected wait time has exceeded 45 minutes. Utilization is at {c.load}%.
+                       <strong>{c.waitingCount} farmers</strong> are currently waiting. Expected wait time is {c.avgWaitTime} minutes. 
+                       Currently processing {c.processingCount} farmers.
                      </p>
                      <div className="bg-white p-3 rounded-lg border border-red-100">
                         <p className="text-[10px] uppercase font-bold text-red-500 mb-1">Suggested Action</p>
-                        <p className="text-xs text-earth-700 font-medium">Consider activating an additional operational counter immediately.</p>
+                        <p className="text-xs text-earth-700 font-medium">Deploy additional staff to Counter #3 immediately.</p>
                      </div>
                   </div>
                 ))}
@@ -192,15 +225,11 @@ const AdminCongestion = () => {
                   <div key={c.id} className="p-4 rounded-xl border border-amber-200 bg-amber-50">
                      <div className="flex justify-between items-start mb-2">
                         <h4 className="font-bold text-amber-900 text-sm">{c.name}</h4>
-                        <Badge variant="warning" className="text-[10px]">Capacity Alert</Badge>
+                        <Badge variant="warning" className="text-[10px]">{c.congestionBadge}</Badge>
                      </div>
                      <p className="text-xs text-amber-800 leading-relaxed mb-3">
-                       Centre utilization has reached {c.load}%. Queue is building up.
+                       Centre queue is building up. {c.waitingCount} farmers waiting.
                      </p>
-                     <div className="bg-white p-3 rounded-lg border border-amber-100">
-                        <p className="text-[10px] uppercase font-bold text-amber-500 mb-1">Suggested Action</p>
-                        <p className="text-xs text-earth-700 font-medium">Monitor closely for the next 30 minutes.</p>
-                     </div>
                   </div>
                 ))}
 
@@ -209,6 +238,109 @@ const AdminCongestion = () => {
         </div>
 
       </div>
+
+      {/* DETAILED CENTRE VIEW MODAL */}
+      {selectedCentre && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden border border-earth-200 flex flex-col max-h-[90vh]">
+            <div className="flex justify-between items-center p-5 border-b border-earth-100 bg-earth-50 shrink-0">
+              <h3 className="font-bold text-lg text-forest-900 flex items-center gap-2">
+                <Store className="w-5 h-5 text-forest-600" />
+                Live Operational View: {selectedCentre.name}
+              </h3>
+              <button onClick={() => setSelectedCentre(null)} className="text-earth-500 hover:text-earth-900">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              
+              <div className="flex justify-between items-start border-b border-earth-100 pb-4">
+                 <div>
+                   <p className="text-sm font-bold text-earth-500 uppercase tracking-wider mb-1">Location Details</p>
+                   <p className="font-bold text-forest-900 text-lg">{selectedCentre.id}</p>
+                   <p className="text-sm text-earth-600">{selectedCentre.district}, {selectedCentre.state || 'Andhra Pradesh'}</p>
+                 </div>
+                 <div className="text-right">
+                   <p className="text-sm font-bold text-earth-500 uppercase tracking-wider mb-1">Congestion Status</p>
+                   <Badge variant={
+                     selectedCentre.color === 'red' || selectedCentre.color === 'orange' ? 'danger' :
+                     selectedCentre.color === 'amber' ? 'warning' : 'success'
+                   } className="text-sm px-3 py-1">
+                     {selectedCentre.congestionBadge}
+                   </Badge>
+                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                 <Card className="border-earth-200 shadow-sm">
+                   <CardContent className="p-4 flex flex-col justify-center h-full">
+                     <p className="text-[11px] font-bold text-earth-500 uppercase tracking-widest mb-2 flex items-center gap-1.5"><Users className="w-3.5 h-3.5"/> Today's Bookings</p>
+                     <h3 className="text-3xl font-black text-forest-900">{selectedCentre.bookingsCount}</h3>
+                   </CardContent>
+                 </Card>
+                 <Card className="border-earth-200 shadow-sm">
+                   <CardContent className="p-4 flex flex-col justify-center h-full">
+                     <p className="text-[11px] font-bold text-earth-500 uppercase tracking-widest mb-2 flex items-center gap-1.5"><Users className="w-3.5 h-3.5"/> Current Queue (Waiting)</p>
+                     <h3 className={`text-3xl font-black ${selectedCentre.color === 'red' ? 'text-red-600' : 'text-amber-600'}`}>{selectedCentre.waitingCount}</h3>
+                   </CardContent>
+                 </Card>
+                 <Card className="border-earth-200 shadow-sm bg-forest-50 border-forest-100">
+                   <CardContent className="p-4 flex flex-col justify-center h-full">
+                     <p className="text-[11px] font-bold text-forest-600 uppercase tracking-widest mb-2 flex items-center gap-1.5"><Store className="w-3.5 h-3.5"/> Currently Processing</p>
+                     <h3 className="text-3xl font-black text-forest-700">{selectedCentre.processingCount}</h3>
+                   </CardContent>
+                 </Card>
+                 <Card className="border-earth-200 shadow-sm bg-green-50 border-green-100">
+                   <CardContent className="p-4 flex flex-col justify-center h-full">
+                     <p className="text-[11px] font-bold text-green-700 uppercase tracking-widest mb-2 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5"/> Completed</p>
+                     <h3 className="text-3xl font-black text-green-800">{selectedCentre.completedCount}</h3>
+                   </CardContent>
+                 </Card>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <Card className="border-earth-200 shadow-sm">
+                   <CardContent className="p-4 flex justify-between items-center">
+                     <div>
+                       <p className="text-[11px] font-bold text-earth-500 uppercase tracking-widest mb-1">Avg Waiting Time</p>
+                       <p className="text-xl font-bold text-earth-900 flex items-center gap-2">
+                         <Clock className="w-4 h-4 text-earth-400" /> {selectedCentre.avgWaitTime} min
+                       </p>
+                     </div>
+                   </CardContent>
+                 </Card>
+                 <Card className="border-earth-200 shadow-sm">
+                   <CardContent className="p-4 flex justify-between items-center">
+                     <div>
+                       <p className="text-[11px] font-bold text-earth-500 uppercase tracking-widest mb-1">Avg Processing Time</p>
+                       <p className="text-xl font-bold text-earth-900 flex items-center gap-2">
+                         <PackageOpen className="w-4 h-4 text-earth-400" /> {selectedCentre.avgProcessingTime} min
+                       </p>
+                     </div>
+                   </CardContent>
+                 </Card>
+                 <Card className="border-earth-200 shadow-sm">
+                   <CardContent className="p-4 flex justify-between items-center">
+                     <div>
+                       <p className="text-[11px] font-bold text-earth-500 uppercase tracking-widest mb-1">Active Counters/Staff</p>
+                       <p className="text-xl font-bold text-earth-900 flex items-center gap-2">
+                         <Users className="w-4 h-4 text-earth-400" /> {selectedCentre.activeCounters}
+                       </p>
+                     </div>
+                   </CardContent>
+                 </Card>
+              </div>
+
+            </div>
+            
+            <div className="p-4 border-t border-earth-100 bg-earth-50 flex justify-end shrink-0">
+              <Button variant="outline" onClick={() => setSelectedCentre(null)}>Close</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
