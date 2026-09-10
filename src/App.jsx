@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Landing & Auth
-import LandingPage from './landing/LandingPage';
+import LandingPage from './pages/landing/LandingPage';
 import LoginPage from './auth/LoginPage';
 import ProtectedRoute from './auth/ProtectedRoute';
 import FarmerAuth from './portals/farmer/pages/FarmerAuth';

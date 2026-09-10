@@ -90,16 +90,16 @@ const AdminFarmers = () => {
     <div className="space-y-6 max-w-[1600px] mx-auto animate-in fade-in duration-500 relative">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-forest-900 tracking-tight">Farmer Management</h2>
+          <h2 className="text-2xl font-bold text-farmer-text tracking-tight">Farmer Management</h2>
           <p className="text-earth-600 mt-1">Registry of all {state.farmers.length} enrolled farmers across the state.</p>
         </div>
         
         <div className="flex items-center gap-3">
           <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-earth-400" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-farmer-secondary" />
             <Input 
               placeholder="Search by name, ID, mobile, district..." 
-              className="pl-9 bg-white border-earth-200"
+              className="pl-9 bg-white border-farmer-border"
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -107,21 +107,21 @@ const AdminFarmers = () => {
               }}
             />
           </div>
-          <Button variant="outline" className="shrink-0 bg-white border-earth-200 text-earth-700">
+          <Button variant="outline" className="shrink-0 bg-white border-farmer-border text-earth-700">
             <Filter className="w-4 h-4 mr-2" />
             Filters
           </Button>
-          <Button onClick={() => setShowAddModal(true)} className="shrink-0 bg-forest-600 hover:bg-forest-700 text-white">
+          <Button onClick={() => setShowAddModal(true)} className="shrink-0 bg-farmer-primary hover:bg-farmer-primary text-white">
             <Plus className="w-4 h-4 mr-2" />
             Add Farmer
           </Button>
         </div>
       </div>
 
-      <Card className="border-earth-200 shadow-sm bg-white overflow-hidden">
+      <Card className="border-farmer-border shadow-sm bg-white overflow-hidden">
         <CardContent className="p-0 overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-earth-500 bg-earth-50 uppercase border-b border-earth-200">
+            <thead className="text-xs text-farmer-secondary bg-farmer-bg uppercase border-b border-farmer-border">
                <tr>
                   <th className="px-6 py-4 font-bold tracking-wider">Farmer Details</th>
                   <th className="px-6 py-4 font-bold tracking-wider">Address</th>
@@ -137,15 +137,15 @@ const AdminFarmers = () => {
                    const farmerProcurements = state.procurements.filter(p => p.farmerId === farmer.id && p.status === 'Completed');
                    
                    return (
-                     <tr key={farmer.id} className="hover:bg-earth-50/50 transition-colors">
+                     <tr key={farmer.id} className="hover:bg-farmer-bg/50 transition-colors">
                         <td className="px-6 py-4">
                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-forest-100 flex items-center justify-center text-forest-700 font-bold shrink-0">
+                              <div className="w-10 h-10 rounded-full bg-forest-100 flex items-center justify-center text-farmer-primary font-bold shrink-0">
                                  {farmer.name.charAt(0)}
                               </div>
                               <div>
-                                 <p className="font-bold text-forest-900 leading-tight mb-0.5">{farmer.name}</p>
-                                 <div className="flex items-center gap-2 text-[10px] font-medium text-earth-500">
+                                 <p className="font-bold text-farmer-text leading-tight mb-0.5">{farmer.name}</p>
+                                 <div className="flex items-center gap-2 text-[10px] font-medium text-farmer-secondary">
                                    <span>{farmer.farmerId || farmer.id}</span>
                                    <span className="w-1 h-1 rounded-full bg-earth-300"></span>
                                    <span>+91 {farmer.mobile}</span>
@@ -154,8 +154,8 @@ const AdminFarmers = () => {
                            </div>
                         </td>
                         <td className="px-6 py-4">
-                           <p className="font-medium text-earth-900">{farmer.village || '--'}</p>
-                           <p className="text-xs text-earth-500">{farmer.district || '--'}, {farmer.state}</p>
+                           <p className="font-medium text-farmer-text">{farmer.village || '--'}</p>
+                           <p className="text-xs text-farmer-secondary">{farmer.district || '--'}, {farmer.state}</p>
                         </td>
                         <td className="px-6 py-4">
                            {farmer.isRegistered === false ? (
@@ -167,17 +167,17 @@ const AdminFarmers = () => {
                         <td className="px-6 py-4">
                            <div className="flex flex-col gap-1 text-xs font-medium">
                               <div>
-                                <span className="text-earth-500">Bookings: </span>
-                                <span className="text-forest-900 font-bold">{farmerBookings.length}</span>
+                                <span className="text-farmer-secondary">Bookings: </span>
+                                <span className="text-farmer-text font-bold">{farmerBookings.length}</span>
                               </div>
                               <div>
-                                <span className="text-earth-500">Completed Procurements: </span>
-                                <span className="text-forest-900 font-bold">{farmerProcurements.length}</span>
+                                <span className="text-farmer-secondary">Completed Procurements: </span>
+                                <span className="text-farmer-text font-bold">{farmerProcurements.length}</span>
                               </div>
                            </div>
                         </td>
                         <td className="px-6 py-4 text-right">
-                           <Button variant="ghost" size="sm" onClick={() => openDetails(farmer)} className="text-forest-600 hover:text-forest-700 hover:bg-forest-50">
+                           <Button variant="ghost" size="sm" onClick={() => openDetails(farmer)} className="text-farmer-primary hover:text-farmer-primary hover:bg-farmer-primary-light">
                              <Eye className="w-4 h-4 mr-2" />
                              View
                            </Button>
@@ -187,9 +187,9 @@ const AdminFarmers = () => {
                  })
                ) : (
                  <tr>
-                   <td colSpan="5" className="px-6 py-12 text-center text-earth-500">
+                   <td colSpan="5" className="px-6 py-12 text-center text-farmer-secondary">
                      <User className="w-12 h-12 mx-auto mb-3 text-earth-300" />
-                     <p className="text-lg font-medium text-earth-900">No farmers found</p>
+                     <p className="text-lg font-medium text-farmer-text">No farmers found</p>
                      <p className="text-sm mt-1">Try adjusting your search criteria</p>
                    </td>
                  </tr>
@@ -200,15 +200,15 @@ const AdminFarmers = () => {
         
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="p-4 border-t border-earth-100 flex items-center justify-between bg-earth-50/50">
+          <div className="p-4 border-t border-farmer-border flex items-center justify-between bg-farmer-bg/50">
             <p className="text-sm text-earth-600 font-medium">
-              Showing <span className="font-bold text-forest-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-bold text-forest-900">{Math.min(currentPage * itemsPerPage, filteredFarmers.length)}</span> of <span className="font-bold text-forest-900">{filteredFarmers.length}</span> farmers
+              Showing <span className="font-bold text-farmer-text">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-bold text-farmer-text">{Math.min(currentPage * itemsPerPage, filteredFarmers.length)}</span> of <span className="font-bold text-farmer-text">{filteredFarmers.length}</span> farmers
             </p>
             <div className="flex items-center gap-2">
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="bg-white border-earth-200"
+                className="bg-white border-farmer-border"
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
@@ -220,7 +220,7 @@ const AdminFarmers = () => {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="bg-white border-earth-200"
+                className="bg-white border-farmer-border"
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
               >
@@ -234,10 +234,10 @@ const AdminFarmers = () => {
       {/* ADD FARMER MODAL */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-earth-200">
-            <div className="flex justify-between items-center p-5 border-b border-earth-100 bg-earth-50">
-              <h3 className="font-bold text-lg text-forest-900">Add New Farmer</h3>
-              <button onClick={() => setShowAddModal(false)} className="text-earth-500 hover:text-earth-900">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-farmer-border">
+            <div className="flex justify-between items-center p-5 border-b border-farmer-border bg-farmer-bg">
+              <h3 className="font-bold text-lg text-farmer-text">Add New Farmer</h3>
+              <button onClick={() => setShowAddModal(false)} className="text-farmer-secondary hover:text-farmer-text">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -308,7 +308,7 @@ const AdminFarmers = () => {
                 </div>
                 <div className="pt-2 flex gap-3">
                   <Button type="button" variant="outline" onClick={() => setShowAddModal(false)} className="w-full">Cancel</Button>
-                  <Button type="submit" className="w-full bg-forest-600 hover:bg-forest-700 text-white">Create Farmer</Button>
+                  <Button type="submit" className="w-full bg-farmer-primary hover:bg-farmer-primary text-white">Create Farmer</Button>
                 </div>
               </form>
             </div>
@@ -319,13 +319,13 @@ const AdminFarmers = () => {
       {/* VIEW FARMER DETAILS MODAL */}
       {showDetailsModal && selectedFarmer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden border border-earth-200 flex flex-col max-h-[90vh]">
-            <div className="flex justify-between items-center p-5 border-b border-earth-100 bg-earth-50 shrink-0">
-              <h3 className="font-bold text-lg text-forest-900 flex items-center gap-2">
-                <User className="w-5 h-5 text-forest-600" />
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden border border-farmer-border flex flex-col max-h-[90vh]">
+            <div className="flex justify-between items-center p-5 border-b border-farmer-border bg-farmer-bg shrink-0">
+              <h3 className="font-bold text-lg text-farmer-text flex items-center gap-2">
+                <User className="w-5 h-5 text-farmer-primary" />
                 Farmer Details
               </h3>
-              <button onClick={() => setShowDetailsModal(false)} className="text-earth-500 hover:text-earth-900">
+              <button onClick={() => setShowDetailsModal(false)} className="text-farmer-secondary hover:text-farmer-text">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -333,24 +333,24 @@ const AdminFarmers = () => {
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
               
               {/* Profile Info */}
-              <div className="flex flex-col md:flex-row gap-6 items-start bg-forest-50/50 p-5 rounded-2xl border border-forest-100">
-                <div className="w-16 h-16 rounded-full bg-forest-200 flex items-center justify-center text-forest-800 font-bold text-2xl shrink-0">
+              <div className="flex flex-col md:flex-row gap-6 items-start bg-farmer-primary-light/50 p-5 rounded-2xl border border-forest-100">
+                <div className="w-16 h-16 rounded-full bg-forest-200 flex items-center justify-center text-farmer-primary-dark font-bold text-2xl shrink-0">
                    {selectedFarmer.name.charAt(0)}
                 </div>
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
-                    <p className="text-xs font-bold text-forest-700 uppercase tracking-wider mb-1">Farmer Name</p>
-                    <p className="font-bold text-forest-900 text-lg">{selectedFarmer.name}</p>
+                    <p className="text-xs font-bold text-farmer-primary uppercase tracking-wider mb-1">Farmer Name</p>
+                    <p className="font-bold text-farmer-text text-lg">{selectedFarmer.name}</p>
                     <p className="text-sm font-mono text-earth-600">{selectedFarmer.farmerId || selectedFarmer.id}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-forest-700 uppercase tracking-wider mb-1">Contact</p>
-                    <p className="font-medium text-earth-900 flex items-center gap-1.5"><Phone className="w-3.5 h-3.5"/> +91 {selectedFarmer.mobile}</p>
+                    <p className="text-xs font-bold text-farmer-primary uppercase tracking-wider mb-1">Contact</p>
+                    <p className="font-medium text-farmer-text flex items-center gap-1.5"><Phone className="w-3.5 h-3.5"/> +91 {selectedFarmer.mobile}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-forest-700 uppercase tracking-wider mb-1">Location</p>
-                    <p className="font-medium text-earth-900 flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5"/> {selectedFarmer.village || '--'}</p>
-                    <p className="text-xs text-earth-500 ml-5">{selectedFarmer.district || '--'}, {selectedFarmer.state}</p>
+                    <p className="text-xs font-bold text-farmer-primary uppercase tracking-wider mb-1">Location</p>
+                    <p className="font-medium text-farmer-text flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5"/> {selectedFarmer.village || '--'}</p>
+                    <p className="text-xs text-farmer-secondary ml-5">{selectedFarmer.district || '--'}, {selectedFarmer.state}</p>
                   </div>
                 </div>
                 <div>
@@ -368,10 +368,10 @@ const AdminFarmers = () => {
 
               {/* Booking History */}
               <div>
-                <h4 className="font-bold text-earth-900 mb-3 border-b border-earth-100 pb-2">Booking History</h4>
-                <div className="overflow-x-auto bg-white border border-earth-200 rounded-xl">
+                <h4 className="font-bold text-farmer-text mb-3 border-b border-farmer-border pb-2">Booking History</h4>
+                <div className="overflow-x-auto bg-white border border-farmer-border rounded-xl">
                   <table className="w-full text-sm text-left">
-                    <thead className="text-xs text-earth-500 bg-earth-50 uppercase border-b border-earth-200">
+                    <thead className="text-xs text-farmer-secondary bg-farmer-bg uppercase border-b border-farmer-border">
                       <tr>
                         <th className="px-4 py-3 font-bold">Booking ID</th>
                         <th className="px-4 py-3 font-bold">Date</th>
@@ -386,10 +386,10 @@ const AdminFarmers = () => {
                           const centre = state.centres.find(c => c.id === booking.centreId);
                           return (
                             <tr key={booking.id}>
-                              <td className="px-4 py-3 font-medium text-earth-900">{booking.id}</td>
+                              <td className="px-4 py-3 font-medium text-farmer-text">{booking.id}</td>
                               <td className="px-4 py-3 text-earth-600">{booking.date}</td>
                               <td className="px-4 py-3 text-earth-800">{centre?.name || booking.centreId}</td>
-                              <td className="px-4 py-3 font-bold text-forest-700">{booking.token}</td>
+                              <td className="px-4 py-3 font-bold text-farmer-primary">{booking.token}</td>
                               <td className="px-4 py-3">
                                 <Badge variant="outline">{booking.status}</Badge>
                               </td>
@@ -398,7 +398,7 @@ const AdminFarmers = () => {
                         })
                       ) : (
                         <tr>
-                          <td colSpan="5" className="px-4 py-6 text-center text-earth-500 text-sm">No bookings found for this farmer.</td>
+                          <td colSpan="5" className="px-4 py-6 text-center text-farmer-secondary text-sm">No bookings found for this farmer.</td>
                         </tr>
                       )}
                     </tbody>
@@ -408,10 +408,10 @@ const AdminFarmers = () => {
 
               {/* Procurement History */}
               <div>
-                <h4 className="font-bold text-earth-900 mb-3 border-b border-earth-100 pb-2">Complete Procurement History</h4>
-                <div className="overflow-x-auto bg-white border border-earth-200 rounded-xl">
+                <h4 className="font-bold text-farmer-text mb-3 border-b border-farmer-border pb-2">Complete Procurement History</h4>
+                <div className="overflow-x-auto bg-white border border-farmer-border rounded-xl">
                   <table className="w-full text-sm text-left whitespace-nowrap">
-                    <thead className="text-[11px] text-earth-500 bg-earth-50 uppercase tracking-wider border-b border-earth-200">
+                    <thead className="text-[11px] text-farmer-secondary bg-farmer-bg uppercase tracking-wider border-b border-farmer-border">
                       <tr>
                         <th className="px-4 py-3 font-bold">Proc ID</th>
                         <th className="px-4 py-3 font-bold">Date</th>
@@ -430,13 +430,13 @@ const AdminFarmers = () => {
                           const payment = state.payments.find(p => p.procurementId === proc.id);
                           return (
                             <tr key={proc.id}>
-                              <td className="px-4 py-3 font-medium text-earth-900">{proc.id}</td>
+                              <td className="px-4 py-3 font-medium text-farmer-text">{proc.id}</td>
                               <td className="px-4 py-3 text-earth-600">{proc.date}</td>
                               <td className="px-4 py-3 text-earth-800">{centre?.name || proc.centreId}</td>
-                              <td className="px-4 py-3 font-medium text-earth-900">{proc.crop}</td>
-                              <td className="px-4 py-3 text-earth-900">{proc.actualQuantity} Q</td>
+                              <td className="px-4 py-3 font-medium text-farmer-text">{proc.crop}</td>
+                              <td className="px-4 py-3 text-farmer-text">{proc.actualQuantity} Q</td>
                               <td className="px-4 py-3 text-earth-600">₹{proc.rate?.toLocaleString()}/Q</td>
-                              <td className="px-4 py-3 font-bold text-forest-900 text-right">₹{proc.totalAmount?.toLocaleString()}</td>
+                              <td className="px-4 py-3 font-bold text-farmer-text text-right">₹{proc.totalAmount?.toLocaleString()}</td>
                               <td className="px-4 py-3">
                                 <Badge variant={payment?.status === 'Completed' || payment?.status === 'Paid' ? 'success' : 'warning'} className="text-[10px]">
                                   {payment?.status || 'Pending'}
@@ -447,7 +447,7 @@ const AdminFarmers = () => {
                         })
                       ) : (
                         <tr>
-                          <td colSpan="8" className="px-4 py-6 text-center text-earth-500 text-sm">No completed procurements found.</td>
+                          <td colSpan="8" className="px-4 py-6 text-center text-farmer-secondary text-sm">No completed procurements found.</td>
                         </tr>
                       )}
                     </tbody>
@@ -457,7 +457,7 @@ const AdminFarmers = () => {
 
             </div>
             
-            <div className="p-4 border-t border-earth-100 bg-earth-50 flex justify-end shrink-0">
+            <div className="p-4 border-t border-farmer-border bg-farmer-bg flex justify-end shrink-0">
               <Button variant="outline" onClick={() => setShowDetailsModal(false)}>Close</Button>
             </div>
           </div>

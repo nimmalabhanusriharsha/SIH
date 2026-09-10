@@ -31,27 +31,27 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-6">
 
         <Link to="/admin/farmers" className="block group">
-          <Card className="border-forest-200 shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
+          <Card className="border-farmer-border shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform"><Users className="w-16 h-16" /></div>
             <CardContent className="p-4 md:p-5">
-              <p className="text-xs font-medium text-earth-500 mb-1">Total Farmers</p>
-              <h3 className="text-2xl font-black text-forest-900">{totalFarmers}</h3>
+              <p className="text-xs font-medium text-farmer-secondary mb-1">Total Farmers</p>
+              <h3 className="text-2xl font-black text-farmer-text">{totalFarmers}</h3>
             </CardContent>
           </Card>
         </Link>
 
         <Link to="/admin/centres" className="block group">
-          <Card className="border-forest-200 shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
+          <Card className="border-farmer-border shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform"><Building className="w-16 h-16" /></div>
             <CardContent className="p-4 md:p-5">
-              <p className="text-xs font-medium text-earth-500 mb-1">Total Centers</p>
-              <h3 className="text-2xl font-black text-forest-900">{totalCenters}</h3>
+              <p className="text-xs font-medium text-farmer-secondary mb-1">Total Centers</p>
+              <h3 className="text-2xl font-black text-farmer-text">{totalCenters}</h3>
             </CardContent>
           </Card>
         </Link>
 
         <Link to="/admin/centres" className="block group">
-          <Card className="border-forest-200 shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
+          <Card className="border-farmer-border shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform"><Activity className="w-16 h-16 text-green-700" /></div>
             <CardContent className="p-4 md:p-5">
               <p className="text-xs font-medium text-green-700 mb-1">Active Centers</p>
@@ -61,51 +61,51 @@ const AdminDashboard = () => {
         </Link>
 
         <Link to="/admin/centres" className="block group">
-          <Card className="border-forest-200 shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
+          <Card className="border-farmer-border shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform"><MapPin className="w-16 h-16" /></div>
             <CardContent className="p-4 md:p-5">
-              <p className="text-xs font-medium text-earth-500 mb-1">Inactive Centers</p>
-              <h3 className="text-2xl font-black text-earth-900">{inactiveCenters}</h3>
+              <p className="text-xs font-medium text-farmer-secondary mb-1">Inactive Centers</p>
+              <h3 className="text-2xl font-black text-farmer-text">{inactiveCenters}</h3>
             </CardContent>
           </Card>
         </Link>
 
         <Link to="/admin/bookings" className="block group">
-          <Card className="border-forest-200 shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
+          <Card className="border-farmer-border shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform"><CalendarClock className="w-16 h-16" /></div>
             <CardContent className="p-4 md:p-5">
-              <p className="text-xs font-medium text-earth-500 mb-1">Total Bookings</p>
-              <h3 className="text-2xl font-black text-forest-900">{totalBookings}</h3>
+              <p className="text-xs font-medium text-farmer-secondary mb-1">Total Bookings</p>
+              <h3 className="text-2xl font-black text-farmer-text">{totalBookings}</h3>
             </CardContent>
           </Card>
         </Link>
 
         <Link to="/admin/procurement" className="block group">
-          <Card className="border-forest-200 shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
+          <Card className="border-farmer-border shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform"><PackageOpen className="w-16 h-16" /></div>
             <CardContent className="p-4 md:p-5">
-              <p className="text-xs font-medium text-earth-500 mb-1">Total Procurement (Q)</p>
-              <h3 className="text-2xl font-black text-forest-900">{totalProcurementQuantity}</h3>
+              <p className="text-xs font-medium text-farmer-secondary mb-1">Total Procurement (Q)</p>
+              <h3 className="text-2xl font-black text-farmer-text">{totalProcurementQuantity}</h3>
             </CardContent>
           </Card>
         </Link>
 
         <Link to="/admin/procurement" className="block group">
-          <Card className="border-forest-200 shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
+          <Card className="border-farmer-border shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform"><PackageOpen className="w-16 h-16 text-green-700" /></div>
             <CardContent className="p-4 md:p-5">
-              <p className="text-xs font-medium text-earth-500 mb-1">Completed Procurements</p>
-              <h3 className="text-2xl font-black text-forest-900">{completedProcurements.length}</h3>
+              <p className="text-xs font-medium text-farmer-secondary mb-1">Completed Procurements</p>
+              <h3 className="text-2xl font-black text-farmer-text">{completedProcurements.length}</h3>
             </CardContent>
           </Card>
         </Link>
 
         <Link to="/admin/payments" className="block group">
-          <Card className="border-forest-200 shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
+          <Card className="border-farmer-border shadow-sm hover:border-forest-400 hover:shadow-md transition-all h-full bg-white relative overflow-hidden">
             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform"><IndianRupee className="w-16 h-16" /></div>
             <CardContent className="p-4 md:p-5">
-              <p className="text-xs font-medium text-earth-500 mb-1">Total Payment Amount</p>
-              <h3 className="text-2xl font-black text-forest-900">₹{totalPaymentAmount}</h3>
+              <p className="text-xs font-medium text-farmer-secondary mb-1">Total Payment Amount</p>
+              <h3 className="text-2xl font-black text-farmer-text">₹{totalPaymentAmount}</h3>
             </CardContent>
           </Card>
         </Link>
@@ -116,10 +116,10 @@ const AdminDashboard = () => {
 
         {/* 2. CENTRE PERFORMANCE OVERVIEW */}
         <div className="lg:col-span-1">
-          <Card className="border-earth-200 shadow-sm h-full flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-earth-100 bg-white py-4">
+          <Card className="border-farmer-border shadow-sm h-full flex flex-col">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-farmer-border bg-white py-4">
               <div>
-                <CardTitle className="text-lg text-forest-900">Procurement Centre Performance</CardTitle>
+                <CardTitle className="text-lg text-farmer-text">Procurement Centre Performance</CardTitle>
                 <CardDescription>Live operations metrics across all centres</CardDescription>
               </div>
               <Button variant="outline" size="sm" asChild>
@@ -128,7 +128,7 @@ const AdminDashboard = () => {
             </CardHeader>
             <CardContent className="p-0 flex-1 overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-earth-500 bg-earth-50 uppercase border-b border-earth-200">
+                <thead className="text-xs text-farmer-secondary bg-farmer-bg uppercase border-b border-farmer-border">
                   <tr>
                     <th className="px-4 py-3 font-semibold">Centre</th>
                     <th className="px-4 py-3 font-semibold">Waiting</th>
@@ -150,10 +150,10 @@ const AdminDashboard = () => {
                     if (load > 80) { badgeType = 'danger'; badgeLabel = 'High Load'; }
 
                     return (
-                      <tr key={centre.id} className="hover:bg-earth-50/50 transition-colors">
+                      <tr key={centre.id} className="hover:bg-farmer-bg/50 transition-colors">
                         <td className="px-4 py-3">
-                          <p className="font-bold text-forest-900">{centre.name}</p>
-                          <p className="text-[10px] text-earth-500">{centre.district}</p>
+                          <p className="font-bold text-farmer-text">{centre.name}</p>
+                          <p className="text-[10px] text-farmer-secondary">{centre.district}</p>
                         </td>
                         <td className="px-4 py-3 font-medium">{qLen}</td>
                         <td className="px-4 py-3">{centre.activeCounters || 3}</td>

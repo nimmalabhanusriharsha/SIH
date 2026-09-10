@@ -133,8 +133,14 @@ const LoginPage = ({ role }) => {
   const isFarmer = role === 'FARMER';
 
   return (
-    <div className={`min-h-screen flex items-center justify-center p-4 py-8 ${isFarmer ? 'bg-farmer-bg' : 'bg-earth-50'}`}>
-      <div className="w-full max-w-lg">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 py-8 bg-cover bg-center bg-fixed relative"
+      style={{ backgroundImage: "url('/images/admin-login-bg.png')" }}
+    >
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-black/40 z-0"></div>
+      
+      <div className="w-full max-w-lg relative z-10">
 
         {/* Brand Header */}
         <div className="flex flex-col items-center justify-center mb-6 text-center">
@@ -147,11 +153,11 @@ const LoginPage = ({ role }) => {
               <ShieldCheck className="w-8 h-8 text-white" />
             )}
           </div>
-          <h1 className={`text-2xl font-black tracking-tight ${isFarmer ? 'text-farmer-text' : 'text-earth-900'}`}>
+          <h1 className={`text-3xl font-black tracking-tight drop-shadow-md text-white`}>
             {t('appName', 'KisanQueue')}
           </h1>
-          <p className={`text-xs font-bold uppercase tracking-widest mt-0.5 ${isFarmer ? 'text-farmer-secondary' : 'text-earth-600'}`}>
-            {isFarmer ? t('farmerPortal', 'Farmer Portal') : `${role} Dashboard Login`}
+          <p className={`text-xs font-extrabold uppercase tracking-widest mt-1 drop-shadow-sm text-emerald-300`}>
+            {`${role} Dashboard Login`}
           </p>
         </div>
 
