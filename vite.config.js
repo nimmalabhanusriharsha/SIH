@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    strictPort: true,
+    strictPort: false,
     // Proxy /api requests to the Express backend server during development.
     // This keeps the API key server-side — the browser never sees it.
     proxy: {
