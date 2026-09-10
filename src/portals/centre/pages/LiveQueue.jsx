@@ -92,9 +92,9 @@ const StaffLiveQueue = () => {
       
       {/* HEADER SECTION */}
       <div>
-        <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">LIVE QUEUE</p>
-        <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mt-0.5">Live Queue</h1>
-        <p className="text-sm font-medium text-slate-500 mt-1">Scan farmer's QR to verify and manage the queue efficiently.</p>
+        <p className="text-[11px] font-extrabold text-farmer-secondary uppercase tracking-widest">LIVE QUEUE</p>
+        <h1 className="text-2xl md:text-3xl font-black text-farmer-text tracking-tight mt-0.5">Live Queue</h1>
+        <p className="text-sm font-medium text-farmer-secondary mt-1">Scan farmer's QR to verify and manage the queue efficiently.</p>
       </div>
 
       {/* TWO COLUMN MAIN LAYOUT */}
@@ -107,22 +107,22 @@ const StaffLiveQueue = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             
             {/* CURRENTLY SERVING CARD */}
-            <Card className="border border-slate-100 shadow-xs bg-white rounded-2xl overflow-hidden">
+            <Card className="border border-farmer-border shadow-xs bg-white rounded-2xl overflow-hidden">
               <CardContent className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-full bg-[#e6f4ea] text-[#046a38] flex items-center justify-center shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-farmer-primary-light text-farmer-primary flex items-center justify-center shrink-0">
                     <Users className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-600">Currently Serving</p>
-                    <h3 className="text-2xl md:text-3xl font-black text-[#046a38] mt-0.5">{currentlyServing.token}</h3>
-                    <p className="text-xs font-medium text-slate-500 mt-0.5">{currentlyServing.farmerName}</p>
+                    <p className="text-xs font-bold text-farmer-secondary">Currently Serving</p>
+                    <h3 className="text-2xl md:text-3xl font-black text-farmer-primary mt-0.5">{currentlyServing.token}</h3>
+                    <p className="text-xs font-medium text-farmer-secondary mt-0.5">{currentlyServing.farmerName}</p>
                   </div>
                 </div>
                 <button 
                   type="button"
                   onClick={() => handleScanFarmer()}
-                  className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:border-[#046a38] hover:text-[#046a38] transition-colors shrink-0 cursor-pointer"
+                  className="w-8 h-8 rounded-full border border-farmer-border flex items-center justify-center text-farmer-secondary hover:border-farmer-primary hover:text-farmer-primary transition-colors shrink-0 cursor-pointer"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -130,21 +130,21 @@ const StaffLiveQueue = () => {
             </Card>
 
             {/* FARMERS WAITING CARD (GREEN ACCENT) */}
-            <Card className="border border-slate-100 shadow-xs bg-white rounded-2xl overflow-hidden">
+            <Card className="border border-farmer-border shadow-xs bg-white rounded-2xl overflow-hidden">
               <CardContent className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-full bg-[#e6f4ea] text-[#046a38] flex items-center justify-center shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-farmer-primary-light text-farmer-primary flex items-center justify-center shrink-0">
                     <Users className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-600">Farmers Waiting</p>
-                    <h3 className="text-2xl md:text-3xl font-black text-slate-900 mt-0.5">{mockQueueList.length}</h3>
-                    <p className="text-xs font-medium text-slate-500 mt-0.5">in queue</p>
+                    <p className="text-xs font-bold text-farmer-secondary">Farmers Waiting</p>
+                    <h3 className="text-2xl md:text-3xl font-black text-farmer-text mt-0.5">{mockQueueList.length}</h3>
+                    <p className="text-xs font-medium text-farmer-secondary mt-0.5">in queue</p>
                   </div>
                 </div>
                 <button 
                   type="button"
-                  className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:border-[#046a38] hover:text-[#046a38] transition-colors shrink-0 cursor-pointer"
+                  className="w-8 h-8 rounded-full border border-farmer-border flex items-center justify-center text-farmer-secondary hover:border-farmer-primary hover:text-farmer-primary transition-colors shrink-0 cursor-pointer"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -154,15 +154,15 @@ const StaffLiveQueue = () => {
           </div>
 
           {/* QR-ONLY FARMER VERIFICATION CARD (MAIN FOCUS) */}
-          <Card className="border border-slate-100 shadow-xs bg-white rounded-2xl overflow-hidden">
-            <CardHeader className="py-4 px-6 border-b border-slate-100 bg-white">
+          <Card className="border border-farmer-border shadow-xs bg-white rounded-2xl overflow-hidden">
+            <CardHeader className="py-4 px-6 border-b border-farmer-border bg-white">
               <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-full bg-[#046a38] text-white flex items-center justify-center shrink-0">
+                <div className="w-6 h-6 rounded-full bg-farmer-primary text-white flex items-center justify-center shrink-0">
                   <Check className="w-3.5 h-3.5 stroke-[3]" />
                 </div>
                 <div>
-                  <CardTitle className="text-base font-bold text-slate-900">Farmer Verification</CardTitle>
-                  <p className="text-xs font-medium text-slate-500">Scan the farmer's QR code to verify and proceed.</p>
+                  <CardTitle className="text-base font-bold text-farmer-text">Farmer Verification</CardTitle>
+                  <p className="text-xs font-medium text-farmer-secondary">Scan the farmer's QR code to verify and proceed.</p>
                 </div>
               </div>
             </CardHeader>
@@ -171,27 +171,27 @@ const StaffLiveQueue = () => {
               {/* QR SCANNER VIEWPORT */}
               <div 
                 onClick={() => handleScanFarmer()}
-                className="w-full bg-[#e6f4ea] rounded-2xl py-10 px-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-[#d8edd9] transition-colors relative group border border-emerald-200"
+                className="w-full bg-farmer-primary-light rounded-2xl py-10 px-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-[#d8edd9] transition-colors relative group border border-emerald-200"
               >
                 {/* CORNER BRACKETS */}
                 <div className="w-48 h-36 relative flex flex-col items-center justify-center">
-                  <div className="absolute top-0 left-0 w-5 h-5 border-t-3 border-l-3 border-[#046a38] rounded-tl-md"></div>
-                  <div className="absolute top-0 right-0 w-5 h-5 border-t-3 border-r-3 border-[#046a38] rounded-tr-md"></div>
-                  <div className="absolute bottom-0 left-0 w-5 h-5 border-b-3 border-l-3 border-[#046a38] rounded-bl-md"></div>
-                  <div className="absolute bottom-0 right-0 w-5 h-5 border-b-3 border-r-3 border-[#046a38] rounded-br-md"></div>
+                  <div className="absolute top-0 left-0 w-5 h-5 border-t-3 border-l-3 border-farmer-primary rounded-tl-md"></div>
+                  <div className="absolute top-0 right-0 w-5 h-5 border-t-3 border-r-3 border-farmer-primary rounded-tr-md"></div>
+                  <div className="absolute bottom-0 left-0 w-5 h-5 border-b-3 border-l-3 border-farmer-primary rounded-bl-md"></div>
+                  <div className="absolute bottom-0 right-0 w-5 h-5 border-b-3 border-r-3 border-farmer-primary rounded-br-md"></div>
 
                   {/* QR LOGO ICON */}
-                  <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center text-[#046a38] shadow-xs mb-2">
+                  <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center text-farmer-primary shadow-xs mb-2">
                     <QrCode className="w-10 h-10" />
                   </div>
                 </div>
 
-                <h3 className="text-base font-black text-slate-900 mt-2">Scan Farmer QR</h3>
-                <p className="text-xs font-medium text-slate-600 mt-1">Place the QR code within the frame to verify</p>
+                <h3 className="text-base font-black text-farmer-text mt-2">Scan Farmer QR</h3>
+                <p className="text-xs font-medium text-farmer-secondary mt-1">Place the QR code within the frame to verify</p>
                 
                 {isScanning && (
                   <div className="absolute inset-0 bg-white/80 backdrop-blur-xs rounded-2xl flex items-center justify-center">
-                    <div className="flex items-center gap-2 text-[#046a38] font-bold text-sm">
+                    <div className="flex items-center gap-2 text-farmer-primary font-bold text-sm">
                       <RefreshCw className="w-5 h-5 animate-spin" /> Verifying QR...
                     </div>
                   </div>
@@ -201,18 +201,18 @@ const StaffLiveQueue = () => {
           </Card>
 
           {/* VERIFIED FARMER DETAILS CARD (BELOW QR SCANNER) */}
-          <Card className="border border-slate-100 shadow-xs bg-white rounded-2xl overflow-hidden">
-            <CardHeader className="py-4 px-6 border-b border-slate-100 flex flex-row items-center justify-between bg-white">
+          <Card className="border border-farmer-border shadow-xs bg-white rounded-2xl overflow-hidden">
+            <CardHeader className="py-4 px-6 border-b border-farmer-border flex flex-row items-center justify-between bg-white">
               <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-full bg-[#046a38] text-white flex items-center justify-center shrink-0">
+                <div className="w-6 h-6 rounded-full bg-farmer-primary text-white flex items-center justify-center shrink-0">
                   <Check className="w-3.5 h-3.5 stroke-[3]" />
                 </div>
-                <CardTitle className="text-base font-bold text-slate-900">Verified Farmer Details</CardTitle>
+                <CardTitle className="text-base font-bold text-farmer-text">Verified Farmer Details</CardTitle>
               </div>
 
               {/* VERIFIED BADGE */}
-              <span className="px-3 py-1 rounded-full bg-[#e6f4ea] text-[#046a38] border border-emerald-300 font-bold text-xs flex items-center gap-1.5">
-                <div className="w-4 h-4 rounded-full bg-[#046a38] text-white flex items-center justify-center">
+              <span className="px-3 py-1 rounded-full bg-farmer-primary-light text-farmer-primary border border-emerald-300 font-bold text-xs flex items-center gap-1.5">
+                <div className="w-4 h-4 rounded-full bg-farmer-primary text-white flex items-center justify-center">
                   <Check className="w-2.5 h-2.5 stroke-[3]" />
                 </div>
                 Verified
@@ -225,21 +225,21 @@ const StaffLiveQueue = () => {
               <div className="flex flex-col md:flex-row gap-6">
                 
                 {/* FARMER PROFILE INFO */}
-                <div className="flex items-start gap-4 md:w-5/12 pr-4 border-b md:border-b-0 md:border-r border-slate-100 pb-4 md:pb-0">
-                  <div className="w-14 h-14 rounded-full bg-[#e6f4ea] text-[#046a38] flex items-center justify-center shrink-0">
+                <div className="flex items-start gap-4 md:w-5/12 pr-4 border-b md:border-b-0 md:border-r border-farmer-border pb-4 md:pb-0">
+                  <div className="w-14 h-14 rounded-full bg-farmer-primary-light text-farmer-primary flex items-center justify-center shrink-0">
                     <User className="w-7 h-7" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-black text-slate-900">{currentlyServing.farmerName}</h3>
-                    <p className="text-xs font-medium text-slate-500 mt-0.5">Farmer ID: {currentlyServing.farmerId}</p>
+                    <h3 className="text-lg font-black text-farmer-text">{currentlyServing.farmerName}</h3>
+                    <p className="text-xs font-medium text-farmer-secondary mt-0.5">Farmer ID: {currentlyServing.farmerId}</p>
                     
-                    <div className="mt-3 space-y-1 text-xs font-medium text-slate-600">
+                    <div className="mt-3 space-y-1 text-xs font-medium text-farmer-secondary">
                       <div className="flex items-center gap-2">
-                        <Phone className="w-3.5 h-3.5 text-slate-400" />
+                        <Phone className="w-3.5 h-3.5 text-farmer-secondary" />
                         <span>{currentlyServing.phone}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                        <MapPin className="w-3.5 h-3.5 text-farmer-secondary" />
                         <span>{currentlyServing.village}</span>
                       </div>
                     </div>
@@ -251,67 +251,67 @@ const StaffLiveQueue = () => {
                   
                   {/* TOKEN NUMBER */}
                   <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
-                      <Ticket className="w-3.5 h-3.5 text-slate-600" />
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-farmer-secondary flex items-center justify-center shrink-0 mt-0.5">
+                      <Ticket className="w-3.5 h-3.5 text-farmer-secondary" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Token Number</p>
-                      <p className="text-sm font-black text-slate-900 mt-0.5">{currentlyServing.token}</p>
+                      <p className="text-[10px] font-extrabold text-farmer-secondary uppercase tracking-widest">Token Number</p>
+                      <p className="text-sm font-black text-farmer-text mt-0.5">{currentlyServing.token}</p>
                     </div>
                   </div>
 
                   {/* BOOKED SLOT */}
                   <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
-                      <Clock className="w-3.5 h-3.5 text-slate-600" />
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-farmer-secondary flex items-center justify-center shrink-0 mt-0.5">
+                      <Clock className="w-3.5 h-3.5 text-farmer-secondary" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Booked Slot</p>
-                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.slotTime}</p>
+                      <p className="text-[10px] font-extrabold text-farmer-secondary uppercase tracking-widest">Booked Slot</p>
+                      <p className="text-xs font-bold text-farmer-text mt-0.5">{currentlyServing.slotTime}</p>
                     </div>
                   </div>
 
                   {/* COMMODITY */}
                   <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
-                      <Leaf className="w-3.5 h-3.5 text-slate-600" />
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-farmer-secondary flex items-center justify-center shrink-0 mt-0.5">
+                      <Leaf className="w-3.5 h-3.5 text-farmer-secondary" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Commodity</p>
-                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.commodity}</p>
+                      <p className="text-[10px] font-extrabold text-farmer-secondary uppercase tracking-widest">Commodity</p>
+                      <p className="text-xs font-bold text-farmer-text mt-0.5">{currentlyServing.commodity}</p>
                     </div>
                   </div>
 
                   {/* EXPECTED QUANTITY */}
                   <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
-                      <Scale className="w-3.5 h-3.5 text-slate-600" />
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-farmer-secondary flex items-center justify-center shrink-0 mt-0.5">
+                      <Scale className="w-3.5 h-3.5 text-farmer-secondary" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Expected Quantity</p>
-                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.qty}</p>
+                      <p className="text-[10px] font-extrabold text-farmer-secondary uppercase tracking-widest">Expected Quantity</p>
+                      <p className="text-xs font-bold text-farmer-text mt-0.5">{currentlyServing.qty}</p>
                     </div>
                   </div>
 
                   {/* BOOKING DATE */}
                   <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
-                      <Calendar className="w-3.5 h-3.5 text-slate-600" />
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-farmer-secondary flex items-center justify-center shrink-0 mt-0.5">
+                      <Calendar className="w-3.5 h-3.5 text-farmer-secondary" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Booking Date</p>
-                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.date}</p>
+                      <p className="text-[10px] font-extrabold text-farmer-secondary uppercase tracking-widest">Booking Date</p>
+                      <p className="text-xs font-bold text-farmer-text mt-0.5">{currentlyServing.date}</p>
                     </div>
                   </div>
 
                   {/* VERIFICATION TIME */}
                   <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-slate-600" />
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-farmer-secondary flex items-center justify-center shrink-0 mt-0.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-farmer-secondary" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Verification Time</p>
-                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.verificationTime}</p>
+                      <p className="text-[10px] font-extrabold text-farmer-secondary uppercase tracking-widest">Verification Time</p>
+                      <p className="text-xs font-bold text-farmer-text mt-0.5">{currentlyServing.verificationTime}</p>
                     </div>
                   </div>
 
@@ -324,7 +324,7 @@ const StaffLiveQueue = () => {
                 <button
                   type="button"
                   onClick={handleStartProcurement}
-                  className="flex-1 bg-[#046a38] hover:bg-[#03522c] text-white font-bold h-12 rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
+                  className="flex-1 bg-farmer-primary hover:bg-[#03522c] text-white font-bold h-12 rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
                 >
                   <Play className="w-4 h-4 fill-current" /> Start Procurement <ChevronRight className="w-4 h-4" />
                 </button>
@@ -332,9 +332,9 @@ const StaffLiveQueue = () => {
                 <button
                   type="button"
                   onClick={() => setShowBookingModal(true)}
-                  className="flex-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold h-12 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
+                  className="flex-1 bg-white border border-farmer-border hover:bg-slate-50 text-farmer-text font-bold h-12 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
                 >
-                  <FileText className="w-4 h-4 text-slate-600" /> View Booking Details
+                  <FileText className="w-4 h-4 text-farmer-secondary" /> View Booking Details
                 </button>
               </div>
 
@@ -346,13 +346,13 @@ const StaffLiveQueue = () => {
         {/* RIGHT COLUMN: QUEUE LIST (18 WAITING) TABLE & CALL NEXT FARMER BUTTON */}
         <div className="lg:col-span-5 space-y-4">
           
-          <Card className="border border-slate-100 shadow-xs bg-white rounded-2xl overflow-hidden flex flex-col justify-between h-full">
+          <Card className="border border-farmer-border shadow-xs bg-white rounded-2xl overflow-hidden flex flex-col justify-between h-full">
             <div>
               {/* QUEUE LIST HEADER */}
-              <CardHeader className="py-4 px-6 border-b border-slate-100 flex flex-row items-center justify-between bg-white">
+              <CardHeader className="py-4 px-6 border-b border-farmer-border flex flex-row items-center justify-between bg-white">
                 <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-[#046a38]" />
-                  <CardTitle className="text-base font-bold text-slate-900">
+                  <Users className="w-5 h-5 text-farmer-primary" />
+                  <CardTitle className="text-base font-bold text-farmer-text">
                     Queue List ({mockQueueList.length} waiting)
                   </CardTitle>
                 </div>
@@ -360,16 +360,16 @@ const StaffLiveQueue = () => {
                 <button
                   type="button"
                   onClick={() => handleScanFarmer()}
-                  className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl border border-farmer-border hover:bg-slate-50 text-farmer-text text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
-                  <RefreshCw className="w-3.5 h-3.5 text-slate-600" /> Refresh
+                  <RefreshCw className="w-3.5 h-3.5 text-farmer-secondary" /> Refresh
                 </button>
               </CardHeader>
 
               {/* QUEUE LIST TABLE */}
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
-                  <thead className="bg-slate-50/60 border-b border-slate-100 text-slate-400 uppercase font-extrabold text-[10px] tracking-wider">
+                  <thead className="bg-slate-50/60 border-b border-farmer-border text-farmer-secondary uppercase font-extrabold text-[10px] tracking-wider">
                     <tr>
                       <th className="p-3 pl-5">#</th>
                       <th className="p-3">Token</th>
@@ -385,11 +385,11 @@ const StaffLiveQueue = () => {
                         onClick={() => handleScanFarmer(item)}
                         className="hover:bg-slate-50/80 transition-colors cursor-pointer group"
                       >
-                        <td className="p-3 pl-5 text-xs font-bold text-slate-400">{item.id}</td>
-                        <td className="p-3 font-black text-[#046a38] text-sm group-hover:underline">{item.token}</td>
-                        <td className="p-3 font-bold text-slate-900 text-xs">{item.farmerName}</td>
-                        <td className="p-3 font-medium text-slate-600 text-xs">{item.commodity}</td>
-                        <td className="p-3 pr-5 text-right font-medium text-slate-500 text-xs">{item.slotTime}</td>
+                        <td className="p-3 pl-5 text-xs font-bold text-farmer-secondary">{item.id}</td>
+                        <td className="p-3 font-black text-farmer-primary text-sm group-hover:underline">{item.token}</td>
+                        <td className="p-3 font-bold text-farmer-text text-xs">{item.farmerName}</td>
+                        <td className="p-3 font-medium text-farmer-secondary text-xs">{item.commodity}</td>
+                        <td className="p-3 pr-5 text-right font-medium text-farmer-secondary text-xs">{item.slotTime}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -398,11 +398,11 @@ const StaffLiveQueue = () => {
             </div>
 
             {/* FULL-WIDTH CALL NEXT FARMER BUTTON AT BOTTOM OF QUEUE LIST */}
-            <div className="p-4 bg-white border-t border-slate-100">
+            <div className="p-4 bg-white border-t border-farmer-border">
               <button
                 type="button"
                 onClick={() => handleScanFarmer(mockQueueList[0])}
-                className="w-full bg-[#e6f4ea] hover:bg-[#d8edd9] text-[#046a38] font-black h-12 rounded-2xl transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
+                className="w-full bg-farmer-primary-light hover:bg-[#d8edd9] text-farmer-primary font-black h-12 rounded-2xl transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
               >
                 <FastForward className="w-4 h-4 fill-current" /> Call Next Farmer ({mockQueueList[0]?.token || 'A106'})
               </button>
@@ -418,7 +418,7 @@ const StaffLiveQueue = () => {
       {showBookingModal && (
         <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden animate-in zoom-in-95">
-            <div className="bg-[#046a38] p-5 flex justify-between items-center text-white">
+            <div className="bg-farmer-primary p-5 flex justify-between items-center text-white">
               <h3 className="font-bold text-base flex items-center gap-2">
                 <FileText className="w-5 h-5" /> Booking Details - {currentlyServing.token}
               </h3>
@@ -431,48 +431,48 @@ const StaffLiveQueue = () => {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 text-sm font-medium text-slate-700">
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2">
+            <div className="p-6 space-y-4 text-sm font-medium text-farmer-text">
+              <div className="bg-slate-50 p-4 rounded-xl border border-farmer-border space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-slate-500 text-xs">Farmer Name:</span>
-                  <span className="font-bold text-slate-900">{currentlyServing.farmerName}</span>
+                  <span className="text-farmer-secondary text-xs">Farmer Name:</span>
+                  <span className="font-bold text-farmer-text">{currentlyServing.farmerName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 text-xs">Farmer ID:</span>
-                  <span className="font-bold text-slate-900">{currentlyServing.farmerId}</span>
+                  <span className="text-farmer-secondary text-xs">Farmer ID:</span>
+                  <span className="font-bold text-farmer-text">{currentlyServing.farmerId}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 text-xs">Phone:</span>
-                  <span className="font-bold text-slate-900">{currentlyServing.phone}</span>
+                  <span className="text-farmer-secondary text-xs">Phone:</span>
+                  <span className="font-bold text-farmer-text">{currentlyServing.phone}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 text-xs">Location:</span>
-                  <span className="font-bold text-slate-900">{currentlyServing.village}</span>
+                  <span className="text-farmer-secondary text-xs">Location:</span>
+                  <span className="font-bold text-farmer-text">{currentlyServing.village}</span>
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2">
+              <div className="bg-slate-50 p-4 rounded-xl border border-farmer-border space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-slate-500 text-xs">Commodity:</span>
-                  <span className="font-bold text-slate-900">{currentlyServing.commodity}</span>
+                  <span className="text-farmer-secondary text-xs">Commodity:</span>
+                  <span className="font-bold text-farmer-text">{currentlyServing.commodity}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 text-xs">Expected Qty:</span>
-                  <span className="font-bold text-[#046a38]">{currentlyServing.qty}</span>
+                  <span className="text-farmer-secondary text-xs">Expected Qty:</span>
+                  <span className="font-bold text-farmer-primary">{currentlyServing.qty}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 text-xs">Booked Slot:</span>
-                  <span className="font-bold text-slate-900">{currentlyServing.slotTime}</span>
+                  <span className="text-farmer-secondary text-xs">Booked Slot:</span>
+                  <span className="font-bold text-farmer-text">{currentlyServing.slotTime}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 text-xs">Booking Date:</span>
-                  <span className="font-bold text-slate-900">{currentlyServing.date}</span>
+                  <span className="text-farmer-secondary text-xs">Booking Date:</span>
+                  <span className="font-bold text-farmer-text">{currentlyServing.date}</span>
                 </div>
               </div>
 
               <div className="pt-2">
                 <Button 
-                  className="w-full bg-[#046a38] hover:bg-[#03522c] text-white font-bold rounded-xl h-11"
+                  className="w-full bg-farmer-primary hover:bg-[#03522c] text-white font-bold rounded-xl h-11"
                   onClick={() => setShowBookingModal(false)}
                 >
                   Close Details

@@ -139,16 +139,16 @@ const AdminPayments = () => {
     <div className="space-y-6 max-w-[1600px] mx-auto animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-forest-900 tracking-tight">Payment Monitoring</h2>
+          <h2 className="text-2xl font-bold text-farmer-text tracking-tight">Payment Monitoring</h2>
           <p className="text-earth-600 mt-1">Direct Benefit Transfer (DBT) and procurement settlement status.</p>
         </div>
         
         <div className="flex items-center gap-3">
           <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-earth-400" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-farmer-secondary" />
             <Input 
               placeholder="Search by ID, Farmer, Transaction..." 
-              className="pl-9 bg-white border-earth-200"
+              className="pl-9 bg-white border-farmer-border"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -156,12 +156,12 @@ const AdminPayments = () => {
           <Button 
             variant={showFilters ? "default" : "outline"} 
             onClick={() => setShowFilters(!showFilters)}
-            className={`shrink-0 ${showFilters ? 'bg-forest-600 text-white hover:bg-forest-700' : 'bg-white text-earth-700'}`}
+            className={`shrink-0 ${showFilters ? 'bg-farmer-primary text-white hover:bg-farmer-primary' : 'bg-white text-earth-700'}`}
           >
             <Filter className="w-4 h-4 mr-2" />
             Filters
           </Button>
-          <Button variant="outline" className="shrink-0 bg-white border-earth-200 text-forest-700 hidden md:flex">
+          <Button variant="outline" className="shrink-0 bg-white border-farmer-border text-farmer-primary hidden md:flex">
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
@@ -169,11 +169,11 @@ const AdminPayments = () => {
       </div>
 
       {showFilters && (
-        <Card className="border-earth-200 shadow-sm bg-white animate-in slide-in-from-top-4">
+        <Card className="border-farmer-border shadow-sm bg-white animate-in slide-in-from-top-4">
           <CardContent className="p-4 md:p-5">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-earth-900 text-sm">Cascading Filters</h3>
-              <Button variant="ghost" size="sm" onClick={clearFilters} className="text-earth-500 hover:text-red-600 h-8 px-2 text-xs">
+              <h3 className="font-bold text-farmer-text text-sm">Cascading Filters</h3>
+              <Button variant="ghost" size="sm" onClick={clearFilters} className="text-farmer-secondary hover:text-red-600 h-8 px-2 text-xs">
                 <X className="w-3.5 h-3.5 mr-1" /> Clear All
               </Button>
             </div>
@@ -184,14 +184,14 @@ const AdminPayments = () => {
                 <label className="text-xs font-bold text-earth-700">1. State</label>
                 <div className="relative">
                   <select 
-                    className="w-full text-sm rounded-lg border border-earth-200 bg-white px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent"
+                    className="w-full text-sm rounded-lg border border-farmer-border bg-white px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent"
                     value={filters.state}
                     onChange={(e) => handleFilterChange('state', e.target.value)}
                   >
                     <option value="">All States</option>
                     {availableStates.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
-                  <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-earth-400 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-farmer-secondary pointer-events-none" />
                 </div>
               </div>
 
@@ -200,7 +200,7 @@ const AdminPayments = () => {
                 <label className="text-xs font-bold text-earth-700">2. District</label>
                 <div className="relative">
                   <select 
-                    className="w-full text-sm rounded-lg border border-earth-200 bg-white px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent disabled:opacity-50 disabled:bg-earth-50"
+                    className="w-full text-sm rounded-lg border border-farmer-border bg-white px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent disabled:opacity-50 disabled:bg-farmer-bg"
                     value={filters.district}
                     onChange={(e) => handleFilterChange('district', e.target.value)}
                     disabled={!filters.state}
@@ -208,7 +208,7 @@ const AdminPayments = () => {
                     <option value="">{filters.state ? 'All Districts' : 'Select State First'}</option>
                     {availableDistricts.map(d => <option key={d} value={d}>{d}</option>)}
                   </select>
-                  <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-earth-400 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-farmer-secondary pointer-events-none" />
                 </div>
               </div>
 
@@ -217,7 +217,7 @@ const AdminPayments = () => {
                 <label className="text-xs font-bold text-earth-700">3. Centre</label>
                 <div className="relative">
                   <select 
-                    className="w-full text-sm rounded-lg border border-earth-200 bg-white px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent disabled:opacity-50 disabled:bg-earth-50"
+                    className="w-full text-sm rounded-lg border border-farmer-border bg-white px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent disabled:opacity-50 disabled:bg-farmer-bg"
                     value={filters.centre}
                     onChange={(e) => handleFilterChange('centre', e.target.value)}
                     disabled={!filters.district}
@@ -225,7 +225,7 @@ const AdminPayments = () => {
                     <option value="">{filters.district ? 'All Centres' : 'Select District First'}</option>
                     {availableCentres.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
-                  <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-earth-400 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-farmer-secondary pointer-events-none" />
                 </div>
               </div>
 
@@ -234,7 +234,7 @@ const AdminPayments = () => {
                 <label className="text-xs font-bold text-earth-700">4. Date</label>
                 <div className="relative">
                   <select 
-                    className="w-full text-sm rounded-lg border border-earth-200 bg-white px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent disabled:opacity-50 disabled:bg-earth-50"
+                    className="w-full text-sm rounded-lg border border-farmer-border bg-white px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent disabled:opacity-50 disabled:bg-farmer-bg"
                     value={filters.date}
                     onChange={(e) => handleFilterChange('date', e.target.value)}
                     disabled={!filters.centre}
@@ -242,7 +242,7 @@ const AdminPayments = () => {
                     <option value="">{filters.centre ? 'All Dates' : 'Select Centre First'}</option>
                     {availableDates.map(d => <option key={d} value={d}>{d}</option>)}
                   </select>
-                  <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-earth-400 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-farmer-secondary pointer-events-none" />
                 </div>
               </div>
 
@@ -251,7 +251,7 @@ const AdminPayments = () => {
                 <label className="text-xs font-bold text-earth-700">5. Crop</label>
                 <div className="relative">
                   <select 
-                    className="w-full text-sm rounded-lg border border-earth-200 bg-white px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent disabled:opacity-50 disabled:bg-earth-50"
+                    className="w-full text-sm rounded-lg border border-farmer-border bg-white px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent disabled:opacity-50 disabled:bg-farmer-bg"
                     value={filters.crop}
                     onChange={(e) => handleFilterChange('crop', e.target.value)}
                     disabled={!filters.date}
@@ -259,7 +259,7 @@ const AdminPayments = () => {
                     <option value="">{filters.date ? 'All Crops' : 'Select Date First'}</option>
                     {availableCrops.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
-                  <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-earth-400 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-farmer-secondary pointer-events-none" />
                 </div>
               </div>
 
@@ -268,7 +268,7 @@ const AdminPayments = () => {
                 <label className="text-xs font-bold text-earth-700">6. Farmer ID</label>
                 <div className="relative">
                   <select 
-                    className="w-full text-sm rounded-lg border border-earth-200 bg-white px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent disabled:opacity-50 disabled:bg-earth-50"
+                    className="w-full text-sm rounded-lg border border-farmer-border bg-white px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent disabled:opacity-50 disabled:bg-farmer-bg"
                     value={filters.farmerId}
                     onChange={(e) => handleFilterChange('farmerId', e.target.value)}
                     disabled={!filters.crop}
@@ -276,7 +276,7 @@ const AdminPayments = () => {
                     <option value="">{filters.crop ? 'All Farmers' : 'Select Crop First'}</option>
                     {availableFarmers.map(f => <option key={f} value={f}>{f}</option>)}
                   </select>
-                  <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-earth-400 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 text-farmer-secondary pointer-events-none" />
                 </div>
               </div>
 
@@ -287,10 +287,10 @@ const AdminPayments = () => {
 
       {/* KPI Cards based on filtered results */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border-forest-200 shadow-sm bg-white">
+        <Card className="border-farmer-border shadow-sm bg-white">
           <CardContent className="p-4 md:p-5">
-            <p className="text-xs font-medium text-earth-500">Filtered Procurement Value</p>
-            <h3 className="text-2xl font-black text-forest-900 mt-1">₹ {(totalValue / 100000).toFixed(2)} L</h3>
+            <p className="text-xs font-medium text-farmer-secondary">Filtered Procurement Value</p>
+            <h3 className="text-2xl font-black text-farmer-text mt-1">₹ {(totalValue / 100000).toFixed(2)} L</h3>
           </CardContent>
         </Card>
         <Card className="border-green-200 shadow-sm bg-green-50/30">
@@ -313,14 +313,14 @@ const AdminPayments = () => {
         </Card>
       </div>
 
-      <Card className="border-earth-200 shadow-sm bg-white overflow-hidden">
-        <CardHeader className="border-b border-earth-100 py-4 bg-earth-50 flex flex-row items-center justify-between">
-           <CardTitle className="text-lg text-forest-900">Payment Status Tracker</CardTitle>
-           <span className="text-xs font-bold text-earth-500">{filteredPayments.length} results</span>
+      <Card className="border-farmer-border shadow-sm bg-white overflow-hidden">
+        <CardHeader className="border-b border-farmer-border py-4 bg-farmer-bg flex flex-row items-center justify-between">
+           <CardTitle className="text-lg text-farmer-text">Payment Status Tracker</CardTitle>
+           <span className="text-xs font-bold text-farmer-secondary">{filteredPayments.length} results</span>
         </CardHeader>
         <CardContent className="p-0 overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-[11px] text-earth-500 bg-earth-50/50 uppercase border-b border-earth-200 tracking-wider">
+            <thead className="text-[11px] text-farmer-secondary bg-farmer-bg/50 uppercase border-b border-farmer-border tracking-wider">
                <tr>
                   <th className="px-6 py-4 font-bold">Payment / Proc ID</th>
                   <th className="px-6 py-4 font-bold">Farmer & Center</th>
@@ -342,35 +342,35 @@ const AdminPayments = () => {
                    if (pay.status === 'Not Initiated' || pay.status === 'Pending') statusBadge = 'outline';
 
                    return (
-                     <tr key={pay.id} className="hover:bg-earth-50/50 transition-colors">
+                     <tr key={pay.id} className="hover:bg-farmer-bg/50 transition-colors">
                         <td className="px-6 py-4">
-                           <p className="font-bold text-forest-900 mb-0.5">{pay.id}</p>
-                           <p className="text-[10px] text-earth-500 font-mono">{pay.procurementId}</p>
+                           <p className="font-bold text-farmer-text mb-0.5">{pay.id}</p>
+                           <p className="text-[10px] text-farmer-secondary font-mono">{pay.procurementId}</p>
                         </td>
                         <td className="px-6 py-4">
-                           <p className="font-bold text-earth-900">{pay.farmerName}</p>
-                           <p className="text-[10px] text-earth-500 flex items-center gap-1 mt-0.5">
+                           <p className="font-bold text-farmer-text">{pay.farmerName}</p>
+                           <p className="text-[10px] text-farmer-secondary flex items-center gap-1 mt-0.5">
                              <Building className="w-3 h-3"/>{pay.centreName}
                            </p>
-                           <p className="text-[9px] text-earth-400 mt-0.5">{pay.farmerId}</p>
+                           <p className="text-[9px] text-farmer-secondary mt-0.5">{pay.farmerId}</p>
                         </td>
                         <td className="px-6 py-4">
-                           <p className="font-medium text-earth-900">{pay.crop}</p>
-                           <p className="text-[10px] text-earth-500 mt-0.5">{pay.date}</p>
+                           <p className="font-medium text-farmer-text">{pay.crop}</p>
+                           <p className="text-[10px] text-farmer-secondary mt-0.5">{pay.date}</p>
                         </td>
                         <td className="px-6 py-4">
-                           <p className="font-mono text-xs text-earth-700 flex items-center gap-1"><CreditCard className="w-3.5 h-3.5 text-earth-400"/> {pay.bankAccount}</p>
-                           <p className="text-[10px] text-earth-500 mt-0.5">IFSC: {pay.ifsc}</p>
+                           <p className="font-mono text-xs text-earth-700 flex items-center gap-1"><CreditCard className="w-3.5 h-3.5 text-farmer-secondary"/> {pay.bankAccount}</p>
+                           <p className="text-[10px] text-farmer-secondary mt-0.5">IFSC: {pay.ifsc}</p>
                         </td>
                         <td className="px-6 py-4">
-                           <p className="font-black text-forest-900">₹ {pay.amount?.toLocaleString()}</p>
-                           <span className="font-mono text-[9px] text-earth-500 mt-1 block">{pay.txRef}</span>
+                           <p className="font-black text-farmer-text">₹ {pay.amount?.toLocaleString()}</p>
+                           <span className="font-mono text-[9px] text-farmer-secondary mt-1 block">{pay.txRef}</span>
                         </td>
                         <td className="px-6 py-4">
                            <Badge variant={statusBadge} className="uppercase tracking-wider text-[10px]">{pay.status}</Badge>
                         </td>
                         <td className="px-6 py-4 text-right">
-                           <Button variant="ghost" size="sm" className="text-forest-600 hover:text-forest-700 hover:bg-forest-50">
+                           <Button variant="ghost" size="sm" className="text-farmer-primary hover:text-farmer-primary hover:bg-farmer-primary-light">
                              <Eye className="w-4 h-4 mr-2" />
                              View
                            </Button>
@@ -380,9 +380,9 @@ const AdminPayments = () => {
                  })
                ) : (
                  <tr>
-                   <td colSpan="7" className="px-6 py-12 text-center text-earth-500">
+                   <td colSpan="7" className="px-6 py-12 text-center text-farmer-secondary">
                      <IndianRupee className="w-12 h-12 mx-auto mb-3 text-earth-300" />
-                     <p className="text-lg font-medium text-earth-900">No payments found</p>
+                     <p className="text-lg font-medium text-farmer-text">No payments found</p>
                      <p className="text-xs mt-1">Try relaxing your filters to see more results</p>
                    </td>
                  </tr>

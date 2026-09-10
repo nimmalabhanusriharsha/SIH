@@ -493,14 +493,14 @@ const FarmerAuth = ({ initialTab = 'login' }) => {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-black text-emerald-400 uppercase tracking-wider">SMS Message</span>
-                    <span className="text-[10px] text-slate-400">• {smsBanner.timestamp}</span>
+                    <span className="text-[10px] text-farmer-secondary">• {smsBanner.timestamp}</span>
                   </div>
                   <p className="text-xs font-bold text-slate-200">KisanQueue OTP Service</p>
                 </div>
               </div>
               <button 
                 onClick={() => setSmsBanner(null)}
-                className="text-slate-400 hover:text-white text-xs font-bold px-1"
+                className="text-farmer-secondary hover:text-white text-xs font-bold px-1"
               >
                 ✕
               </button>

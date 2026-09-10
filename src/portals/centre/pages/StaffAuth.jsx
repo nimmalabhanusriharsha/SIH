@@ -161,7 +161,7 @@ const StaffAuth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f7f5] flex items-center justify-center p-4 py-8 font-sans relative overflow-x-hidden">
+    <div className="min-h-screen bg-farmer-card flex items-center justify-center p-4 py-8 font-sans relative overflow-x-hidden">
       
       {/* FLOATING REAL SMS NOTIFICATION BANNER */}
       {smsBanner && (
@@ -175,14 +175,14 @@ const StaffAuth = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-black text-emerald-400 uppercase tracking-wider">SMS Message</span>
-                    <span className="text-[10px] text-slate-400">• {smsBanner.timestamp}</span>
+                    <span className="text-[10px] text-farmer-secondary">• {smsBanner.timestamp}</span>
                   </div>
                   <p className="text-xs font-bold text-slate-200">KisanQueue OTP Service</p>
                 </div>
               </div>
               <button 
                 onClick={() => setSmsBanner(null)}
-                className="text-slate-400 hover:text-white text-xs font-bold px-1"
+                className="text-farmer-secondary hover:text-white text-xs font-bold px-1"
               >
                 ✕
               </button>
@@ -206,19 +206,19 @@ const StaffAuth = () => {
         
         {/* BRANDING HEADER */}
         <div className="flex flex-col items-center justify-center text-center">
-          <div className="w-14 h-14 rounded-2xl bg-[#046a38] text-white flex items-center justify-center shadow-md mb-3">
+          <div className="w-14 h-14 rounded-2xl bg-farmer-primary text-white flex items-center justify-center shadow-md mb-3">
             <Building2 className="w-7 h-7 text-white" strokeWidth={2.5} />
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">KisanQueue</h1>
-          <p className="text-xs font-extrabold text-[#046a38] uppercase tracking-widest mt-0.5">
+          <h1 className="text-2xl font-black text-farmer-text tracking-tight">KisanQueue</h1>
+          <p className="text-xs font-extrabold text-farmer-primary uppercase tracking-widest mt-0.5">
             PROCUREMENT CENTRE STAFF PORTAL
           </p>
         </div>
 
         {/* AUTH CARD */}
-        <div className="bg-white border border-slate-200/90 rounded-3xl shadow-sm overflow-hidden">
+        <div className="bg-white border border-farmer-border/90 rounded-3xl shadow-sm overflow-hidden">
           
-          <div className="bg-[#046a38] p-5 text-white text-center">
+          <div className="bg-farmer-primary p-5 text-white text-center">
             <h2 className="text-lg font-extrabold flex items-center justify-center gap-2">
               <Lock className="w-4 h-4 text-emerald-200" />
               {step === 1 ? 'Staff Authentication' : 'OTP Verification'}
@@ -242,8 +242,8 @@ const StaffAuth = () => {
 
             {/* SUCCESS ALERT */}
             {successMsg && (
-              <div className="p-3.5 rounded-xl text-xs font-bold bg-emerald-50 text-[#046a38] border border-emerald-200 flex items-center gap-2 animate-in fade-in">
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-[#046a38]" />
+              <div className="p-3.5 rounded-xl text-xs font-bold bg-emerald-50 text-farmer-primary border border-emerald-200 flex items-center gap-2 animate-in fade-in">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-farmer-primary" />
                 <span>{successMsg}</span>
               </div>
             )}
@@ -254,14 +254,14 @@ const StaffAuth = () => {
                 
                 {/* Procurement Centre Selection */}
                 <div>
-                  <label className="text-slate-700 uppercase tracking-wider block mb-1.5">
+                  <label className="text-farmer-text uppercase tracking-wider block mb-1.5">
                     Procurement Centre <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <select
                       value={centreId}
                       onChange={(e) => setCentreId(e.target.value)}
-                      className="w-full h-11 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 bg-white focus:outline-none focus:border-[#046a38] cursor-pointer"
+                      className="w-full h-11 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text bg-white focus:outline-none focus:border-farmer-primary cursor-pointer"
                     >
                       {state.centres.map(c => (
                         <option key={c.id} value={c.id}>{c.id} - {c.name}</option>
@@ -273,13 +273,13 @@ const StaffAuth = () => {
                 {/* Counter ID Selection */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-slate-700 uppercase tracking-wider block mb-1.5">
+                    <label className="text-farmer-text uppercase tracking-wider block mb-1.5">
                       Counter ID <span className="text-red-500">*</span>
                     </label>
                     <select
                       value={counterId}
                       onChange={(e) => setCounterId(e.target.value)}
-                      className="w-full h-11 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 bg-white focus:outline-none focus:border-[#046a38] cursor-pointer"
+                      className="w-full h-11 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text bg-white focus:outline-none focus:border-farmer-primary cursor-pointer"
                     >
                       <option value="Counter 1">Counter 1</option>
                       <option value="Counter 2">Counter 2</option>
@@ -289,7 +289,7 @@ const StaffAuth = () => {
                   </div>
 
                   <div>
-                    <label className="text-slate-700 uppercase tracking-wider block mb-1.5">
+                    <label className="text-farmer-text uppercase tracking-wider block mb-1.5">
                       Staff Name
                     </label>
                     <input
@@ -297,25 +297,25 @@ const StaffAuth = () => {
                       placeholder="e.g. Srinivas Rao"
                       value={staffName}
                       onChange={(e) => setStaffName(e.target.value)}
-                      className="w-full h-11 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 bg-white focus:outline-none focus:border-[#046a38]"
+                      className="w-full h-11 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text bg-white focus:outline-none focus:border-farmer-primary"
                     />
                   </div>
                 </div>
 
                 {/* Phone Number Input */}
                 <div>
-                  <label className="text-slate-700 uppercase tracking-wider block mb-1.5">
+                  <label className="text-farmer-text uppercase tracking-wider block mb-1.5">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-farmer-secondary" />
                     <input
                       type="text"
                       maxLength={10}
                       placeholder="10-digit mobile number"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full h-11 border border-slate-200 rounded-xl pl-10 pr-3 text-xs font-bold text-slate-900 bg-white focus:outline-none focus:border-[#046a38]"
+                      className="w-full h-11 border border-farmer-border rounded-xl pl-10 pr-3 text-xs font-bold text-farmer-text bg-white focus:outline-none focus:border-farmer-primary"
                       required
                     />
                   </div>
@@ -324,7 +324,7 @@ const StaffAuth = () => {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full py-3.5 bg-[#046a38] hover:bg-[#03522c] text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer mt-2"
+                  className="w-full py-3.5 bg-farmer-primary hover:bg-[#03522c] text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer mt-2"
                 >
                   <span>Send OTP</span>
                   <ArrowRight className="w-4 h-4" />
@@ -337,12 +337,12 @@ const StaffAuth = () => {
               <form onSubmit={handleVerifyAndLogin} className="space-y-5 text-center text-xs">
                 
                 {/* Centre & Counter Badge */}
-                <div className="bg-[#e6f4ea] border border-emerald-200 p-3 rounded-xl font-bold text-[#046a38] flex items-center justify-between text-xs">
+                <div className="bg-farmer-primary-light border border-emerald-200 p-3 rounded-xl font-bold text-farmer-primary flex items-center justify-between text-xs">
                   <span>{centreId} • {counterId} • +91 {phone}</span>
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="text-[11px] underline font-extrabold text-slate-600 hover:text-slate-900 cursor-pointer"
+                    className="text-[11px] underline font-extrabold text-farmer-secondary hover:text-farmer-text cursor-pointer"
                   >
                     Edit Details
                   </button>
@@ -351,7 +351,7 @@ const StaffAuth = () => {
                 {/* 6-DIGIT BOXES */}
                 <div>
                   <div className="flex justify-between items-center mb-3">
-                    <label className="text-xs font-extrabold text-slate-700 uppercase tracking-wider">
+                    <label className="text-xs font-extrabold text-farmer-text uppercase tracking-wider">
                       Enter 6-Digit Verification Code
                     </label>
                   </div>
@@ -365,21 +365,21 @@ const StaffAuth = () => {
                         value={digit}
                         onChange={(e) => handleOtpChange(idx, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(idx, e)}
-                        className="w-10 h-12 border-2 border-slate-200 rounded-xl text-center font-black text-lg text-slate-900 focus:outline-none focus:border-[#046a38] bg-slate-50 focus:bg-white"
+                        className="w-10 h-12 border-2 border-farmer-border rounded-xl text-center font-black text-lg text-farmer-text focus:outline-none focus:border-farmer-primary bg-slate-50 focus:bg-white"
                       />
                     ))}
                   </div>
                 </div>
 
                 {/* RESEND TIMER & ACTION */}
-                <div className="flex justify-between items-center text-xs font-bold text-slate-500 pt-1">
+                <div className="flex justify-between items-center text-xs font-bold text-farmer-secondary pt-1">
                   <span>{timer > 0 ? `Resend OTP in 00:${timer < 10 ? '0' : ''}${timer}s` : 'Did not receive code?'}</span>
                   <button
                     type="button"
                     onClick={handleResendOtp}
                     disabled={!canResend}
                     className={`font-extrabold transition-colors cursor-pointer ${
-                      canResend ? 'text-[#046a38] hover:underline' : 'text-slate-300 cursor-not-allowed'
+                      canResend ? 'text-farmer-primary hover:underline' : 'text-slate-300 cursor-not-allowed'
                     }`}
                   >
                     Resend OTP
@@ -390,7 +390,7 @@ const StaffAuth = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 bg-[#046a38] hover:bg-[#03522c] text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3.5 bg-farmer-primary hover:bg-[#03522c] text-white font-extrabold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <RefreshCw className="w-4 h-4 animate-spin text-white" />
@@ -408,10 +408,10 @@ const StaffAuth = () => {
           </div>
 
           {/* FOOTER ACTIONS */}
-          <div className="p-4 bg-slate-50 border-t border-slate-200/80 flex items-center justify-end text-xs">
+          <div className="p-4 bg-slate-50 border-t border-farmer-border/80 flex items-center justify-end text-xs">
             <button
               onClick={() => navigate('/')}
-              className="font-semibold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+              className="font-semibold text-farmer-secondary hover:text-farmer-text transition-colors cursor-pointer"
             >
               ← Back to Portal
             </button>

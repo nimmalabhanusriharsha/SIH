@@ -58,17 +58,17 @@ const StaffActivity = () => {
     <div className="space-y-6 max-w-5xl mx-auto font-sans">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <p className="text-[11px] font-extrabold text-[#046a38] uppercase tracking-widest">PROCUREMENT CENTRE</p>
-          <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mt-0.5">Activity Log</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Traceability of all farmer procurements and counter operations performed at this centre.</p>
+          <p className="text-[11px] font-extrabold text-farmer-primary uppercase tracking-widest">PROCUREMENT CENTRE</p>
+          <h1 className="text-2xl md:text-3xl font-black text-farmer-text tracking-tight mt-0.5">Activity Log</h1>
+          <p className="text-sm font-medium text-farmer-secondary mt-1">Traceability of all farmer procurements and counter operations performed at this centre.</p>
         </div>
       </div>
 
-      <Card className="border border-slate-200/80 shadow-xs overflow-hidden bg-white rounded-2xl">
-        <CardHeader className="bg-slate-50/60 border-b border-slate-100 p-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-           <CardTitle className="text-base font-extrabold text-slate-900 flex items-center gap-2.5">
-             <div className="w-8 h-8 rounded-xl bg-[#e6f4ea] flex items-center justify-center shrink-0">
-               <div className="w-5.5 h-5.5 rounded-lg bg-[#046a38] text-white flex items-center justify-center shadow-xs">
+      <Card className="border border-farmer-border/80 shadow-xs overflow-hidden bg-white rounded-2xl">
+        <CardHeader className="bg-slate-50/60 border-b border-farmer-border p-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+           <CardTitle className="text-base font-extrabold text-farmer-text flex items-center gap-2.5">
+             <div className="w-8 h-8 rounded-xl bg-farmer-primary-light flex items-center justify-center shrink-0">
+               <div className="w-5.5 h-5.5 rounded-lg bg-farmer-primary text-white flex items-center justify-center shadow-xs">
                  <History className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
                </div>
              </div>
@@ -76,10 +76,10 @@ const StaffActivity = () => {
            </CardTitle>
            
            <div className="relative w-full lg:w-80">
-             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-farmer-secondary" />
              <Input 
                placeholder="Search by action, farmer, or counter..." 
-               className="pl-9 h-9 border-slate-200 text-xs font-bold rounded-xl focus:border-[#046a38]"
+               className="pl-9 h-9 border-farmer-border text-xs font-bold rounded-xl focus:border-farmer-primary"
                value={searchTerm}
                onChange={(e) => setSearchTerm(e.target.value)}
              />
@@ -91,7 +91,7 @@ const StaffActivity = () => {
             {filteredActivity.length > 0 ? filteredActivity.map((activity) => (
               <div key={activity.id} className="p-5 hover:bg-slate-50/80 transition-colors flex gap-4">
                  <div className="flex flex-col items-center gap-2 shrink-0">
-                    <div className="w-10 h-10 rounded-xl bg-[#e6f4ea] text-[#046a38] flex items-center justify-center font-bold">
+                    <div className="w-10 h-10 rounded-xl bg-farmer-primary-light text-farmer-primary flex items-center justify-center font-bold">
                       <CheckCircle2 className="w-5 h-5" strokeWidth={2.5} />
                     </div>
                     <div className="w-px h-full bg-slate-200 min-h-[35px]"></div>
@@ -99,29 +99,29 @@ const StaffActivity = () => {
                  
                  <div className="flex-1 pb-1">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 mb-2">
-                       <p className="text-sm font-black text-slate-900 leading-snug">{activity.action}</p>
-                       <span className="text-[11px] font-bold text-slate-500 whitespace-nowrap bg-slate-100 px-2.5 py-1 rounded-lg">
+                       <p className="text-sm font-black text-farmer-text leading-snug">{activity.action}</p>
+                       <span className="text-[11px] font-bold text-farmer-secondary whitespace-nowrap bg-slate-100 px-2.5 py-1 rounded-lg">
                          {new Date(activity.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                        </span>
                     </div>
                     
                     <div className="flex flex-wrap gap-2 mt-2">
                        {activity.counterId && (
-                         <span className="bg-[#e6f4ea] border border-emerald-200 text-[#046a38] font-extrabold uppercase tracking-wider text-[10px] px-2.5 py-1 rounded-lg flex items-center gap-1">
-                           <Monitor className="w-3 h-3 text-[#046a38]" /> {activity.counterId}
+                         <span className="bg-farmer-primary-light border border-emerald-200 text-farmer-primary font-extrabold uppercase tracking-wider text-[10px] px-2.5 py-1 rounded-lg flex items-center gap-1">
+                           <Monitor className="w-3 h-3 text-farmer-primary" /> {activity.counterId}
                          </span>
                        )}
                        {activity.farmerName && (
-                         <span className="bg-slate-100 border border-slate-200 text-slate-700 font-extrabold uppercase tracking-wider text-[10px] px-2.5 py-1 rounded-lg flex items-center gap-1">
-                           <User className="w-3 h-3 text-slate-600" /> Farmer: {activity.farmerName} {activity.farmerId ? `(${activity.farmerId})` : ''}
+                         <span className="bg-slate-100 border border-farmer-border text-farmer-text font-extrabold uppercase tracking-wider text-[10px] px-2.5 py-1 rounded-lg flex items-center gap-1">
+                           <User className="w-3 h-3 text-farmer-secondary" /> Farmer: {activity.farmerName} {activity.farmerId ? `(${activity.farmerId})` : ''}
                          </span>
                        )}
-                       <span className="bg-slate-50 border border-slate-200 text-slate-600 font-extrabold uppercase tracking-wider text-[10px] px-2.5 py-1 rounded-lg flex items-center gap-1">
+                       <span className="bg-slate-50 border border-farmer-border text-farmer-secondary font-extrabold uppercase tracking-wider text-[10px] px-2.5 py-1 rounded-lg flex items-center gap-1">
                          Staff: {activity.staffId}
                        </span>
                        {activity.bookingId && activity.bookingId !== 'N/A' && (
-                         <span className="bg-slate-50 border border-slate-200 text-slate-600 font-extrabold uppercase tracking-wider text-[10px] px-2.5 py-1 rounded-lg flex items-center gap-1">
-                           <FileText className="w-3 h-3 text-[#046a38]" /> Ref: {activity.bookingId}
+                         <span className="bg-slate-50 border border-farmer-border text-farmer-secondary font-extrabold uppercase tracking-wider text-[10px] px-2.5 py-1 rounded-lg flex items-center gap-1">
+                           <FileText className="w-3 h-3 text-farmer-primary" /> Ref: {activity.bookingId}
                          </span>
                        )}
                     </div>
@@ -130,7 +130,7 @@ const StaffActivity = () => {
             )) : (
               <div className="p-12 text-center">
                 <History className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                <p className="text-slate-500 font-bold text-sm">No matching activity records found.</p>
+                <p className="text-farmer-secondary font-bold text-sm">No matching activity records found.</p>
               </div>
             )}
           </div>

@@ -7,13 +7,13 @@ const AdminInsights = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto animate-in fade-in duration-500">
       <div>
-        <h2 className="text-2xl font-bold text-forest-900 tracking-tight flex items-center gap-2">
-          <BrainCircuit className="w-6 h-6 text-forest-600" />
+        <h2 className="text-2xl font-bold text-farmer-text tracking-tight flex items-center gap-2">
+          <BrainCircuit className="w-6 h-6 text-farmer-primary" />
           AI Smart Insights
         </h2>
         <p className="text-earth-600 mt-1">Predictive recommendations and operational intelligence.</p>
-        <div className="bg-earth-100 text-earth-600 px-3 py-1.5 rounded-full inline-flex text-xs font-medium mt-3 border border-earth-200">
-          <Lightbulb className="w-3.5 h-3.5 mr-1.5 text-earth-500" /> Prototype Mode: Insights are estimated using historical mock data.
+        <div className="bg-earth-100 text-earth-600 px-3 py-1.5 rounded-full inline-flex text-xs font-medium mt-3 border border-farmer-border">
+          <Lightbulb className="w-3.5 h-3.5 mr-1.5 text-farmer-secondary" /> Prototype Mode: Insights are estimated using historical mock data.
         </div>
       </div>
 
@@ -21,7 +21,7 @@ const AdminInsights = () => {
         
         {/* Urgent Insights */}
         <div className="space-y-6">
-          <h3 className="text-lg font-bold text-earth-900 border-b border-earth-200 pb-2">High Priority Alerts</h3>
+          <h3 className="text-lg font-bold text-farmer-text border-b border-farmer-border pb-2">High Priority Alerts</h3>
           
           <Card className="border-red-200 shadow-sm bg-red-50/50 hover:shadow-md transition-shadow relative overflow-hidden">
              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
@@ -45,7 +45,7 @@ const AdminInsights = () => {
                       <p className="text-sm text-earth-800 font-medium mb-3">Activate Counter 4 immediately to offset the incoming load.</p>
                       <div className="flex gap-2">
                          <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white border-0">Approve Action</Button>
-                         <Button size="sm" variant="outline" className="border-earth-200">Dismiss</Button>
+                         <Button size="sm" variant="outline" className="border-farmer-border">Dismiss</Button>
                       </div>
                     </div>
                   </div>
@@ -83,7 +83,7 @@ const AdminInsights = () => {
 
         {/* Strategic Insights */}
         <div className="space-y-6">
-          <h3 className="text-lg font-bold text-earth-900 border-b border-earth-200 pb-2">Strategic Intelligence</h3>
+          <h3 className="text-lg font-bold text-farmer-text border-b border-farmer-border pb-2">Strategic Intelligence</h3>
           
           <Card className="border-amber-200 shadow-sm bg-amber-50/50 hover:shadow-md transition-shadow relative overflow-hidden">
              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">

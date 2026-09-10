@@ -218,18 +218,18 @@ const StaffProcurement = () => {
     <div className="space-y-6 font-sans">
       
       {/* PAGE HEADER & TOP STEPPER */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-200 pb-5">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-farmer-border pb-5">
         <div>
-          <p className="text-[11px] font-extrabold text-[#046a38] uppercase tracking-widest">PROCUREMENT CENTRE</p>
-          <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mt-0.5">Procurement</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Complete quality check, record harvest details and process payment for the verified farmer.</p>
+          <p className="text-[11px] font-extrabold text-farmer-primary uppercase tracking-widest">PROCUREMENT CENTRE</p>
+          <h1 className="text-2xl md:text-3xl font-black text-farmer-text tracking-tight mt-0.5">Procurement</h1>
+          <p className="text-sm font-medium text-farmer-secondary mt-1">Complete quality check, record harvest details and process payment for the verified farmer.</p>
         </div>
 
         {/* TOP STEPPER BADGE */}
-        <div className="flex items-center gap-2 bg-white border border-slate-200/90 rounded-2xl px-4 py-2 shadow-xs text-xs font-bold">
+        <div className="flex items-center gap-2 bg-white border border-farmer-border/90 rounded-2xl px-4 py-2 shadow-xs text-xs font-bold">
           {/* Step 1: Verify Farmer */}
           <div className="flex items-center gap-1.5 text-emerald-700">
-            <div className="w-5 h-5 rounded-full bg-[#046a38] text-white flex items-center justify-center text-[10px] font-extrabold">
+            <div className="w-5 h-5 rounded-full bg-farmer-primary text-white flex items-center justify-center text-[10px] font-extrabold">
               <Check className="w-3 h-3 stroke-[3]" />
             </div>
             <span>Verify Farmer</span>
@@ -238,18 +238,18 @@ const StaffProcurement = () => {
           <span className="text-slate-300 font-normal">──</span>
 
           {/* Step 2: Quality Check (ACTIVE) */}
-          <div className="flex items-center gap-1.5 text-slate-900">
-            <div className="w-5 h-5 rounded-full bg-[#046a38] text-white flex items-center justify-center text-[11px] font-black">
+          <div className="flex items-center gap-1.5 text-farmer-text">
+            <div className="w-5 h-5 rounded-full bg-farmer-primary text-white flex items-center justify-center text-[11px] font-black">
               2
             </div>
-            <span className="font-extrabold text-[#046a38]">Quality Check</span>
+            <span className="font-extrabold text-farmer-primary">Quality Check</span>
           </div>
 
           <span className="text-slate-300 font-normal">──</span>
 
           {/* Step 3: Procurement */}
-          <div className="flex items-center gap-1.5 text-slate-400">
-            <div className="w-5 h-5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 flex items-center justify-center text-[11px] font-bold">
+          <div className="flex items-center gap-1.5 text-farmer-secondary">
+            <div className="w-5 h-5 rounded-full bg-slate-100 text-farmer-secondary border border-farmer-border flex items-center justify-center text-[11px] font-bold">
               3
             </div>
             <span>Procurement</span>
@@ -258,8 +258,8 @@ const StaffProcurement = () => {
           <span className="text-slate-300 font-normal">──</span>
 
           {/* Step 4: Payment */}
-          <div className="flex items-center gap-1.5 text-slate-400">
-            <div className="w-5 h-5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 flex items-center justify-center text-[11px] font-bold">
+          <div className="flex items-center gap-1.5 text-farmer-secondary">
+            <div className="w-5 h-5 rounded-full bg-slate-100 text-farmer-secondary border border-farmer-border flex items-center justify-center text-[11px] font-bold">
               4
             </div>
             <span>Payment</span>
@@ -272,9 +272,9 @@ const StaffProcurement = () => {
         
         {/* COLUMN 1 (lg:col-span-3): VERIFIED FARMER CARD */}
         <div className="lg:col-span-3 space-y-6">
-          <Card className="border border-slate-200 shadow-xs bg-white rounded-2xl overflow-hidden">
+          <Card className="border border-farmer-border shadow-xs bg-white rounded-2xl overflow-hidden">
             {/* Header Banner */}
-            <div className="bg-[#046a38] px-4 py-3 flex justify-between items-center text-white">
+            <div className="bg-farmer-primary px-4 py-3 flex justify-between items-center text-white">
               <div className="flex items-center gap-2">
                 <Sprout className="w-4 h-4 text-emerald-200" strokeWidth={2.5} />
                 <span className="font-extrabold text-sm tracking-tight">Verified Farmer</span>
@@ -287,62 +287,62 @@ const StaffProcurement = () => {
             <CardContent className="p-5 space-y-5">
               {/* Profile Avatar & Info */}
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-full bg-[#e6f4ea] flex items-center justify-center text-[#046a38] shrink-0 border border-emerald-200">
-                  <div className="w-6 h-6 rounded-full bg-[#046a38] text-white flex items-center justify-center text-xs font-black">
+                <div className="w-12 h-12 rounded-full bg-farmer-primary-light flex items-center justify-center text-farmer-primary shrink-0 border border-emerald-200">
+                  <div className="w-6 h-6 rounded-full bg-farmer-primary text-white flex items-center justify-center text-xs font-black">
                     {formData.farmerName.charAt(0)}
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-base leading-tight">{formData.farmerName}</h3>
-                  <p className="text-xs font-semibold text-slate-500 mt-0.5">{formData.farmerId}</p>
+                  <h3 className="font-bold text-farmer-text text-base leading-tight">{formData.farmerName}</h3>
+                  <p className="text-xs font-semibold text-farmer-secondary mt-0.5">{formData.farmerId}</p>
                 </div>
               </div>
 
               {/* Farmer Attributes List */}
-              <div className="space-y-3.5 pt-2 text-xs font-semibold text-slate-700">
+              <div className="space-y-3.5 pt-2 text-xs font-semibold text-farmer-text">
                 <div className="flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-slate-400 shrink-0" strokeWidth={2} />
+                  <Phone className="w-4 h-4 text-farmer-secondary shrink-0" strokeWidth={2} />
                   <span>{formData.phone}</span>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-4 h-4 text-slate-400 shrink-0" strokeWidth={2} />
+                  <MapPin className="w-4 h-4 text-farmer-secondary shrink-0" strokeWidth={2} />
                   <span>{formData.location}</span>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Calendar className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" strokeWidth={2} />
+                  <Calendar className="w-4 h-4 text-farmer-secondary shrink-0 mt-0.5" strokeWidth={2} />
                   <div>
-                    <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider">Booking Date</p>
-                    <p className="text-slate-900 font-bold">{formData.bookingDate}</p>
+                    <p className="text-[10px] text-farmer-secondary font-extrabold uppercase tracking-wider">Booking Date</p>
+                    <p className="text-farmer-text font-bold">{formData.bookingDate}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Clock className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" strokeWidth={2} />
+                  <Clock className="w-4 h-4 text-farmer-secondary shrink-0 mt-0.5" strokeWidth={2} />
                   <div>
-                    <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider">Booked Slot</p>
-                    <p className="text-slate-900 font-bold">{formData.bookedSlot}</p>
+                    <p className="text-[10px] text-farmer-secondary font-extrabold uppercase tracking-wider">Booked Slot</p>
+                    <p className="text-farmer-text font-bold">{formData.bookedSlot}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Sprout className="w-4 h-4 text-[#046a38] shrink-0 mt-0.5" strokeWidth={2} />
+                  <Sprout className="w-4 h-4 text-farmer-primary shrink-0 mt-0.5" strokeWidth={2} />
                   <div>
-                    <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider">Commodity</p>
-                    <p className="text-slate-900 font-bold">{formData.commodity}</p>
+                    <p className="text-[10px] text-farmer-secondary font-extrabold uppercase tracking-wider">Commodity</p>
+                    <p className="text-farmer-text font-bold">{formData.commodity}</p>
                   </div>
                 </div>
               </div>
 
               {/* Verified Status Alert Box */}
-              <div className="bg-[#e6f4ea] border border-emerald-200 rounded-xl p-3.5 flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-[#046a38] text-white flex items-center justify-center shrink-0 mt-0.5">
+              <div className="bg-farmer-primary-light border border-emerald-200 rounded-xl p-3.5 flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-farmer-primary text-white flex items-center justify-center shrink-0 mt-0.5">
                   <Check className="w-3.5 h-3.5 stroke-[3]" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900 text-xs">Farmer Verified</h4>
-                  <p className="text-[11px] font-medium text-slate-600 leading-tight mt-0.5">
+                  <h4 className="font-bold text-farmer-text text-xs">Farmer Verified</h4>
+                  <p className="text-[11px] font-medium text-farmer-secondary leading-tight mt-0.5">
                     Proceed with quality check and procurement.
                   </p>
                 </div>
@@ -355,10 +355,10 @@ const StaffProcurement = () => {
         <div className="lg:col-span-6 space-y-6">
           
           {/* HARVEST & QUALITY DETAILS CARD */}
-          <Card className="border border-slate-200 shadow-xs bg-white rounded-2xl overflow-hidden">
-            <CardHeader className="bg-white border-b border-slate-100 py-3.5 px-5">
-              <CardTitle className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <Sprout className="w-4 h-4 text-[#046a38]" strokeWidth={2.5} />
+          <Card className="border border-farmer-border shadow-xs bg-white rounded-2xl overflow-hidden">
+            <CardHeader className="bg-white border-b border-farmer-border py-3.5 px-5">
+              <CardTitle className="text-sm font-extrabold text-farmer-text flex items-center gap-2">
+                <Sprout className="w-4 h-4 text-farmer-primary" strokeWidth={2.5} />
                 Harvest & Quality Details
               </CardTitle>
             </CardHeader>
@@ -367,11 +367,11 @@ const StaffProcurement = () => {
                 
                 {/* Commodity */}
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">
+                  <label className="text-xs font-bold text-farmer-text block mb-1.5">
                     Commodity <span className="text-red-500">*</span>
                   </label>
                   <select
-                    className="w-full h-10 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#046a38] bg-white cursor-pointer"
+                    className="w-full h-10 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text focus:outline-none focus:border-farmer-primary bg-white cursor-pointer"
                     value={formData.commodity}
                     onChange={(e) => handleInputChange('commodity', e.target.value)}
                   >
@@ -386,12 +386,12 @@ const StaffProcurement = () => {
 
                 {/* Moisture Content */}
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">
+                  <label className="text-xs font-bold text-farmer-text block mb-1.5">
                     Moisture Content (%) <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number" step="0.1"
-                    className="w-full h-10 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#046a38] bg-white"
+                    className="w-full h-10 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text focus:outline-none focus:border-farmer-primary bg-white"
                     value={formData.moisture}
                     onChange={(e) => handleInputChange('moisture', e.target.value)}
                   />
@@ -399,11 +399,11 @@ const StaffProcurement = () => {
 
                 {/* Variety (Optional) */}
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">
+                  <label className="text-xs font-bold text-farmer-text block mb-1.5">
                     Variety (Optional)
                   </label>
                   <select
-                    className="w-full h-10 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#046a38] bg-white cursor-pointer"
+                    className="w-full h-10 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text focus:outline-none focus:border-farmer-primary bg-white cursor-pointer"
                     value={formData.variety}
                     onChange={(e) => handleInputChange('variety', e.target.value)}
                   >
@@ -417,12 +417,12 @@ const StaffProcurement = () => {
 
                 {/* Foreign Matter (%) */}
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">
+                  <label className="text-xs font-bold text-farmer-text block mb-1.5">
                     Foreign Matter (%)
                   </label>
                   <input
                     type="number" step="0.1"
-                    className="w-full h-10 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#046a38] bg-white"
+                    className="w-full h-10 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text focus:outline-none focus:border-farmer-primary bg-white"
                     value={formData.foreignMatter}
                     onChange={(e) => handleInputChange('foreignMatter', e.target.value)}
                   />
@@ -430,12 +430,12 @@ const StaffProcurement = () => {
 
                 {/* Quantity / Weight (kg) */}
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">
+                  <label className="text-xs font-bold text-farmer-text block mb-1.5">
                     Quantity / Weight (kg) <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
-                    className="w-full h-10 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#046a38] bg-white"
+                    className="w-full h-10 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text focus:outline-none focus:border-farmer-primary bg-white"
                     value={formData.quantity}
                     onChange={(e) => handleInputChange('quantity', e.target.value)}
                   />
@@ -443,12 +443,12 @@ const StaffProcurement = () => {
 
                 {/* Damaged Grains (%) */}
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">
+                  <label className="text-xs font-bold text-farmer-text block mb-1.5">
                     Damaged Grains (%)
                   </label>
                   <input
                     type="number" step="0.1"
-                    className="w-full h-10 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#046a38] bg-white"
+                    className="w-full h-10 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text focus:outline-none focus:border-farmer-primary bg-white"
                     value={formData.damagedGrains}
                     onChange={(e) => handleInputChange('damagedGrains', e.target.value)}
                   />
@@ -456,11 +456,11 @@ const StaffProcurement = () => {
 
                 {/* Unit */}
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">
+                  <label className="text-xs font-bold text-farmer-text block mb-1.5">
                     Unit
                   </label>
                   <select
-                    className="w-full h-10 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#046a38] bg-white cursor-pointer"
+                    className="w-full h-10 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text focus:outline-none focus:border-farmer-primary bg-white cursor-pointer"
                     value={formData.unit}
                     onChange={(e) => handleInputChange('unit', e.target.value)}
                   >
@@ -471,11 +471,11 @@ const StaffProcurement = () => {
 
                 {/* Grain Grade */}
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">
+                  <label className="text-xs font-bold text-farmer-text block mb-1.5">
                     Grain Grade <span className="text-red-500">*</span>
                   </label>
                   <select
-                    className="w-full h-10 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#046a38] bg-white cursor-pointer"
+                    className="w-full h-10 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text focus:outline-none focus:border-farmer-primary bg-white cursor-pointer"
                     value={formData.grainGrade}
                     onChange={(e) => handleInputChange('grainGrade', e.target.value)}
                   >
@@ -491,10 +491,10 @@ const StaffProcurement = () => {
           </Card>
 
           {/* PRICE & AMOUNT CALCULATION CARD */}
-          <Card className="border border-slate-200 shadow-xs bg-white rounded-2xl overflow-hidden">
-            <CardHeader className="bg-white border-b border-slate-100 py-3.5 px-5">
-              <CardTitle className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <IndianRupee className="w-4 h-4 text-[#046a38]" strokeWidth={2.5} />
+          <Card className="border border-farmer-border shadow-xs bg-white rounded-2xl overflow-hidden">
+            <CardHeader className="bg-white border-b border-farmer-border py-3.5 px-5">
+              <CardTitle className="text-sm font-extrabold text-farmer-text flex items-center gap-2">
+                <IndianRupee className="w-4 h-4 text-farmer-primary" strokeWidth={2.5} />
                 Price & Amount Calculation
               </CardTitle>
             </CardHeader>
@@ -502,12 +502,12 @@ const StaffProcurement = () => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {/* MSP Rate */}
                 <div>
-                  <label className="text-[11px] font-bold text-slate-500 block mb-1">
+                  <label className="text-[11px] font-bold text-farmer-secondary block mb-1">
                     MSP / Centre Rate (₹/kg)
                   </label>
                   <input
                     type="number" step="0.5"
-                    className="w-full h-10 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 bg-slate-50 focus:outline-none focus:border-[#046a38]"
+                    className="w-full h-10 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text bg-slate-50 focus:outline-none focus:border-farmer-primary"
                     value={formData.rate}
                     onChange={(e) => handleInputChange('rate', e.target.value)}
                   />
@@ -515,31 +515,31 @@ const StaffProcurement = () => {
 
                 {/* Total Quantity */}
                 <div>
-                  <label className="text-[11px] font-bold text-slate-500 block mb-1">
+                  <label className="text-[11px] font-bold text-farmer-secondary block mb-1">
                     Total Quantity (kg)
                   </label>
                   <input
                     type="text" readOnly
-                    className="w-full h-10 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 bg-slate-50 focus:outline-none"
+                    className="w-full h-10 border border-farmer-border rounded-xl px-3 text-xs font-bold text-farmer-text bg-slate-50 focus:outline-none"
                     value={formData.quantity}
                   />
                 </div>
 
                 {/* Total Amount */}
                 <div>
-                  <label className="text-[11px] font-bold text-slate-500 block mb-1">
+                  <label className="text-[11px] font-bold text-farmer-secondary block mb-1">
                     Total Amount (₹)
                   </label>
-                  <div className="w-full h-10 bg-[#e6f4ea] border border-emerald-200 rounded-xl px-3 flex items-center font-black text-slate-900 text-base">
+                  <div className="w-full h-10 bg-farmer-primary-light border border-emerald-200 rounded-xl px-3 flex items-center font-black text-farmer-text text-base">
                     {totalAmount.toLocaleString('en-IN')}
                   </div>
                 </div>
               </div>
 
               {/* Calculation Formula & Info Pill */}
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pt-1 border-t border-slate-100 text-xs">
-                <span className="font-semibold text-slate-600">
-                  Calculation: <span className="font-bold text-slate-900">{formData.quantity} kg × ₹{formData.rate} = ₹{totalAmount.toLocaleString('en-IN')}</span>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pt-1 border-t border-farmer-border text-xs">
+                <span className="font-semibold text-farmer-secondary">
+                  Calculation: <span className="font-bold text-farmer-text">{formData.quantity} kg × ₹{formData.rate} = ₹{totalAmount.toLocaleString('en-IN')}</span>
                 </span>
 
                 <div className="flex items-center gap-1.5 text-blue-700 bg-blue-50/80 border border-blue-100 px-2.5 py-1 rounded-full text-[11px] font-medium">
@@ -551,16 +551,16 @@ const StaffProcurement = () => {
           </Card>
 
           {/* REMARKS (OPTIONAL) CARD */}
-          <Card className="border border-slate-200 shadow-xs bg-white rounded-2xl overflow-hidden">
-            <CardHeader className="bg-white border-b border-slate-100 py-3.5 px-5">
-              <CardTitle className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[#046a38]" strokeWidth={2.5} />
-                Remarks <span className="text-slate-400 font-semibold text-xs">(Optional)</span>
+          <Card className="border border-farmer-border shadow-xs bg-white rounded-2xl overflow-hidden">
+            <CardHeader className="bg-white border-b border-farmer-border py-3.5 px-5">
+              <CardTitle className="text-sm font-extrabold text-farmer-text flex items-center gap-2">
+                <FileText className="w-4 h-4 text-farmer-primary" strokeWidth={2.5} />
+                Remarks <span className="text-farmer-secondary font-semibold text-xs">(Optional)</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-5">
               <textarea
-                className="w-full h-20 border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#046a38] resize-none"
+                className="w-full h-20 border border-farmer-border rounded-xl p-3 text-xs font-medium text-farmer-text placeholder:text-farmer-secondary focus:outline-none focus:border-farmer-primary resize-none"
                 placeholder="Any additional notes about the harvest quality, weight, or other observations..."
                 value={formData.remarks}
                 onChange={(e) => handleInputChange('remarks', e.target.value)}
@@ -575,13 +575,13 @@ const StaffProcurement = () => {
               {/* BUTTON 1: COMPLETE PROCUREMENT */}
               <button
                 onClick={handleCompleteProcurement}
-                className="flex items-center gap-3 p-3.5 bg-[#f0f8f3] border-2 border-[#046a38] rounded-2xl hover:bg-[#e2f3e8] transition-all text-left cursor-pointer group shadow-xs"
+                className="flex items-center gap-3 p-3.5 bg-[#f0f8f3] border-2 border-farmer-primary rounded-2xl hover:bg-[#e2f3e8] transition-all text-left cursor-pointer group shadow-xs"
               >
-                <div className="w-9 h-9 rounded-full bg-[#046a38] text-white flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-full bg-farmer-primary text-white flex items-center justify-center shrink-0">
                   <Check className="w-5 h-5 stroke-[2.5]" />
                 </div>
                 <div>
-                  <h4 className="font-extrabold text-[#046a38] text-sm leading-tight">Complete Procurement</h4>
+                  <h4 className="font-extrabold text-farmer-primary text-sm leading-tight">Complete Procurement</h4>
                   <p className="text-[11px] font-medium text-emerald-800/80 leading-tight">Save quality and procurement details</p>
                 </div>
               </button>
@@ -589,7 +589,7 @@ const StaffProcurement = () => {
               {/* BUTTON 2: INITIATE PAYMENT */}
               <button
                 onClick={handleInitiatePayment}
-                className="flex items-center gap-3 p-3.5 bg-[#046a38] border-2 border-[#046a38] text-white rounded-2xl hover:bg-[#03522c] transition-all text-left cursor-pointer group shadow-sm"
+                className="flex items-center gap-3 p-3.5 bg-farmer-primary border-2 border-farmer-primary text-white rounded-2xl hover:bg-[#03522c] transition-all text-left cursor-pointer group shadow-sm"
               >
                 <div className="w-9 h-9 rounded-full bg-white/20 text-white flex items-center justify-center shrink-0">
                   <IndianRupee className="w-5 h-5 stroke-[2.5]" />
@@ -615,36 +615,36 @@ const StaffProcurement = () => {
         <div className="lg:col-span-3 space-y-6">
           
           {/* BOOKING & TOKEN DETAILS CARD */}
-          <Card className="border border-slate-200 shadow-xs bg-white rounded-2xl overflow-hidden">
-            <CardHeader className="bg-white border-b border-slate-100 py-3.5 px-5">
-              <CardTitle className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[#046a38]" strokeWidth={2.5} />
+          <Card className="border border-farmer-border shadow-xs bg-white rounded-2xl overflow-hidden">
+            <CardHeader className="bg-white border-b border-farmer-border py-3.5 px-5">
+              <CardTitle className="text-sm font-extrabold text-farmer-text flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-farmer-primary" strokeWidth={2.5} />
                 Booking & Token Details
               </CardTitle>
             </CardHeader>
             <CardContent className="p-5 space-y-3 text-xs font-semibold">
               <div className="flex justify-between items-center py-1">
-                <span className="text-slate-500 font-medium">Token Number</span>
-                <span className="font-black text-slate-900 text-sm">{formData.tokenNumber}</span>
+                <span className="text-farmer-secondary font-medium">Token Number</span>
+                <span className="font-black text-farmer-text text-sm">{formData.tokenNumber}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">Booking ID</span>
-                <span className="font-bold text-slate-800">{formData.bookingId}</span>
+              <div className="flex justify-between items-center py-1 border-t border-farmer-border">
+                <span className="text-farmer-secondary font-medium">Booking ID</span>
+                <span className="font-bold text-farmer-text">{formData.bookingId}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">Expected Quantity</span>
-                <span className="font-bold text-slate-800">{formData.expectedQuantity}</span>
+              <div className="flex justify-between items-center py-1 border-t border-farmer-border">
+                <span className="text-farmer-secondary font-medium">Expected Quantity</span>
+                <span className="font-bold text-farmer-text">{formData.expectedQuantity}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">Booked Slot</span>
-                <span className="font-bold text-slate-800">{formData.bookedSlot}</span>
+              <div className="flex justify-between items-center py-1 border-t border-farmer-border">
+                <span className="text-farmer-secondary font-medium">Booked Slot</span>
+                <span className="font-bold text-farmer-text">{formData.bookedSlot}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">Status</span>
+              <div className="flex justify-between items-center py-1 border-t border-farmer-border">
+                <span className="text-farmer-secondary font-medium">Status</span>
                 <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold">
                   {formData.status}
                 </span>
@@ -653,68 +653,68 @@ const StaffProcurement = () => {
           </Card>
 
           {/* FARMER BANK DETAILS CARD */}
-          <Card className="border border-slate-200 shadow-xs bg-white rounded-2xl overflow-hidden">
-            <CardHeader className="bg-white border-b border-slate-100 py-3.5 px-5">
-              <CardTitle className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <Landmark className="w-4 h-4 text-[#046a38]" strokeWidth={2.5} />
+          <Card className="border border-farmer-border shadow-xs bg-white rounded-2xl overflow-hidden">
+            <CardHeader className="bg-white border-b border-farmer-border py-3.5 px-5">
+              <CardTitle className="text-sm font-extrabold text-farmer-text flex items-center gap-2">
+                <Landmark className="w-4 h-4 text-farmer-primary" strokeWidth={2.5} />
                 Farmer Bank Details
               </CardTitle>
             </CardHeader>
             <CardContent className="p-5 space-y-3 text-xs font-semibold">
               <div className="flex justify-between items-center py-1">
-                <span className="text-slate-500 font-medium">Account Holder</span>
-                <span className="font-bold text-slate-900">{formData.accountHolder}</span>
+                <span className="text-farmer-secondary font-medium">Account Holder</span>
+                <span className="font-bold text-farmer-text">{formData.accountHolder}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">Account Number</span>
-                <span className="font-bold text-slate-800">{formData.accountNumber}</span>
+              <div className="flex justify-between items-center py-1 border-t border-farmer-border">
+                <span className="text-farmer-secondary font-medium">Account Number</span>
+                <span className="font-bold text-farmer-text">{formData.accountNumber}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">IFSC Code</span>
-                <span className="font-bold text-slate-800">{formData.ifscCode}</span>
+              <div className="flex justify-between items-center py-1 border-t border-farmer-border">
+                <span className="text-farmer-secondary font-medium">IFSC Code</span>
+                <span className="font-bold text-farmer-text">{formData.ifscCode}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">Bank Name</span>
-                <span className="font-bold text-slate-800">{formData.bankName}</span>
+              <div className="flex justify-between items-center py-1 border-t border-farmer-border">
+                <span className="text-farmer-secondary font-medium">Bank Name</span>
+                <span className="font-bold text-farmer-text">{formData.bankName}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">UPI (Optional)</span>
-                <span className="font-bold text-slate-800">{formData.upi}</span>
+              <div className="flex justify-between items-center py-1 border-t border-farmer-border">
+                <span className="text-farmer-secondary font-medium">UPI (Optional)</span>
+                <span className="font-bold text-farmer-text">{formData.upi}</span>
               </div>
             </CardContent>
           </Card>
 
           {/* PROCUREMENT SUMMARY CARD */}
-          <Card className="border border-slate-200 shadow-xs bg-white rounded-2xl overflow-hidden">
-            <CardHeader className="bg-white border-b border-slate-100 py-3.5 px-5">
-              <CardTitle className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[#046a38]" strokeWidth={2.5} />
+          <Card className="border border-farmer-border shadow-xs bg-white rounded-2xl overflow-hidden">
+            <CardHeader className="bg-white border-b border-farmer-border py-3.5 px-5">
+              <CardTitle className="text-sm font-extrabold text-farmer-text flex items-center gap-2">
+                <FileText className="w-4 h-4 text-farmer-primary" strokeWidth={2.5} />
                 Procurement Summary
               </CardTitle>
             </CardHeader>
             <CardContent className="p-5 space-y-3 text-xs font-semibold">
               <div className="flex justify-between items-center py-1">
-                <span className="text-slate-500 font-medium">Commodity</span>
-                <span className="font-bold text-slate-900">{formData.commodity}</span>
+                <span className="text-farmer-secondary font-medium">Commodity</span>
+                <span className="font-bold text-farmer-text">{formData.commodity}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">Quantity (kg)</span>
-                <span className="font-bold text-slate-900">{formData.quantity}</span>
+              <div className="flex justify-between items-center py-1 border-t border-farmer-border">
+                <span className="text-farmer-secondary font-medium">Quantity (kg)</span>
+                <span className="font-bold text-farmer-text">{formData.quantity}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-t border-slate-100">
-                <span className="text-slate-500 font-medium">Rate (₹/kg)</span>
-                <span className="font-bold text-slate-900">{formData.rate}</span>
+              <div className="flex justify-between items-center py-1 border-t border-farmer-border">
+                <span className="text-farmer-secondary font-medium">Rate (₹/kg)</span>
+                <span className="font-bold text-farmer-text">{formData.rate}</span>
               </div>
 
-              <div className="flex justify-between items-center pt-3 border-t border-slate-200">
-                <span className="text-slate-900 font-extrabold text-xs">Total Amount (₹)</span>
-                <span className="font-black text-slate-900 text-base">
+              <div className="flex justify-between items-center pt-3 border-t border-farmer-border">
+                <span className="text-farmer-text font-extrabold text-xs">Total Amount (₹)</span>
+                <span className="font-black text-farmer-text text-base">
                   {totalAmount.toLocaleString('en-IN')}
                 </span>
               </div>
@@ -728,9 +728,9 @@ const StaffProcurement = () => {
       {/* CONFIRMATION / PAYMENT INITIATION MODAL */}
       {modalState.isOpen && (
         <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden animate-in zoom-in-95 border border-slate-100">
+          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden animate-in zoom-in-95 border border-farmer-border">
             {/* Modal Header */}
-            <div className="bg-[#046a38] p-5 flex justify-between items-center text-white">
+            <div className="bg-farmer-primary p-5 flex justify-between items-center text-white">
               <div className="flex items-center gap-2.5">
                 {modalState.type === 'INITIATE_PAYMENT' ? (
                   <IndianRupee className="w-5 h-5 text-emerald-200" />
@@ -750,38 +750,38 @@ const StaffProcurement = () => {
             </div>
 
             {/* Modal Content */}
-            <div className="p-6 space-y-5 text-xs font-semibold text-slate-700">
+            <div className="p-6 space-y-5 text-xs font-semibold text-farmer-text">
               
-              <div className="bg-[#e6f4ea] p-4 rounded-xl border border-emerald-200 flex items-center justify-between">
+              <div className="bg-farmer-primary-light p-4 rounded-xl border border-emerald-200 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-extrabold text-[#046a38] uppercase tracking-wider">Farmer</p>
-                  <p className="font-black text-slate-900 text-base">{formData.farmerName}</p>
-                  <p className="text-slate-500 font-medium text-xs">{formData.farmerId} • Token: {formData.tokenNumber}</p>
+                  <p className="text-[10px] font-extrabold text-farmer-primary uppercase tracking-wider">Farmer</p>
+                  <p className="font-black text-farmer-text text-base">{formData.farmerName}</p>
+                  <p className="text-farmer-secondary font-medium text-xs">{formData.farmerId} • Token: {formData.tokenNumber}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-extrabold text-[#046a38] uppercase tracking-wider">Total Amount</p>
-                  <p className="font-black text-slate-900 text-lg">₹{totalAmount.toLocaleString('en-IN')}</p>
+                  <p className="text-[10px] font-extrabold text-farmer-primary uppercase tracking-wider">Total Amount</p>
+                  <p className="font-black text-farmer-text text-lg">₹{totalAmount.toLocaleString('en-IN')}</p>
                 </div>
               </div>
 
-              <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200/80">
-                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Details Transmitted</p>
+              <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-farmer-border/80">
+                <p className="text-[10px] font-extrabold text-farmer-secondary uppercase tracking-widest mb-1">Details Transmitted</p>
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div><span className="text-slate-500 font-normal">Crop/Variety:</span> <span className="font-bold">{formData.commodity} ({formData.variety})</span></div>
-                  <div><span className="text-slate-500 font-normal">Quantity:</span> <span className="font-bold">{formData.quantity} kg</span></div>
-                  <div><span className="text-slate-500 font-normal">Rate:</span> <span className="font-bold">₹{formData.rate}/kg</span></div>
-                  <div><span className="text-slate-500 font-normal">Grade:</span> <span className="font-bold">{formData.grainGrade}</span></div>
-                  <div><span className="text-slate-500 font-normal">Bank Name:</span> <span className="font-bold">{formData.bankName}</span></div>
-                  <div><span className="text-slate-500 font-normal">Account No:</span> <span className="font-bold">{formData.accountNumber}</span></div>
-                  <div><span className="text-slate-500 font-normal">IFSC:</span> <span className="font-bold">{formData.ifscCode}</span></div>
-                  <div><span className="text-slate-500 font-normal">UPI:</span> <span className="font-bold">{formData.upi}</span></div>
+                  <div><span className="text-farmer-secondary font-normal">Crop/Variety:</span> <span className="font-bold">{formData.commodity} ({formData.variety})</span></div>
+                  <div><span className="text-farmer-secondary font-normal">Quantity:</span> <span className="font-bold">{formData.quantity} kg</span></div>
+                  <div><span className="text-farmer-secondary font-normal">Rate:</span> <span className="font-bold">₹{formData.rate}/kg</span></div>
+                  <div><span className="text-farmer-secondary font-normal">Grade:</span> <span className="font-bold">{formData.grainGrade}</span></div>
+                  <div><span className="text-farmer-secondary font-normal">Bank Name:</span> <span className="font-bold">{formData.bankName}</span></div>
+                  <div><span className="text-farmer-secondary font-normal">Account No:</span> <span className="font-bold">{formData.accountNumber}</span></div>
+                  <div><span className="text-farmer-secondary font-normal">IFSC:</span> <span className="font-bold">{formData.ifscCode}</span></div>
+                  <div><span className="text-farmer-secondary font-normal">UPI:</span> <span className="font-bold">{formData.upi}</span></div>
                 </div>
               </div>
 
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setModalState({ isOpen: false, type: null, data: null })}
-                  className="w-full py-3 bg-[#046a38] hover:bg-[#03522c] text-white font-bold rounded-xl transition-colors cursor-pointer text-sm shadow-xs"
+                  className="w-full py-3 bg-farmer-primary hover:bg-[#03522c] text-white font-bold rounded-xl transition-colors cursor-pointer text-sm shadow-xs"
                 >
                   Done
                 </button>
