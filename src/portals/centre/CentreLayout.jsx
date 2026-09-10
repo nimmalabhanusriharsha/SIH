@@ -1,224 +1,549 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../context/AppContext';
-import { Button } from '../../shared/components/Button';
-import { Badge } from '../../shared/components/Badge';
-import { 
-  LayoutDashboard, Users, Calendar, ScanLine, FileText, Scale, 
-  FileSignature, IndianRupee, MessageSquareWarning, BarChart3, 
-  History, Settings, LogOut, Briefcase, Bell, Globe, Menu, X, Power
+import {
+  LayoutDashboard, Users, Calendar, FileSignature, 
+  MessageSquareWarning, BarChart3, History, Bell, Globe, 
+  Menu, X, MapPin, ChevronDown, Sprout, Headphones, 
+  ChevronRight, LogOut, Check, AlertCircle, Send, UserCheck, Shield, Phone, Mail, Building
 } from 'lucide-react';
+
+import { useTranslation } from '../../data/translations';
 
 const CentreLayout = ({ children }) => {
   const { currentUser, logout, state, setState } = useAppContext();
+  const { t, currentLang, setLanguage } = useTranslation();
   const navigate = useNavigate();
-  
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [centreOpen, setCentreOpen] = useState(true); // Demo state for centre status
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false);
+
+  const notificationRef = useRef(null);
+  const profileRef = useRef(null);
+  const langRef = useRef(null);
+  const [notifications, setNotifications] = useState([
+    { id: 1, title: 'New Farmer Booking', message: 'Token A108 (Suresh Babu) booked slot for 11:30 AM', time: '5 mins ago', read: false },
+    { id: 2, title: 'Payment Processing Update', message: 'Payment PAY-8821 for Ramesh Kumar approved by Admin', time: '25 mins ago', read: false },
+    { id: 3, title: 'Queue Capacity Alert', message: 'Counter 1 serving rate is optimal today', time: '1 hour ago', read: true },
+    { id: 4, title: 'MSP Rate Confirmation', message: 'Paddy Grade A MSP rate confirmed at ₹22.50/kg', time: '2 hours ago', read: true }
+  ]);
+
+  // Support Issue Form State
+  const [issueCategory, setIssueCategory] = useState('Weighing Scale Malfunction');
+  const [issueDescription, setIssueDescription] = useState('');
+  const [issueSubmitted, setIssueSubmitted] = useState(false);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/centre/login');
   };
 
+  const handleMarkAllRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const handleMarkNotificationRead = (id) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+
+  const handleSupportSubmit = (e) => {
+    e.preventDefault();
+    if (!issueDescription.trim()) return;
+
+    const newActivity = {
+      id: `ACT-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      staffId: currentUser?.id || 'STAFF-01',
+      action: `Raised Support Issue (${issueCategory}): ${issueDescription.slice(0, 40)}...`,
+      farmerName: 'System Support',
+      bookingId: 'N/A'
+    };
+
+    setState(prev => ({
+      ...prev,
+      activity: [newActivity, ...(prev.activity || [])]
+    }));
+
+    setIssueSubmitted(true);
+    setTimeout(() => {
+      setIssueSubmitted(false);
+      setIssueDescription('');
+      setIsHelpModalOpen(false);
+    }, 1800);
+  };
+
+  // Close dropdowns on click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setIsNotificationsOpen(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+      if (langRef.current && !langRef.current.contains(event.target)) {
+        setIsLangOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const navItems = [
-    { name: 'Dashboard', path: '/centre/dashboard', icon: LayoutDashboard },
-    { name: 'Live Queue', path: '/centre/live-queue', icon: Users },
-    { name: "Today's Bookings", path: '/centre/bookings', icon: Calendar },
-    { name: 'Farmer Verification', path: '/centre/verification', icon: ScanLine },
-    { name: 'Quality Check', path: '/centre/quality-check', icon: FileText },
-    { name: 'Weighing', path: '/centre/weighing', icon: Scale },
-    { name: 'Procurement', path: '/centre/procurement', icon: FileSignature },
-    { name: 'Payments', path: '/centre/payments', icon: IndianRupee },
-    { name: 'Complaints', path: '/centre/complaints', icon: MessageSquareWarning },
-    { name: 'Reports', path: '/centre/reports', icon: BarChart3 },
-    { name: 'Activity Log', path: '/centre/activity', icon: History },
-    { name: 'Settings', path: '/centre/settings', icon: Settings },
+    { name: t('centre.nav.dashboard', 'Dashboard'), path: '/centre/dashboard', icon: LayoutDashboard },
+    { name: t('centre.nav.todaysBookings', "Today's Bookings"), path: '/centre/bookings', icon: Calendar },
+    { name: t('centre.nav.liveQueue', 'Live Queue'), path: '/centre/live-queue', icon: Users },
+    { name: t('centre.nav.procurement', 'Procurement'), path: '/centre/procurement', icon: FileSignature },
+    { name: t('centre.nav.complaints', 'Complaints'), path: '/centre/complaints', icon: MessageSquareWarning },
+    { name: t('centre.nav.reports', 'Reports'), path: '/centre/reports', icon: BarChart3 },
+    { name: t('centre.nav.activityLog', 'Activity Log'), path: '/centre/activity', icon: History },
   ];
 
-  const centre = state.centres.find(c => c.id === currentUser?.centreId);
-
-  // Mobile Bottom Nav items (primary actions only)
+  const centre = state.centres.find(c => c.id === currentUser?.centreId) || state.centres[0];
   const bottomNavItems = navItems.slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-earth-50 flex flex-col md:flex-row">
-      
+    <div className="min-h-screen bg-[#f8faf9] flex flex-col md:flex-row font-sans">
+
       {/* MOBILE HEADER */}
-      <header className="md:hidden bg-white border-b border-earth-200 p-4 flex justify-between items-center sticky top-0 z-30">
+      <header className="md:hidden bg-white border-b border-slate-200 p-4 flex justify-between items-center sticky top-0 z-30 shadow-xs">
         <div className="flex items-center gap-2">
-           <button onClick={() => setIsMobileMenuOpen(true)} className="p-1 -ml-1 text-forest-900">
-             <Menu className="w-6 h-6" />
-           </button>
-           <h1 className="font-black text-forest-900 text-lg tracking-tight">KisanQueue</h1>
+          <button onClick={() => setIsMobileMenuOpen(true)} className="p-1 -ml-1 text-slate-900 cursor-pointer">
+            <Menu className="w-6 h-6" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-[#046a38] text-white flex items-center justify-center">
+              <Sprout className="w-4 h-4 text-white" strokeWidth={2.5} />
+            </div>
+            <h1 className="font-black text-slate-900 text-lg tracking-tight">KisanQueue</h1>
+          </div>
         </div>
         <div className="flex items-center gap-3">
-           <div className={`w-3 h-3 rounded-full ${centreOpen ? 'bg-green-500' : 'bg-red-500'}`}></div>
-           <Button variant="ghost" size="icon" className="text-earth-600 rounded-full w-8 h-8"><Bell className="w-5 h-5" /></Button>
+          <button 
+            onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+            className="relative p-2 text-slate-600 cursor-pointer"
+          >
+            <Bell className="w-5 h-5" />
+            {unreadCount > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>}
+          </button>
         </div>
       </header>
 
       {/* MOBILE SLIDE-OUT MENU */}
-      <div className={`md:hidden fixed inset-0 bg-forest-950/80 z-40 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsMobileMenuOpen(false)}></div>
-      <aside className={`md:hidden fixed inset-y-0 left-0 w-[280px] bg-forest-900 text-white z-50 transform transition-transform duration-300 flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-         <div className="p-4 border-b border-forest-800 flex justify-between items-center">
-            <div>
-              <h1 className="text-xl font-black tracking-tight">KisanQueue</h1>
-              <p className="text-[10px] font-bold text-forest-300 uppercase tracking-widest mt-0.5">Procurement Centre</p>
+      <div className={`md:hidden fixed inset-0 bg-slate-900/60 z-40 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsMobileMenuOpen(false)}></div>
+      <aside className={`md:hidden fixed inset-y-0 left-0 w-[280px] bg-[#f4f7f5] text-slate-900 z-50 transform transition-transform duration-300 flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-4 border-b border-slate-200 flex justify-between items-center">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-[#046a38] text-white flex items-center justify-center shadow-xs">
+              <Sprout className="w-4.5 h-4.5 text-white" strokeWidth={2.5} />
             </div>
-            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-forest-300 hover:text-white bg-forest-800 rounded-full"><X className="w-5 h-5" /></button>
-         </div>
-         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-            {navItems.map((item) => (
-              <NavLink key={item.name} to={item.path} onClick={() => setIsMobileMenuOpen(false)}
-                className={({ isActive }) => `flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold transition-all ${isActive ? 'bg-forest-800 text-white shadow-inner' : 'text-forest-200 hover:bg-forest-800/50 hover:text-white'}`}
-              >
-                <item.icon className="w-5 h-5" /> {item.name}
-              </NavLink>
-            ))}
-         </nav>
-      </aside>
-
-      {/* DESKTOP SIDEBAR */}
-      <aside className="hidden md:flex w-64 flex-col bg-forest-900 text-white fixed h-full z-20 shadow-xl">
-        <div className="p-6 border-b border-forest-800 bg-forest-950/30">
-          <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
-            KisanQueue
-          </h1>
-          <p className="text-xs font-bold text-forest-400 mt-1 uppercase tracking-widest">Procurement Centre</p>
+            <div>
+              <h1 className="text-lg font-black tracking-tight text-slate-900">KisanQueue</h1>
+              <p className="text-[10px] font-extrabold text-[#046a38] uppercase tracking-wider">Procurement Centre</p>
+            </div>
+          </div>
+          <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-500 hover:text-slate-900 rounded-full cursor-pointer"><X className="w-5 h-5" /></button>
         </div>
-        
-        <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
           {navItems.map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                  isActive
-                    ? 'bg-forest-800 text-white shadow-inner border border-forest-700'
-                    : 'text-forest-200 hover:bg-forest-800/50 hover:text-white border border-transparent'
-                }`
-              }
+            <NavLink key={item.name} to={item.path} onClick={() => setIsMobileMenuOpen(false)}
+              className={({ isActive }) => `flex items-center gap-3 px-3 py-3 text-xs font-bold transition-all ${isActive ? 'bg-[#e6f4ea] text-[#046a38] border-l-4 border-[#046a38] rounded-r-xl' : 'text-slate-700 hover:bg-[#e6f4ea]/60'}`}
             >
-              <item.icon className={`w-5 h-5 ${item.name === 'Complaints' ? 'text-amber-400' : ''}`} />
-              {item.name}
+              <item.icon className="w-5 h-5 text-[#046a38]" /> {item.name}
             </NavLink>
           ))}
         </nav>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
-      <div className="flex-1 md:ml-64 flex flex-col min-h-screen relative">
-        
-        {/* DESKTOP HEADER */}
-        <header className="hidden md:flex bg-white border-b border-earth-200 px-8 py-4 justify-between items-center sticky top-0 z-10 shadow-sm">
-           
-           <div className="flex items-center gap-4">
-              <div className="bg-forest-50 p-2.5 rounded-xl border border-forest-100">
-                <Briefcase className="w-6 h-6 text-forest-700" />
-              </div>
-              <div>
-                <h2 className="text-lg font-black text-forest-900">Good Morning, {currentUser?.name}</h2>
-                <div className="flex items-center gap-2 text-xs font-bold text-earth-500 mt-0.5">
-                  <span>{centre?.name}</span>
-                  <span className="w-1 h-1 bg-earth-300 rounded-full"></span>
-                  <span className="uppercase tracking-wider">{centre?.id}</span>
+      {/* DESKTOP SIDEBAR */}
+      <aside className="hidden md:flex w-64 flex-col bg-[#f4f7f5] border-r border-slate-200 fixed h-full z-20 shadow-xs">
+        {/* LOGO */}
+        <div className="p-5 border-b border-slate-200/80 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-[#e6f4ea] flex items-center justify-center shrink-0">
+            <div className="w-7.5 h-7.5 rounded-xl bg-[#046a38] text-white flex items-center justify-center shadow-xs">
+              <Sprout className="w-4.5 h-4.5 text-white" strokeWidth={2.5} />
+            </div>
+          </div>
+          <div>
+            <h1 className="text-lg font-black tracking-tight text-slate-900 leading-tight">KisanQueue</h1>
+            <p className="text-[10px] font-extrabold text-[#046a38] uppercase tracking-wider mt-0.5">Procurement Centre</p>
+          </div>
+        </div>
+
+        {/* NAV LINKS */}
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.name}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 text-xs font-bold transition-all ${isActive
+                  ? 'bg-[#e6f4ea] text-[#046a38] border-l-4 border-[#046a38] rounded-r-xl rounded-l-none'
+                  : 'text-slate-700 hover:bg-[#e6f4ea]/70 hover:text-[#046a38] rounded-xl border-l-4 border-transparent'
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${isActive ? 'bg-[#046a38] text-white' : 'text-[#046a38]'}`}>
+                    <item.icon className="w-4 h-4" strokeWidth={2.5} />
+                  </div>
+                  {item.name}
+                </>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* BOTTOM NEED HELP BUTTON (FUNCTIONAL) */}
+        <div className="p-3 border-t border-slate-200/80">
+          <div 
+            onClick={() => setIsHelpModalOpen(true)}
+            className="flex items-center justify-between p-3 rounded-2xl bg-white border border-slate-200/80 shadow-xs hover:border-[#046a38] hover:shadow-xs transition-all cursor-pointer group"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-[#e6f4ea] flex items-center justify-center shrink-0">
+                <div className="w-6 h-6 rounded-lg bg-[#046a38] text-white flex items-center justify-center shadow-xs">
+                  <Headphones className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
                 </div>
               </div>
-           </div>
-
-           <div className="flex items-center gap-6">
-              
-              {/* Centre Status Toggle */}
-              <div className="flex items-center gap-3 bg-earth-50 p-1.5 pr-4 rounded-full border border-earth-200 shadow-inner">
-                 <button 
-                   onClick={() => setCentreOpen(!centreOpen)}
-                   className={`p-2 rounded-full shadow-sm transition-colors ${centreOpen ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}
-                 >
-                   <Power className="w-4 h-4" />
-                 </button>
-                 <div className="flex flex-col">
-                   <span className="text-[10px] font-bold text-earth-500 uppercase tracking-widest leading-none">Centre Status</span>
-                   <span className={`text-xs font-black uppercase tracking-wider mt-0.5 ${centreOpen ? 'text-green-700' : 'text-red-600'}`}>
-                     {centreOpen ? 'OPEN' : 'PAUSED'}
-                   </span>
-                 </div>
+              <div>
+                <p className="text-xs font-bold text-slate-900 group-hover:text-[#046a38] transition-colors">{t('centre.nav.needHelp', 'Need Help?')}</p>
+                <p className="text-[10px] font-medium text-slate-500">{t('centre.nav.contactAdmin', 'Contact Admin')}</p>
               </div>
-
-              <div className="h-8 w-px bg-earth-200"></div>
-              
-              <div className="flex items-center gap-2 text-earth-500 font-bold text-sm bg-white border border-earth-200 px-3 py-1.5 rounded-full hover:bg-earth-50 cursor-pointer transition-colors shadow-sm">
-                <Globe className="w-4 h-4 text-forest-600" /> EN
-              </div>
-              
-              <button className="relative p-2 text-earth-500 hover:bg-earth-100 rounded-full transition-colors">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-              </button>
-              
-              <div className="h-8 w-px bg-earth-200"></div>
-
-              {/* Profile Menu */}
-              <div className="flex items-center gap-3 cursor-pointer group">
-                 <div className="w-10 h-10 rounded-full bg-forest-100 border border-forest-200 flex items-center justify-center text-forest-700 font-black shadow-sm group-hover:bg-forest-200 transition-colors">
-                    {currentUser?.name.charAt(0)}
-                 </div>
-                 <div className="flex flex-col hidden lg:flex">
-                   <span className="text-sm font-bold text-earth-900 group-hover:text-forest-700 transition-colors">{currentUser?.name}</span>
-                   <button onClick={handleLogout} className="text-xs font-bold text-red-500 hover:text-red-700 text-left mt-0.5 uppercase tracking-wider flex items-center gap-1">
-                      <LogOut className="w-3 h-3" /> Sign Out
-                   </button>
-                 </div>
-              </div>
-           </div>
-        </header>
-
-        {/* MOBILE CENTRE STATUS BAR (Below Header) */}
-        <div className="md:hidden bg-earth-50 border-b border-earth-200 px-4 py-3 flex justify-between items-center shadow-inner">
-           <div className="flex items-center gap-2">
-              <span className={`w-2.5 h-2.5 rounded-full ${centreOpen ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span>
-              <span className="text-xs font-bold uppercase tracking-wider text-earth-700">
-                {centreOpen ? 'CENTRE OPEN' : 'CENTRE PAUSED'}
-              </span>
-           </div>
-           <button 
-             onClick={() => setCentreOpen(!centreOpen)}
-             className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border shadow-sm ${centreOpen ? 'bg-white border-earth-300 text-earth-600' : 'bg-red-100 border-red-200 text-red-700'}`}
-           >
-             {centreOpen ? 'Pause' : 'Resume'}
-           </button>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#046a38] group-hover:translate-x-0.5 transition-all" />
+          </div>
         </div>
+      </aside>
+
+      {/* MAIN CONTENT AREA */}
+      <div className="flex-1 md:ml-64 flex flex-col min-h-screen relative">
+
+        {/* DESKTOP HEADER */}
+        <header className="hidden md:flex bg-white border-b border-slate-200 px-8 py-3.5 justify-between items-center sticky top-0 z-10 shadow-xs">
+
+          {/* LOCATION SELECTOR */}
+          <div className="flex items-center gap-3 bg-white border border-slate-200 px-4 py-2 rounded-2xl shadow-xs cursor-pointer hover:border-slate-300 transition-colors">
+            <div className="w-9 h-9 rounded-xl bg-[#e6f4ea] flex items-center justify-center shrink-0">
+              <div className="w-6.5 h-6.5 rounded-lg bg-[#046a38] text-white flex items-center justify-center shadow-xs">
+                <MapPin className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5 text-xs font-black text-slate-900">
+                <span>{centre?.name || 'Sri Lakshmi Procurement Centre'}</span>
+              </div>
+              <p className="text-[11px] font-medium text-slate-500">
+                {centre?.id || 'C001'} • {currentUser?.counterId || 'Counter 1'} • {centre?.district || 'West Godavari'}
+              </p>
+            </div>
+          </div>
+
+          {/* RIGHT HEADER ITEMS */}
+          <div className="flex items-center gap-4">
+
+            {/* DATE & TIME CARD */}
+            <div className="flex items-center gap-2 bg-white border border-slate-200 px-3.5 py-2 rounded-2xl shadow-xs text-xs font-bold text-slate-700">
+              <div className="w-6 h-6 rounded-md bg-[#e6f4ea] flex items-center justify-center text-[#046a38]">
+                <Calendar className="w-3.5 h-3.5" strokeWidth={2.5} />
+              </div>
+              <span>Tue, 10 Sep 2025</span>
+              <span className="text-slate-300">|</span>
+              <span className="text-slate-500 font-medium">10:24 AM</span>
+            </div>
+
+            {/* FUNCTIONAL GLOBAL LANGUAGE SELECTOR */}
+            <div className="relative" ref={langRef}>
+              <button 
+                onClick={() => setIsLangOpen(!isLangOpen)}
+                className="flex items-center gap-2 text-slate-700 font-bold text-xs bg-white border border-slate-200 px-3.5 py-2 rounded-2xl hover:bg-slate-50 cursor-pointer shadow-xs transition-colors"
+              >
+                <Globe className="w-4 h-4 text-[#046a38]" strokeWidth={2.5} /> {(currentLang || 'en').toUpperCase()} <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </button>
+
+              {isLangOpen && (
+                <div className="absolute right-0 mt-2 w-36 bg-white rounded-2xl shadow-xl border border-slate-200 z-50 p-2 text-xs font-bold text-slate-700 animate-in zoom-in-95">
+                  <button 
+                    onClick={() => { setLanguage('en'); setIsLangOpen(false); }}
+                    className={`w-full text-left px-3 py-2 rounded-xl transition-colors cursor-pointer ${currentLang === 'en' ? 'bg-[#e6f4ea] text-[#046a38]' : 'hover:bg-slate-50'}`}
+                  >
+                    English (EN)
+                  </button>
+                  <button 
+                    onClick={() => { setLanguage('te'); setIsLangOpen(false); }}
+                    className={`w-full text-left px-3 py-2 rounded-xl transition-colors cursor-pointer ${currentLang === 'te' ? 'bg-[#e6f4ea] text-[#046a38]' : 'hover:bg-slate-50'}`}
+                  >
+                    తెలుగు (TE)
+                  </button>
+                  <button 
+                    onClick={() => { setLanguage('hi'); setIsLangOpen(false); }}
+                    className={`w-full text-left px-3 py-2 rounded-xl transition-colors cursor-pointer ${currentLang === 'hi' ? 'bg-[#e6f4ea] text-[#046a38]' : 'hover:bg-slate-50'}`}
+                  >
+                    हिन्दी (HI)
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* FUNCTIONAL NOTIFICATION BELL WITH DROPDOWN */}
+            <div className="relative" ref={notificationRef}>
+              <button 
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                className="relative p-2.5 text-slate-600 hover:bg-slate-100 rounded-2xl bg-white border border-slate-200 transition-colors shadow-xs cursor-pointer"
+              >
+                <Bell className="w-4 h-4" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                )}
+              </button>
+
+              {/* NOTIFICATION DROPDOWN */}
+              {isNotificationsOpen && (
+                <div className="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-2xl shadow-xl border border-slate-200 z-50 overflow-hidden animate-in zoom-in-95">
+                  <div className="bg-[#046a38] p-4 flex justify-between items-center text-white">
+                    <div className="flex items-center gap-2">
+                      <Bell className="w-4 h-4 text-emerald-200" />
+                      <h4 className="font-extrabold text-sm">Centre Notifications</h4>
+                    </div>
+                    {unreadCount > 0 && (
+                      <button 
+                        onClick={handleMarkAllRead}
+                        className="text-[11px] font-bold text-emerald-100 hover:text-white underline cursor-pointer"
+                      >
+                        Mark all as read
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto custom-scrollbar">
+                    {notifications.map((item) => (
+                      <div 
+                        key={item.id} 
+                        onClick={() => handleMarkNotificationRead(item.id)}
+                        className={`p-3.5 hover:bg-slate-50 transition-colors cursor-pointer flex gap-3 items-start ${!item.read ? 'bg-[#e6f4ea]/40' : ''}`}
+                      >
+                        <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!item.read ? 'bg-[#046a38]' : 'bg-transparent'}`}></div>
+                        <div className="flex-1">
+                          <h5 className="font-extrabold text-slate-900 text-xs">{item.title}</h5>
+                          <p className="text-[11px] text-slate-600 font-medium leading-tight mt-0.5">{item.message}</p>
+                          <span className="text-[10px] text-slate-400 font-semibold block mt-1">{item.time}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* FUNCTIONAL USER PROFILE BUTTON WITH DROPDOWN */}
+            <div className="relative" ref={profileRef}>
+              <div 
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center gap-3 cursor-pointer group bg-white border border-slate-200 pl-2 pr-4 py-1.5 rounded-full shadow-xs hover:border-[#046a38] transition-colors"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#046a38] text-white flex items-center justify-center font-black text-sm shadow-xs">
+                  {currentUser?.name ? currentUser.name.charAt(0) : 'S'}
+                </div>
+                <div className="flex flex-col hidden lg:flex">
+                  <span className="text-xs font-black text-slate-900 leading-tight">{currentUser?.name || 'Srinivas Rao'}</span>
+                  <span className="text-[10px] font-semibold text-[#046a38] text-left leading-tight">
+                    {currentUser?.counterId || 'Counter 1'}
+                  </span>
+                </div>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#046a38]" />
+              </div>
+
+              {/* USER PROFILE DROPDOWN */}
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 z-50 overflow-hidden animate-in zoom-in-95">
+                  <div className="p-4 bg-[#f4f7f5] border-b border-slate-200 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#046a38] text-white flex items-center justify-center font-black text-base">
+                      {currentUser?.name ? currentUser.name.charAt(0) : 'S'}
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-slate-900 text-sm leading-tight">{currentUser?.name || 'Srinivas Rao'}</h4>
+                      <p className="text-[11px] font-medium text-slate-500 mt-0.5">ID: {currentUser?.id || 'STAFF-01'}</p>
+                    </div>
+                  </div>
+
+                  <div className="p-4 space-y-2.5 text-xs font-bold text-slate-700">
+                    <div className="flex items-center justify-between py-1 border-b border-slate-100">
+                      <span className="text-slate-400 font-medium">Procurement Centre</span>
+                      <span className="text-slate-900">{centre?.name || 'Sri Lakshmi Centre'}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between py-1 border-b border-slate-100">
+                      <span className="text-slate-400 font-medium">Counter ID</span>
+                      <span className="text-[#046a38] font-black">{currentUser?.counterId || 'Counter 1'}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between py-1 border-b border-slate-100">
+                      <span className="text-slate-400 font-medium">Phone</span>
+                      <span className="text-slate-800">{currentUser?.phone || '+91 98765 43210'}</span>
+                    </div>
+
+                    <div className="pt-2 space-y-1.5">
+                      <button
+                        onClick={() => { setIsProfileOpen(false); navigate('/centre/activity'); }}
+                        className="w-full py-2 px-3 text-left font-extrabold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center justify-between cursor-pointer"
+                      >
+                        <span>View Staff Activity Log</span>
+                        <ChevronRight className="w-4 h-4 text-slate-400" />
+                      </button>
+
+                      <button
+                        onClick={handleLogout}
+                        className="w-full py-2.5 px-3 font-extrabold text-red-600 hover:bg-red-50 rounded-xl transition-colors flex items-center gap-2 cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+          </div>
+        </header>
 
         {/* MAIN PAGE CONTENT */}
         <main className="flex-1 p-4 md:p-8 pb-24 md:pb-12 max-w-7xl mx-auto w-full">
           {children}
         </main>
-        
+
       </div>
 
       {/* MOBILE BOTTOM NAV */}
-      <nav className="md:hidden fixed bottom-0 w-full bg-white border-t border-earth-200 flex justify-around p-2 pb-safe z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+      <nav className="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around p-2 pb-safe z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
         {bottomNavItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             className={({ isActive }) =>
-              `flex flex-col items-center p-2 rounded-xl text-[10px] font-bold transition-all ${
-                isActive ? 'text-forest-700 bg-forest-50' : 'text-earth-400 hover:bg-earth-50'
+              `flex flex-col items-center p-2 rounded-xl text-[10px] font-bold transition-all ${isActive ? 'text-[#046a38] bg-[#e6f4ea]' : 'text-slate-400 hover:bg-slate-50'
               }`
             }
           >
             {({ isActive }) => (
               <>
-                <item.icon className={`w-5 h-5 mb-1 ${isActive ? 'text-forest-600' : 'text-earth-400'}`} />
+                <item.icon className={`w-5 h-5 mb-1 ${isActive ? 'text-[#046a38]' : 'text-slate-400'}`} />
                 {item.name.split(' ')[0]}
               </>
             )}
           </NavLink>
         ))}
       </nav>
-      
+
+      {/* FUNCTIONAL NEED HELP / SUPPORT MODAL */}
+      {isHelpModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden animate-in zoom-in-95 border border-slate-100">
+            {/* Modal Header */}
+            <div className="bg-[#046a38] p-5 flex justify-between items-center text-white">
+              <div className="flex items-center gap-2.5">
+                <Headphones className="w-5 h-5 text-emerald-200" />
+                <h3 className="font-extrabold text-base">Help & Support / Contact Admin</h3>
+              </div>
+              <button 
+                onClick={() => setIsHelpModalOpen(false)}
+                className="p-1 rounded-lg hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-5 text-xs font-semibold text-slate-700">
+              
+              {/* Admin Contact Information */}
+              <div className="bg-[#e6f4ea] p-4 rounded-xl border border-emerald-200 space-y-2">
+                <p className="text-[10px] font-extrabold text-[#046a38] uppercase tracking-wider">Centre Support Desk</p>
+                <div className="space-y-1 text-xs text-slate-900 font-bold">
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-3.5 h-3.5 text-[#046a38]" />
+                    <span>Helpline: 1800-425-1999 (Toll Free)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-3.5 h-3.5 text-[#046a38]" />
+                    <span>Email: support@kisanqueue.gov.in</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Building className="w-3.5 h-3.5 text-[#046a38]" />
+                    <span>West Godavari District Hub</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Ticket Form */}
+              <form onSubmit={handleSupportSubmit} className="space-y-4">
+                <div>
+                  <label className="text-xs font-extrabold text-slate-700 uppercase tracking-wider block mb-1.5">
+                    Issue Category <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={issueCategory}
+                    onChange={(e) => setIssueCategory(e.target.value)}
+                    className="w-full h-10 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-900 bg-white focus:outline-none focus:border-[#046a38] cursor-pointer"
+                  >
+                    <option value="Weighing Scale Malfunction">Weighing Scale Malfunction</option>
+                    <option value="App / Technical Bug">App / Technical Bug</option>
+                    <option value="Queue / Token Congestion">Queue / Token Congestion</option>
+                    <option value="Payment Delay Issue">Payment Delay Issue</option>
+                    <option value="Other Assistance">Other Assistance</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-extrabold text-slate-700 uppercase tracking-wider block mb-1.5">
+                    Description / Details <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    required
+                    rows="3"
+                    value={issueDescription}
+                    onChange={(e) => setIssueDescription(e.target.value)}
+                    placeholder="Describe the issue or assistance required..."
+                    className="w-full border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#046a38] resize-none"
+                  ></textarea>
+                </div>
+
+                {issueSubmitted && (
+                  <div className="p-3 bg-emerald-50 border border-emerald-200 text-[#046a38] rounded-xl flex items-center gap-2 font-extrabold text-xs">
+                    <Check className="w-4 h-4 stroke-[3]" />
+                    <span>Issue submitted successfully! Admin notified.</span>
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setIsHelpModalOpen(false)}
+                    className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 py-3 bg-[#046a38] hover:bg-[#03522c] text-white font-extrabold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                  >
+                    <Send className="w-4 h-4" />
+                    <span>Submit Issue</span>
+                  </button>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
