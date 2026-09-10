@@ -3,8 +3,8 @@ import Navigation from './components/Navigation';
 import HeroSection from './components/HeroSection';
 import { AboutSection, PurposeSection, FarmerFirstSection, KisanSahayakSection } from './components/InfoSections';
 import { ServicesSection, HowItWorksSection } from './components/FeatureSections';
-import { CentreAndGovSections, MapAndDemandSections } from './components/GovCentreSections';
-import { SchemesSupportSection, FarmerResourcesSection, ImpactStatisticsSection, FAQSection, ContactSection } from './components/ResourcesSection';
+import { CentreAndGovSections } from './components/GovCentreSections';
+import { SchemesSupportSection, FarmerResourcesSection } from './components/ResourcesSection';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
 
@@ -46,23 +46,11 @@ const LandingPage = () => {
         {/* 9 & 10. Centre & Government Sections */}
         <CentreAndGovSections />
         
-        {/* 11 & 12. Map & Demand */}
-        <MapAndDemandSections />
-        
         {/* 13. Schemes & Support */}
         <SchemesSupportSection />
         
         {/* 14. Resources */}
         <FarmerResourcesSection />
-        
-        {/* 15. Impact / Statistics */}
-        <ImpactStatisticsSection />
-        
-        {/* 16. FAQ */}
-        <FAQSection />
-        
-        {/* 17. Contact Us */}
-        <ContactSection />
 
       </main>
       
