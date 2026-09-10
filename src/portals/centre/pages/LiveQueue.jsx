@@ -1,182 +1,488 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../context/AppContext';
+import { useTranslation } from '../../../data/translations';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../shared/components/Card';
 import { Button } from '../../../shared/components/Button';
-import { Badge } from '../../../shared/components/Badge';
-import { Input } from '../../../shared/components/Input';
-import { Users, Search, Filter, Play, CheckCircle2, Clock, AlertTriangle, RefreshCw } from 'lucide-react';
+import { 
+  Users, CheckCircle2, QrCode, ScanLine, ChevronRight, Phone, 
+  MapPin, Ticket, Clock, Leaf, Scale, Calendar, Play, FileText, 
+  RefreshCw, Check, FastForward, User
+} from 'lucide-react';
 
 const StaffLiveQueue = () => {
   const { state, setState, currentUser } = useAppContext();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [filter, setFilter] = useState('All');
-  const [searchTerm, setSearchTerm] = useState('');
+  // Queue List Default / Mock Data combined with state
+  const mockQueueList = [
+    { id: 1, token: 'A106', farmerName: 'Siva Prasad', commodity: 'Paddy', slotTime: '10:30 AM', farmerId: 'KIS-98231A', phone: '98480 12345', village: 'Gannavaram', qty: '65 kg' },
+    { id: 2, token: 'A107', farmerName: 'Lakshmi Devi', commodity: 'Maize', slotTime: '10:45 AM', farmerId: 'KIS-88123B', phone: '94401 56789', village: 'Nuzvid', qty: '48 kg' },
+    { id: 3, token: 'A108', farmerName: 'Ravi Teja', commodity: 'Paddy', slotTime: '11:00 AM', farmerId: 'KIS-77192C', phone: '98665 43210', village: 'Eluru', qty: '80 kg' },
+    { id: 4, token: 'A109', farmerName: 'Anitha Reddy', commodity: 'Groundnut', slotTime: '11:15 AM', farmerId: 'KIS-66512D', phone: '99890 11223', village: 'Tadepalligudem', qty: '40 kg' },
+    { id: 5, token: 'A110', farmerName: 'Mahesh Babu', commodity: 'Paddy', slotTime: '11:30 AM', farmerId: 'KIS-55410E', phone: '97012 33445', village: 'Bhimavaram', qty: '55 kg' },
+    { id: 6, token: 'A111', farmerName: 'Sunita Rao', commodity: 'Maize', slotTime: '11:45 AM', farmerId: 'KIS-44321F', phone: '98499 88776', village: 'Tanuku', qty: '60 kg' },
+    { id: 7, token: 'A112', farmerName: 'Venkatesh', commodity: 'Paddy', slotTime: '12:00 PM', farmerId: 'KIS-33210G', phone: '94412 99887', village: 'Palakollu', qty: '72 kg' },
+    { id: 8, token: 'A113', farmerName: 'Kavitha', commodity: 'Red Gram', slotTime: '12:15 PM', farmerId: 'KIS-22109H', phone: '98660 55443', village: 'Narsapur', qty: '35 kg' },
+    { id: 9, token: 'A114', farmerName: 'Pradeep', commodity: 'Maize', slotTime: '12:30 PM', farmerId: 'KIS-11098I', phone: '99480 66778', village: 'Jangareddygudem', qty: '50 kg' },
+    { id: 10, token: 'A115', farmerName: 'Saroja', commodity: 'Paddy', slotTime: '12:45 PM', farmerId: 'KIS-00987J', phone: '97045 11223', village: 'Kovvur', qty: '68 kg' },
+  ];
 
-  // Get current serving
-  const currentServing = state.queue.find(q => q.status === 'Serving');
-  const nextInQueue = state.queue.filter(q => q.status === 'Waiting').sort((a,b) => a.position - b.position);
-  const waitingFarmers = nextInQueue.length;
-  const activeCounters = 3;
+  // Currently Serving state
+  const [currentlyServing, setCurrentlyServing] = useState({
+    token: 'A105',
+    farmerName: 'Ramesh Kumar',
+    farmerId: 'KIS-729481C',
+    phone: '98765 43210',
+    village: 'Bhuvanavaram',
+    slotTime: '10:00 AM – 10:30 AM',
+    commodity: 'Paddy',
+    qty: '54 kg',
+    date: '10 Sep 2025',
+    verificationTime: '10:24 AM'
+  });
 
-  const filteredQueue = state.queue
-    .sort((a,b) => a.position - b.position)
-    .filter(q => {
-       if (filter === 'All') return true;
-       return q.status === filter;
-    })
-    .filter(q => {
-       const farmerName = state.farmers.find(f => f.id === q.farmerId)?.name || '';
-       return q.token.toLowerCase().includes(searchTerm.toLowerCase()) || farmerName.toLowerCase().includes(searchTerm.toLowerCase());
-    });
+  const [isScanning, setIsScanning] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
-  const handleCallNext = () => {
-    if (nextInQueue.length === 0) return alert("Queue is empty.");
-    const nextFarmer = nextInQueue[0];
-    const updatedQueue = state.queue.map(q => {
-      if (q.status === 'Serving') return { ...q, status: 'Quality Check' };
-      if (q.id === nextFarmer.id) return { ...q, status: 'Serving', counter: 'C2' };
-      return q;
-    });
-    setState(prev => ({ ...prev, queue: updatedQueue }));
+  // Trigger QR Scanning / Verify Next Farmer
+  const handleScanFarmer = (farmer = null) => {
+    setIsScanning(true);
+    setTimeout(() => {
+      setIsScanning(false);
+      const targetFarmer = farmer || mockQueueList[0];
+      setCurrentlyServing({
+        token: targetFarmer.token,
+        farmerName: targetFarmer.farmerName,
+        farmerId: targetFarmer.farmerId || 'KIS-729481C',
+        phone: targetFarmer.phone || '98765 43210',
+        village: targetFarmer.village || 'Bhuvanavaram',
+        slotTime: targetFarmer.slotTime ? `${targetFarmer.slotTime} – 11:00 AM` : '10:00 AM – 10:30 AM',
+        commodity: targetFarmer.commodity || 'Paddy',
+        qty: targetFarmer.qty || '54 kg',
+        date: '10 Sep 2025',
+        verificationTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+    }, 500);
   };
 
-  const handleProcess = (token) => {
-    const q = state.queue.find(x => x.token === token);
-    if (q.status === 'Quality Check') navigate('/centre/quality-check');
-    else if (q.status === 'Weighing') navigate('/centre/weighing');
-    else navigate('/centre/verification');
+  // Start Procurement handler
+  const handleStartProcurement = () => {
+    // Log activity
+    const newActivity = {
+      id: `ACT-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      staffId: currentUser?.id || 'STAFF-01',
+      action: `Started procurement for token ${currentlyServing.token} (${currentlyServing.farmerName})`,
+      farmerName: currentlyServing.farmerName,
+      bookingId: 'BK-105'
+    };
+
+    setState(prev => ({
+      ...prev,
+      activity: [newActivity, ...(prev.activity || [])]
+    }));
+
+    navigate('/centre/procurement');
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-2">
-        <div>
-          <h2 className="text-2xl font-black text-forest-900 tracking-tight">Live Queue</h2>
-          <p className="text-earth-600 mt-1 font-medium">Manage and monitor the flow of farmers.</p>
-        </div>
-        <Button className="bg-green-500 hover:bg-green-400 text-forest-950 font-black shadow-md border-b-2 border-green-600 active:border-b-0 active:translate-y-px" onClick={handleCallNext}>
-          <Play className="w-4 h-4 mr-1.5 fill-current" /> Call Next Farmer
-        </Button>
+    <div className="space-y-6 font-sans">
+      
+      {/* HEADER SECTION */}
+      <div>
+        <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">LIVE QUEUE</p>
+        <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mt-0.5">Live Queue</h1>
+        <p className="text-sm font-medium text-slate-500 mt-1">Scan farmer's QR to verify and manage the queue efficiently.</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-         <Card className="border-none shadow-sm bg-forest-900 text-white md:col-span-1">
-            <CardContent className="p-4 flex flex-col justify-center h-full">
-               <p className="text-[10px] font-bold text-forest-300 uppercase tracking-widest mb-1">Now Serving</p>
-               <h3 className="text-3xl font-black">{currentServing?.token || '--'}</h3>
-            </CardContent>
-         </Card>
-         <Card className="border-none shadow-sm bg-white md:col-span-1 border border-earth-200">
-            <CardContent className="p-4 flex flex-col justify-center h-full">
-               <p className="text-[10px] font-bold text-earth-500 uppercase tracking-widest mb-1">Next Token</p>
-               <h3 className="text-2xl font-black text-earth-900">{nextInQueue[0]?.token || '--'}</h3>
-            </CardContent>
-         </Card>
-         <Card className="border-none shadow-sm bg-white md:col-span-1 border border-earth-200">
-            <CardContent className="p-4 flex flex-col justify-center h-full">
-               <p className="text-[10px] font-bold text-earth-500 uppercase tracking-widest mb-1">Queue Length</p>
-               <h3 className="text-2xl font-black text-amber-600">{waitingFarmers}</h3>
-            </CardContent>
-         </Card>
-         <Card className="border-none shadow-sm bg-white md:col-span-1 border border-earth-200">
-            <CardContent className="p-4 flex flex-col justify-center h-full">
-               <p className="text-[10px] font-bold text-earth-500 uppercase tracking-widest mb-1">Avg Wait</p>
-               <h3 className="text-2xl font-black text-earth-900">~34m</h3>
-            </CardContent>
-         </Card>
-         <Card className="border-none shadow-sm bg-white md:col-span-1 border border-earth-200">
-            <CardContent className="p-4 flex flex-col justify-center h-full">
-               <p className="text-[10px] font-bold text-earth-500 uppercase tracking-widest mb-1">Active Counters</p>
-               <h3 className="text-2xl font-black text-earth-900">{activeCounters}</h3>
-            </CardContent>
-         </Card>
-      </div>
-
-      <Card className="border-earth-200 shadow-sm overflow-hidden bg-white">
-        <CardHeader className="bg-earth-50 border-b border-earth-100 py-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-           
-           <div className="flex gap-2 overflow-x-auto w-full lg:w-auto custom-scrollbar pb-2 lg:pb-0">
-             {['All', 'Waiting', 'Serving', 'Quality Check', 'Weighing'].map(f => (
-               <button 
-                 key={f}
-                 onClick={() => setFilter(f)}
-                 className={`px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-colors uppercase tracking-wider ${
-                   filter === f ? 'bg-forest-900 text-white' : 'bg-white text-earth-600 border border-earth-200 hover:bg-earth-100'
-                 }`}
-               >
-                 {f}
-               </button>
-             ))}
-           </div>
-           
-           <div className="relative w-full lg:w-64">
-             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-earth-400" />
-             <Input 
-               placeholder="Search token or farmer..." 
-               className="pl-9 h-9 border-earth-300 text-sm font-medium"
-               value={searchTerm}
-               onChange={(e) => setSearchTerm(e.target.value)}
-             />
-           </div>
-        </CardHeader>
+      {/* TWO COLUMN MAIN LAYOUT */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-white border-b border-earth-200 text-earth-500 uppercase font-bold text-[10px] tracking-wider">
-              <tr>
-                <th className="p-4">Token</th>
-                <th className="p-4">Farmer</th>
-                <th className="p-4">Crop & Qty</th>
-                <th className="p-4">Status</th>
-                <th className="p-4">Counter</th>
-                <th className="p-4">Est. Wait</th>
-                <th className="p-4 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-earth-100 bg-white">
-              {filteredQueue.length > 0 ? filteredQueue.map((q, idx) => {
-                const farmer = state.farmers.find(f => f.id === q.farmerId);
-                const booking = state.bookings.find(b => b.token === q.token);
+        {/* LEFT COLUMN: SERVING, VERIFICATION, VERIFIED DETAILS */}
+        <div className="lg:col-span-7 space-y-6">
+          
+          {/* TOP 2 STAT CARDS: CURRENTLY SERVING & FARMERS WAITING */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            {/* CURRENTLY SERVING CARD */}
+            <Card className="border border-slate-100 shadow-xs bg-white rounded-2xl overflow-hidden">
+              <CardContent className="p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-full bg-[#e6f4ea] text-[#046a38] flex items-center justify-center shrink-0">
+                    <Users className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-600">Currently Serving</p>
+                    <h3 className="text-2xl md:text-3xl font-black text-[#046a38] mt-0.5">{currentlyServing.token}</h3>
+                    <p className="text-xs font-medium text-slate-500 mt-0.5">{currentlyServing.farmerName}</p>
+                  </div>
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => handleScanFarmer()}
+                  className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:border-[#046a38] hover:text-[#046a38] transition-colors shrink-0 cursor-pointer"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </CardContent>
+            </Card>
+
+            {/* FARMERS WAITING CARD (GREEN ACCENT) */}
+            <Card className="border border-slate-100 shadow-xs bg-white rounded-2xl overflow-hidden">
+              <CardContent className="p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-full bg-[#e6f4ea] text-[#046a38] flex items-center justify-center shrink-0">
+                    <Users className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-600">Farmers Waiting</p>
+                    <h3 className="text-2xl md:text-3xl font-black text-slate-900 mt-0.5">{mockQueueList.length}</h3>
+                    <p className="text-xs font-medium text-slate-500 mt-0.5">in queue</p>
+                  </div>
+                </div>
+                <button 
+                  type="button"
+                  className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:border-[#046a38] hover:text-[#046a38] transition-colors shrink-0 cursor-pointer"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </CardContent>
+            </Card>
+
+          </div>
+
+          {/* QR-ONLY FARMER VERIFICATION CARD (MAIN FOCUS) */}
+          <Card className="border border-slate-100 shadow-xs bg-white rounded-2xl overflow-hidden">
+            <CardHeader className="py-4 px-6 border-b border-slate-100 bg-white">
+              <div className="flex items-center gap-2.5">
+                <div className="w-6 h-6 rounded-full bg-[#046a38] text-white flex items-center justify-center shrink-0">
+                  <Check className="w-3.5 h-3.5 stroke-[3]" />
+                </div>
+                <div>
+                  <CardTitle className="text-base font-bold text-slate-900">Farmer Verification</CardTitle>
+                  <p className="text-xs font-medium text-slate-500">Scan the farmer's QR code to verify and proceed.</p>
+                </div>
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-6">
+              {/* QR SCANNER VIEWPORT */}
+              <div 
+                onClick={() => handleScanFarmer()}
+                className="w-full bg-[#e6f4ea] rounded-2xl py-10 px-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-[#d8edd9] transition-colors relative group border border-emerald-200"
+              >
+                {/* CORNER BRACKETS */}
+                <div className="w-48 h-36 relative flex flex-col items-center justify-center">
+                  <div className="absolute top-0 left-0 w-5 h-5 border-t-3 border-l-3 border-[#046a38] rounded-tl-md"></div>
+                  <div className="absolute top-0 right-0 w-5 h-5 border-t-3 border-r-3 border-[#046a38] rounded-tr-md"></div>
+                  <div className="absolute bottom-0 left-0 w-5 h-5 border-b-3 border-l-3 border-[#046a38] rounded-bl-md"></div>
+                  <div className="absolute bottom-0 right-0 w-5 h-5 border-b-3 border-r-3 border-[#046a38] rounded-br-md"></div>
+
+                  {/* QR LOGO ICON */}
+                  <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center text-[#046a38] shadow-xs mb-2">
+                    <QrCode className="w-10 h-10" />
+                  </div>
+                </div>
+
+                <h3 className="text-base font-black text-slate-900 mt-2">Scan Farmer QR</h3>
+                <p className="text-xs font-medium text-slate-600 mt-1">Place the QR code within the frame to verify</p>
                 
-                return (
-                  <tr key={q.id} className="hover:bg-earth-50 transition-colors">
-                    <td className="p-4 font-black text-forest-900 text-lg">{q.token}</td>
-                    <td className="p-4 font-bold text-earth-800">{farmer?.name}</td>
-                    <td className="p-4 font-bold text-earth-700">{booking?.crop} <span className="text-earth-400 font-medium ml-1">{booking?.expectedQuantity}Q</span></td>
-                    <td className="p-4">
-                       <Badge className={`uppercase font-bold tracking-widest text-[9px] ${
-                         q.status === 'Serving' ? 'bg-forest-600 text-white' :
-                         q.status === 'Waiting' ? 'bg-amber-100 text-amber-700 hover:bg-amber-100 border-amber-200' :
-                         'bg-blue-100 text-blue-700 border-blue-200'
-                       }`}>
-                         {q.status}
-                       </Badge>
-                    </td>
-                    <td className="p-4 font-bold text-earth-600">{q.counter || '--'}</td>
-                    <td className="p-4 font-bold text-earth-600">{q.status === 'Waiting' ? `~${(idx+1)*5}m` : '--'}</td>
-                    <td className="p-4 text-right">
-                       <Button size="sm" className="h-8 font-bold text-xs shadow-sm bg-forest-600 hover:bg-forest-700" onClick={() => handleProcess(q.token)}>
-                         Process
-                       </Button>
-                    </td>
-                  </tr>
-                );
-              }) : (
-                <tr>
-                  <td colSpan="7" className="p-8 text-center">
-                    <div className="flex flex-col items-center">
-                      <Users className="w-10 h-10 text-earth-300 mb-2" />
-                      <p className="text-earth-500 font-bold">No queue records found.</p>
+                {isScanning && (
+                  <div className="absolute inset-0 bg-white/80 backdrop-blur-xs rounded-2xl flex items-center justify-center">
+                    <div className="flex items-center gap-2 text-[#046a38] font-bold text-sm">
+                      <RefreshCw className="w-5 h-5 animate-spin" /> Verifying QR...
                     </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* VERIFIED FARMER DETAILS CARD (BELOW QR SCANNER) */}
+          <Card className="border border-slate-100 shadow-xs bg-white rounded-2xl overflow-hidden">
+            <CardHeader className="py-4 px-6 border-b border-slate-100 flex flex-row items-center justify-between bg-white">
+              <div className="flex items-center gap-2.5">
+                <div className="w-6 h-6 rounded-full bg-[#046a38] text-white flex items-center justify-center shrink-0">
+                  <Check className="w-3.5 h-3.5 stroke-[3]" />
+                </div>
+                <CardTitle className="text-base font-bold text-slate-900">Verified Farmer Details</CardTitle>
+              </div>
+
+              {/* VERIFIED BADGE */}
+              <span className="px-3 py-1 rounded-full bg-[#e6f4ea] text-[#046a38] border border-emerald-300 font-bold text-xs flex items-center gap-1.5">
+                <div className="w-4 h-4 rounded-full bg-[#046a38] text-white flex items-center justify-center">
+                  <Check className="w-2.5 h-2.5 stroke-[3]" />
+                </div>
+                Verified
+              </span>
+            </CardHeader>
+
+            <CardContent className="p-6 space-y-6">
+              
+              {/* FARMER PROFILE & METADATA GRID */}
+              <div className="flex flex-col md:flex-row gap-6">
+                
+                {/* FARMER PROFILE INFO */}
+                <div className="flex items-start gap-4 md:w-5/12 pr-4 border-b md:border-b-0 md:border-r border-slate-100 pb-4 md:pb-0">
+                  <div className="w-14 h-14 rounded-full bg-[#e6f4ea] text-[#046a38] flex items-center justify-center shrink-0">
+                    <User className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-slate-900">{currentlyServing.farmerName}</h3>
+                    <p className="text-xs font-medium text-slate-500 mt-0.5">Farmer ID: {currentlyServing.farmerId}</p>
+                    
+                    <div className="mt-3 space-y-1 text-xs font-medium text-slate-600">
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-3.5 h-3.5 text-slate-400" />
+                        <span>{currentlyServing.phone}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                        <span>{currentlyServing.village}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* METADATA GRID (3 COLUMNS X 2 ROWS) */}
+                <div className="grid grid-cols-3 gap-y-4 gap-x-2 md:w-7/12">
+                  
+                  {/* TOKEN NUMBER */}
+                  <div className="flex items-start gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
+                      <Ticket className="w-3.5 h-3.5 text-slate-600" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Token Number</p>
+                      <p className="text-sm font-black text-slate-900 mt-0.5">{currentlyServing.token}</p>
+                    </div>
+                  </div>
+
+                  {/* BOOKED SLOT */}
+                  <div className="flex items-start gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
+                      <Clock className="w-3.5 h-3.5 text-slate-600" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Booked Slot</p>
+                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.slotTime}</p>
+                    </div>
+                  </div>
+
+                  {/* COMMODITY */}
+                  <div className="flex items-start gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
+                      <Leaf className="w-3.5 h-3.5 text-slate-600" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Commodity</p>
+                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.commodity}</p>
+                    </div>
+                  </div>
+
+                  {/* EXPECTED QUANTITY */}
+                  <div className="flex items-start gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
+                      <Scale className="w-3.5 h-3.5 text-slate-600" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Expected Quantity</p>
+                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.qty}</p>
+                    </div>
+                  </div>
+
+                  {/* BOOKING DATE */}
+                  <div className="flex items-start gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
+                      <Calendar className="w-3.5 h-3.5 text-slate-600" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Booking Date</p>
+                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.date}</p>
+                    </div>
+                  </div>
+
+                  {/* VERIFICATION TIME */}
+                  <div className="flex items-start gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-slate-600" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Verification Time</p>
+                      <p className="text-xs font-bold text-slate-900 mt-0.5">{currentlyServing.verificationTime}</p>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* ACTION BUTTONS */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={handleStartProcurement}
+                  className="flex-1 bg-[#046a38] hover:bg-[#03522c] text-white font-bold h-12 rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
+                >
+                  <Play className="w-4 h-4 fill-current" /> Start Procurement <ChevronRight className="w-4 h-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowBookingModal(true)}
+                  className="flex-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold h-12 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
+                >
+                  <FileText className="w-4 h-4 text-slate-600" /> View Booking Details
+                </button>
+              </div>
+
+            </CardContent>
+          </Card>
+
         </div>
-      </Card>
+
+        {/* RIGHT COLUMN: QUEUE LIST (18 WAITING) TABLE & CALL NEXT FARMER BUTTON */}
+        <div className="lg:col-span-5 space-y-4">
+          
+          <Card className="border border-slate-100 shadow-xs bg-white rounded-2xl overflow-hidden flex flex-col justify-between h-full">
+            <div>
+              {/* QUEUE LIST HEADER */}
+              <CardHeader className="py-4 px-6 border-b border-slate-100 flex flex-row items-center justify-between bg-white">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-[#046a38]" />
+                  <CardTitle className="text-base font-bold text-slate-900">
+                    Queue List ({mockQueueList.length} waiting)
+                  </CardTitle>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleScanFarmer()}
+                  className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 text-slate-600" /> Refresh
+                </button>
+              </CardHeader>
+
+              {/* QUEUE LIST TABLE */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead className="bg-slate-50/60 border-b border-slate-100 text-slate-400 uppercase font-extrabold text-[10px] tracking-wider">
+                    <tr>
+                      <th className="p-3 pl-5">#</th>
+                      <th className="p-3">Token</th>
+                      <th className="p-3">Farmer Name</th>
+                      <th className="p-3">Commodity</th>
+                      <th className="p-3 pr-5 text-right">Slot Time</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 bg-white">
+                    {mockQueueList.map((item) => (
+                      <tr 
+                        key={item.id} 
+                        onClick={() => handleScanFarmer(item)}
+                        className="hover:bg-slate-50/80 transition-colors cursor-pointer group"
+                      >
+                        <td className="p-3 pl-5 text-xs font-bold text-slate-400">{item.id}</td>
+                        <td className="p-3 font-black text-[#046a38] text-sm group-hover:underline">{item.token}</td>
+                        <td className="p-3 font-bold text-slate-900 text-xs">{item.farmerName}</td>
+                        <td className="p-3 font-medium text-slate-600 text-xs">{item.commodity}</td>
+                        <td className="p-3 pr-5 text-right font-medium text-slate-500 text-xs">{item.slotTime}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* FULL-WIDTH CALL NEXT FARMER BUTTON AT BOTTOM OF QUEUE LIST */}
+            <div className="p-4 bg-white border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => handleScanFarmer(mockQueueList[0])}
+                className="w-full bg-[#e6f4ea] hover:bg-[#d8edd9] text-[#046a38] font-black h-12 rounded-2xl transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm"
+              >
+                <FastForward className="w-4 h-4 fill-current" /> Call Next Farmer ({mockQueueList[0]?.token || 'A106'})
+              </button>
+            </div>
+
+          </Card>
+
+        </div>
+
+      </div>
+
+      {/* BOOKING DETAILS MODAL */}
+      {showBookingModal && (
+        <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden animate-in zoom-in-95">
+            <div className="bg-[#046a38] p-5 flex justify-between items-center text-white">
+              <h3 className="font-bold text-base flex items-center gap-2">
+                <FileText className="w-5 h-5" /> Booking Details - {currentlyServing.token}
+              </h3>
+              <button 
+                type="button" 
+                onClick={() => setShowBookingModal(false)}
+                className="text-white/80 hover:text-white transition-colors cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-sm font-medium text-slate-700">
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-slate-500 text-xs">Farmer Name:</span>
+                  <span className="font-bold text-slate-900">{currentlyServing.farmerName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 text-xs">Farmer ID:</span>
+                  <span className="font-bold text-slate-900">{currentlyServing.farmerId}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 text-xs">Phone:</span>
+                  <span className="font-bold text-slate-900">{currentlyServing.phone}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 text-xs">Location:</span>
+                  <span className="font-bold text-slate-900">{currentlyServing.village}</span>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-slate-500 text-xs">Commodity:</span>
+                  <span className="font-bold text-slate-900">{currentlyServing.commodity}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 text-xs">Expected Qty:</span>
+                  <span className="font-bold text-[#046a38]">{currentlyServing.qty}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 text-xs">Booked Slot:</span>
+                  <span className="font-bold text-slate-900">{currentlyServing.slotTime}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 text-xs">Booking Date:</span>
+                  <span className="font-bold text-slate-900">{currentlyServing.date}</span>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Button 
+                  className="w-full bg-[#046a38] hover:bg-[#03522c] text-white font-bold rounded-xl h-11"
+                  onClick={() => setShowBookingModal(false)}
+                >
+                  Close Details
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

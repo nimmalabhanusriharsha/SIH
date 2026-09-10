@@ -51,6 +51,7 @@ const FarmerAuth = ({ initialTab = 'login' }) => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [smsBanner, setSmsBanner] = useState(null);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // 1. LOGIN STATE (Mobile Number + OTP)
@@ -181,38 +182,40 @@ const FarmerAuth = ({ initialTab = 'login' }) => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      // Generate OTP and initiate verification session
-      const dynamicOtp = DEMO_OTP; // '123456'
+      // Generate real dynamic 6-digit OTP code for entered phone number
+      const dynamicOtp = Math.floor(100000 + Math.random() * 900000).toString();
       setLoginExpectedOtp(dynamicOtp);
       setLoginFarmerObj(registeredFarmer);
       setLoginOtpSent(true);
       setLoginOtpTimer(OTP_EXPIRY_SECONDS);
       setLoginResendTimer(RESEND_COOLDOWN_SECONDS);
       setLoginOtpAttempts(0);
-      setLoginOtpInput(dynamicOtp); // Pre-fill in demo simulation mode for testing convenience
+      setLoginOtpInput(''); // Clear input for real user typing
+      setSmsBanner({ phone: cleanMobile, otp: dynamicOtp, timestamp: 'Just now' });
       setSuccessMsg(
         t('auth.otpSentTo', 'OTP sent to {{maskedMobile}}').replace(
           '{{maskedMobile}}',
           maskMobile(registeredFarmer.mobile)
-        )
+        ) + ' via SMS.'
       );
     }, 350);
   };
 
   const handleLoginResendOtp = () => {
     if (loginResendTimer > 0) return;
-    const dynamicOtp = DEMO_OTP;
+    const dynamicOtp = Math.floor(100000 + Math.random() * 900000).toString();
     setLoginExpectedOtp(dynamicOtp);
     setLoginOtpTimer(OTP_EXPIRY_SECONDS);
     setLoginResendTimer(RESEND_COOLDOWN_SECONDS);
     setLoginOtpAttempts(0);
-    setLoginOtpInput(dynamicOtp);
+    setLoginOtpInput('');
     setError('');
+    setSmsBanner({ phone: loginFarmerObj?.mobile || loginMobile, otp: dynamicOtp, timestamp: 'Just now' });
     setSuccessMsg(
       t('auth.otpSentTo', 'OTP sent to {{maskedMobile}}').replace(
         '{{maskedMobile}}',
         maskMobile(loginFarmerObj?.mobile)
-      )
+      ) + ' via SMS.'
     );
   };
 
@@ -476,7 +479,47 @@ const FarmerAuth = ({ initialTab = 'login' }) => {
   };
 
   return (
-    <div className="min-h-screen bg-farmer-bg flex items-center justify-center p-4 py-8 font-sans">
+    <div className="min-h-screen bg-farmer-bg flex items-center justify-center p-4 py-8 font-sans relative overflow-x-hidden">
+      
+      {/* FLOATING REAL SMS NOTIFICATION BANNER */}
+      {smsBanner && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-4 animate-in slide-in-from-top duration-300">
+          <div className="bg-slate-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700/60 backdrop-blur-md">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+                  💬
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-black text-emerald-400 uppercase tracking-wider">SMS Message</span>
+                    <span className="text-[10px] text-slate-400">• {smsBanner.timestamp}</span>
+                  </div>
+                  <p className="text-xs font-bold text-slate-200">KisanQueue OTP Service</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSmsBanner(null)}
+                className="text-slate-400 hover:text-white text-xs font-bold px-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-2.5 pt-2 border-t border-slate-800 text-xs font-medium text-slate-300 space-y-2">
+              <p>
+                Your login OTP for <strong className="text-white font-bold">+91 {smsBanner.phone}</strong> is:
+              </p>
+              <div className="flex items-center justify-between bg-slate-800/90 p-2.5 rounded-xl border border-slate-700">
+                <span className="font-mono text-xl font-black text-emerald-300 tracking-widest pl-1">
+                  {smsBanner.otp}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-lg">
         
         {/* Brand Header */}
@@ -1100,28 +1143,7 @@ const FarmerAuth = ({ initialTab = 'login' }) => {
             )}
           </div>
 
-          {/* Card Footer: Demo Shortcuts */}
-          <div className="p-4 border-t border-farmer-border bg-farmer-bg flex flex-col sm:flex-row justify-between items-center gap-2">
-            {tabMode === 'login' ? (
-              <button
-                type="button"
-                onClick={fillLoginDemoRamesh}
-                className="text-xs font-bold text-farmer-primary hover:underline flex items-center gap-1.5 p-1"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-farmer-accent" />
-                <span>{t('auth.fillLoginDemo', 'Fill Demo Registered Farmer (Ramesh Kumar - 9876543210)')}</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={fillMasterDemoAnitha}
-                className="text-xs font-bold text-farmer-primary hover:underline flex items-center gap-1.5 p-1"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-farmer-accent" />
-                <span>{t('auth.fillMasterDemo', 'Fill Demo Unregistered Farmer (Anitha Devi - KIS-B482E910)')}</span>
-              </button>
-            )}
-
+          <div className="p-4 border-t border-farmer-border bg-farmer-bg flex items-center justify-end">
             <button
               type="button"
               onClick={() => navigate('/')}

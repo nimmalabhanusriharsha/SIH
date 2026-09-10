@@ -9,10 +9,14 @@ import { User, ShieldCheck, CheckCircle2, Phone, CreditCard, Sparkles, ArrowRigh
 import { generateFarmerId } from '../utils/tokenGenerator';
 
 import FarmerAuth from '../portals/farmer/pages/FarmerAuth';
+import StaffAuth from '../portals/centre/pages/StaffAuth';
 
 const LoginPage = ({ role }) => {
   if (role === 'FARMER') {
     return <FarmerAuth />;
+  }
+  if (role === 'STAFF') {
+    return <StaffAuth />;
   }
 
   const [tabMode, setTabMode] = useState('login'); // 'login' or 'register' (for farmer)
@@ -418,19 +422,9 @@ const LoginPage = ({ role }) => {
 
           </div>
 
-          <div className={`p-4 border-t flex flex-col sm:flex-row justify-between items-center gap-2 ${
+          <div className={`p-4 border-t flex items-center justify-end ${
             isFarmer ? 'bg-farmer-bg border-farmer-border' : 'bg-earth-50 border-earth-200'
           }`}>
-            <button 
-              type="button"
-              onClick={fillDemo} 
-              className={`text-xs font-bold hover:underline flex items-center gap-1.5 p-1 ${
-                isFarmer ? 'text-farmer-primary' : 'text-forest-600'
-              }`}
-            >
-              <Sparkles className={`w-3.5 h-3.5 ${isFarmer ? 'text-farmer-accent' : 'text-amber-500'}`} />
-              <span>{isFarmer ? t('auth.demoFill', 'Fill Demo Farmer (Ramesh Kumar)') : 'Fill Demo Credentials'}</span>
-            </button>
             <button 
               onClick={() => navigate('/')} 
               className={`text-xs font-semibold ${isFarmer ? 'text-farmer-secondary hover:text-farmer-text' : 'text-earth-600 hover:text-earth-900'}`}
