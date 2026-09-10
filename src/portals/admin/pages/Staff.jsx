@@ -7,16 +7,29 @@ import { Search, Filter, ShieldCheck, Mail, Phone, MapPin } from 'lucide-react';
 
 const AdminStaff = () => {
   const [searchTerm, setSearchTerm] = useState('');
-
-  const staff = [
+  const [selectedStaff, setSelectedStaff] = useState(null);
+  
+  const [staffList, setStaffList] = useState([
     { id: 'STF-001', name: 'Krishna Rao', role: 'Centre Manager', centreId: 'C001', phone: '+91 9876543210', email: 'krishna.r@kisanqueue.gov.in', status: 'Active' },
     { id: 'STF-002', name: 'Lakshmi Devi', role: 'Quality Inspector', centreId: 'C001', phone: '+91 9876543211', email: 'lakshmi.d@kisanqueue.gov.in', status: 'Active' },
     { id: 'STF-003', name: 'Ramesh Babu', role: 'Centre Manager', centreId: 'C002', phone: '+91 9876543212', email: 'ramesh.b@kisanqueue.gov.in', status: 'Active' },
     { id: 'STF-004', name: 'Srinivas G', role: 'Quality Inspector', centreId: 'C003', phone: '+91 9876543213', email: 'srinivas.g@kisanqueue.gov.in', status: 'On Leave' },
     { id: 'STF-005', name: 'Anil Kumar', role: 'Data Entry Operator', centreId: 'C001', phone: '+91 9876543214', email: 'anil.k@kisanqueue.gov.in', status: 'Active' },
-  ];
+  ]);
 
-  const filteredStaff = staff.filter(s => 
+  const handleRevoke = (id) => {
+    if (window.confirm("Are you sure you want to revoke access for this staff member?")) {
+      setStaffList(prev => prev.filter(s => s.id !== id));
+    }
+  };
+
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
+    setStaffList(prev => prev.map(s => s.id === selectedStaff.id ? selectedStaff : s));
+    setSelectedStaff(null);
+  };
+
+  const filteredStaff = staffList.filter(s => 
     s.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     s.centreId.toLowerCase().includes(searchTerm.toLowerCase())
@@ -79,13 +92,81 @@ const AdminStaff = () => {
                  </div>
                  
                  <div className="grid grid-cols-2 gap-2">
-                    <Button variant="outline" size="sm" className="bg-white border-earth-200">Edit Details</Button>
-                    <Button variant="outline" size="sm" className="bg-white border-earth-200 text-red-600 hover:bg-red-50 hover:text-red-700">Revoke Access</Button>
+                    <Button 
+                      variant="outline" size="sm" className="bg-white border-earth-200"
+                      onClick={() => setSelectedStaff(member)}
+                    >
+                      Edit Details
+                    </Button>
+                    <Button 
+                      variant="outline" size="sm" className="bg-white border-earth-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                      onClick={() => handleRevoke(member.id)}
+                    >
+                      Revoke Access
+                    </Button>
                  </div>
               </CardContent>
            </Card>
          ))}
       </div>
+
+      {selectedStaff && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col">
+            <div className="px-6 py-4 border-b border-earth-100 flex items-center justify-between bg-earth-50">
+              <h3 className="font-bold text-lg text-forest-900 flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-forest-600" /> Edit Staff Details
+              </h3>
+              <button onClick={() => setSelectedStaff(null)} className="p-1 hover:bg-earth-200 rounded-md text-earth-500">✕</button>
+            </div>
+            
+            <form onSubmit={handleSaveEdit}>
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-earth-700 mb-1">Name</label>
+                  <Input required value={selectedStaff.name} onChange={e => setSelectedStaff({...selectedStaff, name: e.target.value})} />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-earth-700 mb-1">Role</label>
+                  <select 
+                    className="w-full border border-earth-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-forest-500"
+                    value={selectedStaff.role} onChange={e => setSelectedStaff({...selectedStaff, role: e.target.value})}
+                  >
+                    <option>Centre Manager</option>
+                    <option>Quality Inspector</option>
+                    <option>Data Entry Operator</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-earth-700 mb-1">Assigned Centre</label>
+                  <Input required value={selectedStaff.centreId} onChange={e => setSelectedStaff({...selectedStaff, centreId: e.target.value})} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-earth-700 mb-1">Phone</label>
+                    <Input required value={selectedStaff.phone} onChange={e => setSelectedStaff({...selectedStaff, phone: e.target.value})} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-earth-700 mb-1">Status</label>
+                    <select 
+                      className="w-full border border-earth-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-forest-500"
+                      value={selectedStaff.status} onChange={e => setSelectedStaff({...selectedStaff, status: e.target.value})}
+                    >
+                      <option>Active</option>
+                      <option>On Leave</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="p-4 border-t border-earth-100 bg-earth-50 flex justify-end gap-3">
+                <Button type="button" variant="ghost" onClick={() => setSelectedStaff(null)}>Cancel</Button>
+                <Button type="submit" className="bg-forest-600 hover:bg-forest-700 text-white">Save Changes</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
