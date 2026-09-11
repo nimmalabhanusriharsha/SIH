@@ -3,8 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { useAppContext } from '../../../context/AppContext';
 import { useTranslation } from '../../../data/translations';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../shared/components/Card';
-import { 
-  Sprout, Phone, MapPin, Calendar, Clock, CheckCircle2, 
+import {
+  Sprout, Phone, MapPin, Calendar, Clock, CheckCircle2,
   IndianRupee, FileText, Info, Check, X
 } from 'lucide-react';
 import { CROPS_CATALOGUE, getLocalizedCropName } from '../../farmer/data/crops';
@@ -17,10 +17,10 @@ const StaffProcurement = () => {
   // Find dynamic verified farmer/booking passed from LiveQueue navigation or AppContext
   const navState = location.state || {};
   const activeServingFarmer = state.activeServingFarmer;
-  
+
   const targetBooking = (navState.bookingId ? (state.bookings || []).find(b => b.id === navState.bookingId || b.token === navState.token) : null) ||
-                        (state.activeServingBookingId ? (state.bookings || []).find(b => b.id === state.activeServingBookingId) : null) ||
-                        (state.bookings && state.bookings.length > 0 ? state.bookings[0] : null);
+    (state.activeServingBookingId ? (state.bookings || []).find(b => b.id === state.activeServingBookingId) : null) ||
+    (state.bookings && state.bookings.length > 0 ? state.bookings[0] : null);
 
   const targetFarmerProfile = targetBooking ? (state.farmers || []).find(f => f.id === targetBooking.farmerId) : null;
 
@@ -46,7 +46,7 @@ const StaffProcurement = () => {
     bookedSlot: targetBooking?.slot || activeServingFarmer?.slotTime || '09:00 AM – 10:00 AM',
     expectedQuantity: `${resolvedQty} kg`,
     status: 'Arrived',
-    
+
     // Harvest & Quality Details
     crop: resolvedCrop,
     variety: 'MTU 1010',
@@ -164,11 +164,11 @@ const StaffProcurement = () => {
     };
 
     // Update queue status and booking status to completed
-    const updatedQueue = (state.queue || []).map(q => 
+    const updatedQueue = (state.queue || []).map(q =>
       q.token === formData.tokenNumber || q.farmerId === formData.farmerId ? { ...q, status: 'Completed' } : q
     );
 
-    const updatedBookings = (state.bookings || []).map(b => 
+    const updatedBookings = (state.bookings || []).map(b =>
       b.id === formData.bookingId || b.token === formData.tokenNumber ? { ...b, status: 'Completed' } : b
     );
 
@@ -254,7 +254,7 @@ const StaffProcurement = () => {
       action: `Initiated payment processing for farmer ${formData.farmerName} (${formData.farmerId}, Token ${formData.tokenNumber}) at ${counterId} (Amount: ₹${totalAmount.toLocaleString('en-IN')})`
     };
 
-    const updatedQueue = (state.queue || []).map(q => 
+    const updatedQueue = (state.queue || []).map(q =>
       q.token === formData.tokenNumber ? { ...q, status: 'Completed' } : q
     );
 
@@ -275,7 +275,7 @@ const StaffProcurement = () => {
 
   return (
     <div className="space-y-6 font-sans pb-12">
-      
+
       {/* PAGE HEADER & TOP STEPPER */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-200 pb-5">
         <div>
@@ -328,7 +328,7 @@ const StaffProcurement = () => {
 
       {/* MAIN 3-COLUMN WORKFLOW LAYOUT */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
+
         {/* COLUMN 1 (lg:col-span-3): VERIFIED FARMER CARD */}
         <div className="lg:col-span-3 space-y-6">
           <Card className="border border-slate-200 shadow-xs bg-white rounded-2xl overflow-hidden">
@@ -412,7 +412,7 @@ const StaffProcurement = () => {
 
         {/* COLUMN 2 (lg:col-span-6): MIDDLE SECTION - HARVEST, QUALITY, PRICE, REMARKS & BUTTONS */}
         <div className="lg:col-span-6 space-y-6">
-          
+
           {/* HARVEST & QUALITY DETAILS CARD */}
           <Card className="border border-slate-200 shadow-xs bg-white rounded-2xl overflow-hidden">
             <CardHeader className="bg-white border-b border-slate-100 py-3.5 px-5">
@@ -423,7 +423,7 @@ const StaffProcurement = () => {
             </CardHeader>
             <CardContent className="p-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
+
                 {/* Crop Selection Dropdown (Complete 39 Crops Catalogue) */}
                 <div>
                   <label className="text-xs font-bold text-slate-700 block mb-1.5">
@@ -629,7 +629,7 @@ const StaffProcurement = () => {
           {/* ACTION BUTTONS */}
           <div className="space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              
+
               {/* BUTTON 1: COMPLETE PROCUREMENT */}
               <button
                 onClick={handleCompleteProcurement}
@@ -671,7 +671,7 @@ const StaffProcurement = () => {
 
         {/* COLUMN 3 (lg:col-span-3): RIGHT SECTION - BOOKING DETAILS & SUMMARY */}
         <div className="lg:col-span-3 space-y-6">
-          
+
           {/* BOOKING & TOKEN DETAILS CARD */}
           <Card className="border border-slate-200 shadow-xs bg-white rounded-2xl overflow-hidden">
             <CardHeader className="bg-white border-b border-slate-100 py-3.5 px-5">
@@ -759,7 +759,7 @@ const StaffProcurement = () => {
                   {modalState.type === 'INITIATE_PAYMENT' ? 'Payment Initiated to Admin' : 'Procurement Completed & Saved'}
                 </h3>
               </div>
-              <button 
+              <button
                 onClick={() => setModalState({ isOpen: false, type: null, data: null })}
                 className="p-1 rounded-lg hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
               >
@@ -769,7 +769,7 @@ const StaffProcurement = () => {
 
             {/* Modal Content */}
             <div className="p-6 space-y-5 text-xs font-semibold text-slate-700">
-              
+
               <div className="bg-[#e6f4ea] p-4 rounded-xl border border-emerald-200 flex items-center justify-between">
                 <div>
                   <p className="text-[10px] font-extrabold text-[#046a38] uppercase tracking-wider">Farmer</p>

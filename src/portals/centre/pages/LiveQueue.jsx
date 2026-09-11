@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../context/AppContext';
 import { useTranslation } from '../../../data/translations';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../shared/components/Card';
+import QrScannerModal from '../../../shared/components/QrScannerModal';
 import { 
   Users, CheckCircle2, QrCode, Upload, FileCheck, AlertCircle, RefreshCw, 
   ChevronRight, Phone, MapPin, Ticket, Clock, Sprout, Scale, Calendar, 
-  Play, FileText, Check, FastForward, User
+  Play, FileText, Check, FastForward, User, Camera
 } from 'lucide-react';
 import { CROPS_CATALOGUE, getCropById } from '../../farmer/data/crops';
 import { MASTER_FARMER_REGISTRY } from '../../farmer/data/masterFarmers';
@@ -110,6 +111,7 @@ const StaffLiveQueue = () => {
   const [qrErrorMessage, setQrErrorMessage] = useState('');
   const [uploadedFileName, setUploadedFileName] = useState('');
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showCameraModal, setShowCameraModal] = useState(false);
 
   // Sync currentlyServing if queue updates and no serving farmer is set
   useEffect(() => {
@@ -391,13 +393,24 @@ const StaffLiveQueue = () => {
                   Drag & drop PNG, JPG, or JPEG QR token image generated from Farmer Portal, or click below to select file.
                 </p>
 
-                <label
-                  htmlFor="live-queue-qr-input"
-                  className="cursor-pointer px-6 py-2.5 bg-[#046a38] hover:bg-[#03522c] text-white font-bold rounded-xl text-xs shadow-xs hover:shadow-md transition-all inline-flex items-center gap-2"
-                >
-                  <FileCheck className="w-4 h-4" />
-                  <span>Upload QR</span>
-                </label>
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowCameraModal(true)}
+                    className="px-5 py-2.5 bg-[#046a38] hover:bg-[#03522c] text-white font-bold rounded-xl text-xs shadow-xs transition-all inline-flex items-center gap-2 cursor-pointer"
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>Scan with Camera</span>
+                  </button>
+
+                  <label
+                    htmlFor="live-queue-qr-input"
+                    className="cursor-pointer px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs shadow-xs hover:shadow-md transition-all inline-flex items-center gap-2"
+                  >
+                    <FileCheck className="w-4 h-4" />
+                    <span>Upload QR Image</span>
+                  </label>
+                </div>
 
                 {uploadedFileName && (
                   <p className="mt-3 text-xs font-mono text-[#046a38] bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">
@@ -827,6 +840,16 @@ const StaffLiveQueue = () => {
           </div>
         </div>
       )}
+
+      {/* REAL CAMERA & FILE DECODE QR SCANNER MODAL */}
+      <QrScannerModal
+        isOpen={showCameraModal}
+        onClose={() => setShowCameraModal(false)}
+        onScanSuccess={(decodedText) => {
+          setShowCameraModal(false);
+          processQrVerification(decodedText);
+        }}
+      />
 
     </div>
   );

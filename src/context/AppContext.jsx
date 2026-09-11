@@ -161,14 +161,34 @@ export const AppProvider = ({ children }) => {
         timestamp: new Date().toISOString()
       };
       
-      // Keep only latest 100 to avoid bloat
       const newLog = [newEntry, ...currentLog].slice(0, 100);
       return { ...prev, activity: newLog };
     });
   };
 
+  const addNotification = ({ userId, type = 'procurement', title, message }) => {
+    if (!userId || !title) return;
+    setState(prev => {
+      const currentNotifs = prev.notifications || [];
+      const newNotif = {
+        id: `N-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        userId: userId,
+        type,
+        title,
+        message,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        date: new Date().toISOString().split('T')[0],
+        read: false
+      };
+      return {
+        ...prev,
+        notifications: [newNotif, ...currentNotifs]
+      };
+    });
+  };
+
   return (
-    <AppContext.Provider value={{ state, setState, currentUser, login, logout, resetDemo, addCentre, updateComplaint, updateMSP, logActivity }}>
+    <AppContext.Provider value={{ state, setState, currentUser, login, logout, resetDemo, addCentre, updateComplaint, updateMSP, logActivity, addNotification }}>
       {children}
     </AppContext.Provider>
   );

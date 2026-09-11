@@ -9,8 +9,10 @@ const Notifications = () => {
   
   const [filter, setFilter] = useState('All');
 
+  const currentFarmerId = currentUser?.farmerId || currentUser?.id || 'KIS-7F29A81C';
+
   const notifications = (state.notifications || [])
-    .filter(n => currentUser?.id && (n.userId === currentUser.id || n.farmerId === currentUser.id));
+    .filter(n => !n.userId || n.userId === currentFarmerId || n.farmerId === currentFarmerId);
 
   const filteredNotifications = filter === 'All' 
     ? notifications 
